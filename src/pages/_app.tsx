@@ -1,7 +1,6 @@
 import '@/styles/globals.css'
 import type { AppProps } from 'next/app'
 import {AuthProvider} from "@/utils/auth_provider";
-import ReactDOM from "react-dom";
 import React from "react";
 
 

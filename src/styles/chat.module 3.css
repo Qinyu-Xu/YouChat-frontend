@@ -1,0 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito&display=swap');
+
+.main {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 6rem;
+    min-height: 100vh;
+}

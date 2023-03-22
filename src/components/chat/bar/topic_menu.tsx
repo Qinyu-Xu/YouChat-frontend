@@ -32,10 +32,7 @@ const TopicMenu = ({ selectedKey, changeSelectedKey }) => {
     const items: MenuItem[] = [
         getItem('聊天', '1', changeSelectedKey , <MessageOutlined />),
         getItem('好友', '2', changeSelectedKey,  <TeamOutlined />),
-        getItem('设置', '3', changeSelectedKey, <InfoCircleOutlined />, [
-            getItem('修改信息','4', changeSelectedKey),
-            getItem('注销账户','5', changeSelectedKey),
-        ])
+        getItem('设置', '3', changeSelectedKey, <InfoCircleOutlined />, )
     ];
 
     return (
