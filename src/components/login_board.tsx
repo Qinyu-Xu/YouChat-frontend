@@ -1,149 +1,179 @@
-import { useRef, useState, useEffect, useContext } from 'react';
+import { useState, useContext } from 'react';
 import AuthContext from "@/utils/auth_provider";
 import {formatParams} from "@/utils/utilities";
 import {request} from "@/utils/network";
-import styles from "@/components/login_board.module.css"
+import { MailOutlined, LockOutlined, UserOutlined,} from '@ant-design/icons';
+import { message, Tabs } from 'antd';
+import ProForm from "@ant-design/pro-form";
+import {LoginForm, ProFormText, ProFormCaptcha, ProConfigProvider} from '@ant-design/pro-components';
+
+type LoginType = 'email' | 'account';
 
 const LoginBoard = () => {
 
     const { setAuth } = useContext(AuthContext);
-    const userRef = useRef(null);
-    const emailRef = useRef(null);
-    const errRef = useRef(null);
+    const [loginType, setLoginType] = useState<LoginType>('email');
+    const [form] = ProForm.useForm();
 
-    const [user, setUser] = useState("");
-    const [email, setEmail] = useState("");
-    const [pwd, setPwd] = useState("");
-    const [errMsg, setErrMsg] = useState("");
-    const [isEmail, setIsEmail] = useState(false);
-
-    useEffect(() => {
-        if(isEmail) {
-            emailRef.current.focus();
-        } else {
-            userRef.current.focus();
+    const handleVerification = async (value) => {
+        if (!form.getFieldValue('email')) {
+            message.error('请先输入邮箱');
+            return;
         }
-    }, [isEmail]);
+        let m = form.getFieldsError(['email']);
+        if (m[0].errors.length > 0) {
+            message.error(m[0].errors[0]);
+            return;
+        }
+        let response = await request(
+            "people/email/send"+formatParams({email: value}),
+            "GET",
+            ""
+        );
+        if (response.code === 200) message.success('验证码发送成功!');
+        else message.error(response.message);
+    }
 
     const handleUserSubmit = async (e) => {
-        e.preventDefault();
 
         const userInfo = {
-            username: e.username,
+            userName: e.username,
             password: e.password,
         };
+
         try {
             const response = await request(
-                "/user?" + formatParams(userInfo),
+                "/people/user?" + formatParams(userInfo),
                 "GET",
                 "",
             );
 
             const accessToken = response?.data?.token;
             setAuth({accessToken});
-            setPwd('');
-            setPwd('');
+
         } catch(err) {
-            errRef.current.focus();
+            console.log(err);
         }
     };
 
     const handleEmailSubmit = async (e) => {
-        e.preventDefault();
 
-        const userInfo = {
-            email: e.email,
-            password: e.password,
-        };
         try {
             const response = await request(
-                "/user?" + formatParams(userInfo),
+                "/people/email/verify?" + formatParams({token: e.captcha}),
                 "GET",
                 "",
             );
-
             const accessToken = response?.data?.token;
             setAuth({accessToken});
-            setPwd('');
-            setPwd('');
         } catch(err) {
-            errRef.current.focus();
+            console.log(err);
         }
     };
 
     return (
-        <section>
-            <p ref={errRef} className={errMsg ? styles.errmsg : styles.offscreen} aria-live="assertive">
-                {errMsg}
-            </p>
-            <h1>Sign In</h1>
-            { isEmail
-                ?
-                <form onSubmit={handleEmailSubmit}>
-                    <label htmlFor="email">Email:</label>
-                    <br/>
-                    <input
-                        type="text"
-                        id="email"
-                        ref={emailRef}
-                        autoComplete="off"
-                        onChange={(e) => setUser(e.target.value)}
-                        value={email}
-                        required
-                    />
-                    <br />
-                    <label htmlFor="password">Password:</label>
-                    <br />
-                    <input
-                        type="password"
-                        id="password"
-                        onChange={(e) => setPwd(e.target.value)}
-                        value={pwd}
-                        required
-                    />
-                    <br />
-                    <button>Submit</button>
-                    <br />
-                    <div>
-                        <div>Do not have an account?</div>
-                        <a href='#'>Sign Up</a>
-                        <p onClick={()=>{setIsEmail(false);}}>Login with password</p>
-                    </div>
-                </form>
-                :
-                <form onSubmit={handleUserSubmit}>
-                    <label htmlFor="username">UserName:</label>
-                    <br/>
-                    <input
-                        type="text"
-                        id="username"
-                        ref={userRef}
-                        autoComplete="off"
-                        onChange={(e) => setUser(e.target.value)}
-                        value={user}
-                        required
-                    />
-                    <br />
-                    <label htmlFor="password">Password:</label>
-                    <br />
-                    <input
-                        type="password"
-                        id="password"
-                        onChange={(e) => setPwd(e.target.value)}
-                        value={pwd}
-                        required
-                    />
-                    <br />
-                    <button>Submit</button>
-                    <br />
-                    <div>
-                        <div>Do not have an account?</div>
-                        <a href='#'>Sign Up</a>
-                        <p onClick={()=>setIsEmail(true)}>Login with email</p>
-                    </div>
-                </form>
-            }
-        </section>
+        <ProConfigProvider hashed={false}>
+            <div style={{ backgroundColor: 'white' }}>
+                <LoginForm
+                    title="SwimChat"
+                    subTitle="前端工程师爱划水"
+                    actions={
+
+                            <>
+                            <div style={{float: "right", fontSize: "14px"}}>
+                                没有账号？
+                            <a>注册一个！</a>
+                            </div>
+                            </>
+                    }
+                    onFinish={loginType==='email'?handleEmailSubmit:handleUserSubmit}
+                >
+                    <Tabs
+                        centered
+                        activeKey={loginType}
+                        onChange={(activeKey) => setLoginType(activeKey as LoginType)}
+                    >
+                        <Tabs.TabPane key={'account'} tab={'账号密码登录'} />
+                        <Tabs.TabPane key={'email'} tab={'邮箱登录'} />
+                    </Tabs>
+
+                    {loginType === 'account' && (
+                        <>
+                            <ProFormText
+                                name="username"
+                                fieldProps={{
+                                    size: 'large',
+                                    prefix: <UserOutlined className={'prefixIcon'} />,
+                                }}
+                                placeholder={'用户名'}
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: '请输入用户名!',
+                                    },
+                                ]}
+                            />
+                            <ProFormText.Password
+                                name="password"
+                                fieldProps={{
+                                    size: 'large',
+                                    prefix: <LockOutlined className={'prefixIcon'} />,
+                                }}
+                                placeholder={'密码'}
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: '请输入密码！',
+                                    },
+                                ]}
+                            />
+                        </>
+                    )}
+                    {loginType === 'email' && (
+                        <>
+                            <ProFormText
+                                fieldProps={{
+                                    size: 'large',
+                                    prefix: <MailOutlined className={'prefixIcon'} />,
+                                }}
+                                name="email"
+                                placeholder={'邮箱'}
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: '请输入邮箱！',
+                                    },
+                                ]}
+                            />
+                            <ProFormCaptcha
+                                fieldProps={{
+                                    size: 'large',
+                                    prefix: <LockOutlined className={'prefixIcon'} />,
+                                }}
+                                captchaProps={{
+                                    size: 'large',
+                                }}
+                                placeholder={'验证码'}
+                                captchaTextRender={(timing, count) => {
+                                    if (timing) {
+                                        return `${count} ${'获取验证码'}`;
+                                    }
+                                    return '获取验证码';
+                                }}
+                                name="captcha"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: '请输入验证码！',
+                                    },
+                                ]}
+                                onGetCaptcha={handleVerification}
+                            />
+                        </>
+                    )}
+                </LoginForm>
+            </div>
+        </ProConfigProvider>
     )
 }
 
