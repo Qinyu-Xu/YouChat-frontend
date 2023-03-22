@@ -6,19 +6,16 @@ import { MailOutlined, LockOutlined, UserOutlined,} from '@ant-design/icons';
 import { message, Tabs } from 'antd';
 import ProForm from "@ant-design/pro-form";
 import {LoginForm, ProFormText, ProFormCaptcha, ProConfigProvider} from '@ant-design/pro-components';
+import {useRouter} from "next/router";
 
 type LoginType = 'email' | 'account';
 
-const LoginBoard = () => {
+export const LoginInput = (props) => {
 
-    const { setAuth } = useContext(AuthContext);
-    const [loginType, setLoginType] = useState<LoginType>('email');
-    const [form] = ProForm.useForm();
-
+    const form = props.form;
     const handleVerification = async (value) => {
-        if (!form.getFieldValue('email')) {
-            message.error('请先输入邮箱');
-            return;
+        if(!form.getFieldValue('email')) {
+            message.error("请先输入邮箱！");
         }
         let m = form.getFieldsError(['email']);
         if (m[0].errors.length > 0) {
@@ -26,13 +23,109 @@ const LoginBoard = () => {
             return;
         }
         let response = await request(
-            "people/email/send"+formatParams({email: value}),
+            "people/email/send?"+formatParams({email:form.getFieldValue('email')}),
             "GET",
             ""
         );
         if (response.code === 200) message.success('验证码发送成功!');
         else message.error(response.message);
     }
+
+    return (
+        <div>
+            <Tabs
+                centered
+                activeKey={props.loginType}
+                onChange={(activeKey) => props.setLoginType(activeKey as LoginType)}
+            >
+                <Tabs.TabPane key={'account'} tab={'账号密码'} />
+                <Tabs.TabPane key={'email'} tab={'邮箱'} />
+            </Tabs>
+        {props.loginType === 'account' && (
+        <>
+            <ProFormText
+                name="username"
+                fieldProps={{
+                    size: 'large',
+                    prefix: <UserOutlined className={'prefixIcon'} />,
+                }}
+                placeholder={'用户名'}
+                rules={[
+                    {
+                        required: true,
+                        message: '请输入用户名!',
+                    },
+                ]}
+            />
+            <ProFormText.Password
+                name="password"
+                fieldProps={{
+                    size: 'large',
+                    prefix: <LockOutlined className={'prefixIcon'} />,
+                }}
+                placeholder={'密码'}
+                rules={[
+                    {
+                        required: true,
+                        message: '请输入密码！',
+                    },
+                ]}
+            />
+        </>
+    )}
+    {props.loginType === 'email' && (
+        <>
+            <ProFormText
+                fieldProps={{
+                    size: 'large',
+                    prefix: <MailOutlined className={'prefixIcon'} />,
+                }}
+                name="email"
+                placeholder={'邮箱'}
+                rules={[
+                    {
+                        required: true,
+                        message: '请输入邮箱！',
+                    },
+                ]}
+            />
+            <ProFormCaptcha
+                fieldProps={{
+                    size: 'large',
+                    prefix: <LockOutlined className={'prefixIcon'} />,
+                }}
+                captchaProps={{
+                    size: 'large',
+                }}
+                placeholder={'验证码'}
+                captchaTextRender={(timing, count) => {
+                    if (timing) {
+                        return `${count} ${'获取验证码'}`;
+                    }
+                    return '获取验证码';
+                }}
+                name="captcha"
+                rules={[
+                    {
+                        required: true,
+                        message: '请输入验证码！',
+                    },
+                ]}
+                onGetCaptcha={handleVerification}
+            />
+        </>
+    )}
+        </div>
+);
+}
+
+const LoginBoard = (props) => {
+
+    const [form] = ProForm.useForm();
+    const { setAuth } = useContext(AuthContext);
+    const [loginType, setLoginType] = useState<LoginType>('email');
+
+    const router = useRouter();
 
     const handleUserSubmit = async (e) => {
 
@@ -50,7 +143,7 @@ const LoginBoard = () => {
 
             const accessToken = response?.data?.token;
             setAuth({accessToken});
-
+            router.push(props.type === 'login' ? '/chat' : '/settings')
         } catch(err) {
             console.log(err);
         }
@@ -79,98 +172,17 @@ const LoginBoard = () => {
                     subTitle="前端工程师爱划水"
                     actions={
 
-                            <>
+                            <>{ props.type == 'login' ?
                             <div style={{float: "right", fontSize: "14px"}}>
                                 没有账号？
                             <a>注册一个！</a>
-                            </div>
+                            </div> : <></>}
                             </>
                     }
+                    form={form}
                     onFinish={loginType==='email'?handleEmailSubmit:handleUserSubmit}
                 >
-                    <Tabs
-                        centered
-                        activeKey={loginType}
-                        onChange={(activeKey) => setLoginType(activeKey as LoginType)}
-                    >
-                        <Tabs.TabPane key={'account'} tab={'账号密码登录'} />
-                        <Tabs.TabPane key={'email'} tab={'邮箱登录'} />
-                    </Tabs>
-
-                    {loginType === 'account' && (
-                        <>
-                            <ProFormText
-                                name="username"
-                                fieldProps={{
-                                    size: 'large',
-                                    prefix: <UserOutlined className={'prefixIcon'} />,
-                                }}
-                                placeholder={'用户名'}
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: '请输入用户名!',
-                                    },
-                                ]}
-                            />
-                            <ProFormText.Password
-                                name="password"
-                                fieldProps={{
-                                    size: 'large',
-                                    prefix: <LockOutlined className={'prefixIcon'} />,
-                                }}
-                                placeholder={'密码'}
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: '请输入密码！',
-                                    },
-                                ]}
-                            />
-                        </>
-                    )}
-                    {loginType === 'email' && (
-                        <>
-                            <ProFormText
-                                fieldProps={{
-                                    size: 'large',
-                                    prefix: <MailOutlined className={'prefixIcon'} />,
-                                }}
-                                name="email"
-                                placeholder={'邮箱'}
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: '请输入邮箱！',
-                                    },
-                                ]}
-                            />
-                            <ProFormCaptcha
-                                fieldProps={{
-                                    size: 'large',
-                                    prefix: <LockOutlined className={'prefixIcon'} />,
-                                }}
-                                captchaProps={{
-                                    size: 'large',
-                                }}
-                                placeholder={'验证码'}
-                                captchaTextRender={(timing, count) => {
-                                    if (timing) {
-                                        return `${count} ${'获取验证码'}`;
-                                    }
-                                    return '获取验证码';
-                                }}
-                                name="captcha"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: '请输入验证码！',
-                                    },
-                                ]}
-                                onGetCaptcha={handleVerification}
-                            />
-                        </>
-                    )}
+                    <LoginInput form={form} loginType={loginType} setLoginType={setLoginType}/>
                 </LoginForm>
             </div>
         </ProConfigProvider>

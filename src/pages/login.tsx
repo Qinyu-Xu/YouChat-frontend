@@ -5,7 +5,7 @@ function Login() {
 
     return (
         <main className={styles.login}>
-            <LoginBoard />
+            <LoginBoard type={'login'}/>
         </main>
     );
 };
