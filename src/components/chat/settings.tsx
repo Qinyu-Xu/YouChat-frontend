@@ -1,13 +1,11 @@
 import {request} from "@/utils/network";
-import {useState} from "react";
-import {Button, Divider, Input, Modal, Space, Tabs} from "antd";
+import {useRef, useState} from "react";
+import {Button, Divider, Input, message, Modal, Space, Tabs} from "antd";
 import {useRouter} from "next/router";
 
 import styles from "@/components/chat/settings.module.css";
 import ProForm from "@ant-design/pro-form";
-import {ProFormCaptcha, ProFormText} from "@ant-design/pro-components";
-import {LockOutlined, MailOutlined, UserOutlined} from "@ant-design/icons";
-import LoginBoard, {LoginInput} from "@/components/login_board";
+import {LoginInput} from "@/components/login_board";
 
 const LogOut = () => {
 
@@ -31,17 +29,28 @@ const SecondAuthentication = (props) => {
     const [loginType, setLoginType] = useState('email');
     const [form] = ProForm.useForm();
 
-    const router = useRouter();
     const handleAuth = () => {
         setOpen(true);
     };
-    const handleOk = () => {
+    const handleOk = async () => {
         if (loginType === 'email') {
-            const code = form.getFieldValue('captcha');
 
         } else {
             const user = form.getFieldValue('username');
             const pwd = form.getFieldValue('password');
+            const response = await request(
+                "/people/modify",
+                "POST",
+                JSON.stringify({
+                    userName: user,
+                    password: pwd,
+                })
+            );
+            if (response.code == 200) {
+                setOpen(true);
+            } else {
+                message.error(response.info);
+            }
         }
     };
 
@@ -66,25 +75,61 @@ const SecondAuthentication = (props) => {
 
 const EditProfile = (props) => {
 
+    const code = useRef(0);
+    const [user, setUser] = useState(null);
+    const [pwd, setPwd] = useState(null);
+    const [email, setEmail] = useState(null);
+    const [phone, setPhone] = useState(null);
     const handleCancel = (e) => {
         props.setAuth(false);
     };
+
+    const handleClick = async (e) => {
+        let new_val = undefined;
+
+        if (code.current === 1) {
+            new_val = user;
+        } else if (code.current === 2) {
+            new_val = pwd;
+        } else if (code.current === 4) {
+            new_val = email;
+        } else if (code.current == 5) {
+            new_val = phone;
+        }
+        const response = await request(
+            "/people/modify",
+            "PUT",
+            JSON.stringify({
+                code: code,
+                new: new_val
+            })
+        )
+        if (response.code === 200) {
+            message.success('successfully change your profile!');
+        } else {
+            message.error(reponse.info);
+        }
+    }
 
     return (
         <div>
             <p>Edit Your Profile</p>
             <Space direction="vertical" size="middle">
                 <Space.Compact style={{ width: 500 }}>
-                    <Input placeholder="修改你的用户名" />
-                    <Button type="primary">Submit</Button>
+                    <Input placeholder="修改你的用户名" onChange={(e)=>setUser(e.target.value)}/>
+                    <Button type="primary" onClick={(e) => {code.current=1; handleClick(e)}}>Submit</Button>
                 </Space.Compact >
                 <Space.Compact style={{ width: 500 }}>
-                    <Input placeholder="修改你的密码" />
-                    <Button type="primary">Submit</Button>
+                    <Input placeholder="修改你的密码" onChange={(e)=>setPwd(e.target.value)}/>
+                    <Button type="primary" onClick={(e) => {code.current=2; handleClick(e)}}>Submit</Button>
                 </Space.Compact >
                 <Space.Compact style={{ width: '100%' }}>
-                    <Input placeholder="修改你的邮箱" />
-                    <Button type="primary">Submit</Button>
+                    <Input placeholder="修改你的邮箱" onChange={(e)=>setEmail(e.target.value)}/>
+                    <Button type="primary" onClick={(e) => {code.current=4; handleClick(e)}}>Submit</Button>
+                </Space.Compact>
+                <Space.Compact style={{ width: '100%' }}>
+                    <Input placeholder="修改你的手机号" onChange={(e)=>setPhone(e.target.value)}/>
+                    <Button type="primary" onClick={(e) => {code.current=5; handleClick(e)}}>Submit</Button>
                 </Space.Compact>
 
             <Button onClick={handleCancel}>结束更改</Button>

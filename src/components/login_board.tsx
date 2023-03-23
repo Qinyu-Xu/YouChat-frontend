@@ -23,12 +23,12 @@ export const LoginInput = (props) => {
             return;
         }
         let response = await request(
-            "people/email/send?"+formatParams({email:form.getFieldValue('email')}),
+            `people/email/send/${form.getFieldValue('email')}`,
             "GET",
             ""
         );
         if (response.code === 200) message.success('验证码发送成功!');
-        else message.error(response.message);
+        else message.error(response.info);
     }
 
     return (
