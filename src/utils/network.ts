@@ -6,7 +6,7 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
 
 const network = axios.create({
-    baseURL: "",
+    baseURL: "http://localhost:8000/",
 });
 
 enum NetworkErrorType {

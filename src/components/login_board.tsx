@@ -143,9 +143,7 @@ const LoginBoard = (props) => {
             if(response.code !== 200) {
                 message.error(response?.data?.info);
             } else {
-                const accessToken = response?.data?.token;
-                setAuth({accessToken});
-                await router.push('/chat');
+                router.push('/chat');
             }
         } catch(err) {
             console.log(err);
@@ -179,11 +177,10 @@ const LoginBoard = (props) => {
                     title="SwimChat"
                     subTitle="前端工程师爱划水"
                     actions={
-
                             <>{ props.type == 'login' ?
                             <div style={{float: "right", fontSize: "14px"}}>
                                 没有账号？
-                            <a>注册一个！</a>
+                            <a onClick={()=>router.push('/register')}>注册一个！</a>
                             </div> : <></>}
                             </>
                     }

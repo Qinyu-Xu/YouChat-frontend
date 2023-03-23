@@ -33,7 +33,9 @@ const SecondAuthentication = (props) => {
         setOpen(true);
     };
     const handleOk = async () => {
-        if (loginType === 'email') {
+        props.setAuth(true);
+
+        /*if (loginType === 'email') {
 
         } else {
             const user = form.getFieldValue('username');
@@ -51,7 +53,7 @@ const SecondAuthentication = (props) => {
             } else {
                 message.error(response.info);
             }
-        }
+        }*/
     };
 
     const handleCancel = () => {
