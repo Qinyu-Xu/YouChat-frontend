@@ -136,14 +136,17 @@ const LoginBoard = (props) => {
 
         try {
             const response = await request(
-                "/people/user?" + formatParams(userInfo),
-                "GET",
-                "",
+                "/people/user",
+                "POST",
+                JSON.stringify(userInfo),
             );
-
-            const accessToken = response?.data?.token;
-            setAuth({accessToken});
-            router.push(props.type === 'login' ? '/chat' : '/settings')
+            if(response.code !== 200) {
+                message.error(response?.data?.info);
+            } else {
+                const accessToken = response?.data?.token;
+                setAuth({accessToken});
+                await router.push('/chat');
+            }
         } catch(err) {
             console.log(err);
         }
@@ -157,8 +160,13 @@ const LoginBoard = (props) => {
                 "GET",
                 "",
             );
-            const accessToken = response?.data?.token;
-            setAuth({accessToken});
+            if(response.code !== 200) {
+                message.error(response?.data?.info);
+            } else {
+                const accessToken = response?.data?.token;
+                setAuth({accessToken});
+                await router.push('/chat')
+            }
         } catch(err) {
             console.log(err);
         }
