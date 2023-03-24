@@ -1,0 +1,8 @@
+html, body, #__next, main {
+    margin: 0;
+    border: 0;
+    padding: 0;
+    background: #fafafa; 
+    height: 100%;
+    width: 100%;
+}
