@@ -1,9 +1,11 @@
-function FriendProfile() {
+import styles from '@/styles/layout.module.css'
+
+function Profile() {
     return (
-        <div>
-            FriendProfile
+        <div className={styles.content}>
+            Profile
         </div>
     );
 };
 
-export default FriendProfile;
+export default Profile;
