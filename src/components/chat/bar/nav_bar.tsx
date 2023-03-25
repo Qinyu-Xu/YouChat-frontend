@@ -16,8 +16,6 @@ const NavBar = ({menu}: {menu: any}) => {
             <Drawer
                 title="Topics"
                 placement="left"
-                onClick={() => setVisible(false)}
-                onClose={() => setVisible(false)}
                 visible={visible}
             >
                 {menu}
