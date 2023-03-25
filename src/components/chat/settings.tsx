@@ -23,7 +23,7 @@ const LogOut = () => {
     );
 };
 
-const SecondAuthentication = (props) => {
+const SecondAuthentication = (props: any) => {
 
     const [open, setOpen] = useState(false);
     const [loginType, setLoginType] = useState('email');
@@ -75,18 +75,18 @@ const SecondAuthentication = (props) => {
     );
 };
 
-const EditProfile = (props) => {
+const EditProfile = (props: any) => {
 
     const code = useRef(0);
     const [user, setUser] = useState(null);
     const [pwd, setPwd] = useState(null);
     const [email, setEmail] = useState(null);
     const [phone, setPhone] = useState(null);
-    const handleCancel = (e) => {
+    const handleCancel = (e: any) => {
         props.setAuth(false);
     };
 
-    const handleClick = async (e) => {
+    const handleClick = async (e: any) => {
         let new_val = undefined;
 
         if (code.current === 1) {
@@ -109,7 +109,7 @@ const EditProfile = (props) => {
         if (response.code === 200) {
             message.success('successfully change your profile!');
         } else {
-            message.error(reponse.info);
+            message.error(response.info);
         }
     }
 
@@ -118,19 +118,19 @@ const EditProfile = (props) => {
             <p>Edit Your Profile</p>
             <Space direction="vertical" size="middle">
                 <Space.Compact style={{ width: 500 }}>
-                    <Input placeholder="修改你的用户名" onChange={(e)=>setUser(e.target.value)}/>
+                    <Input placeholder="修改你的用户名" onChange={(e: any)=>setUser(e.target.value)}/>
                     <Button type="primary" onClick={(e) => {code.current=1; handleClick(e)}}>Submit</Button>
                 </Space.Compact >
                 <Space.Compact style={{ width: 500 }}>
-                    <Input placeholder="修改你的密码" onChange={(e)=>setPwd(e.target.value)}/>
+                    <Input placeholder="修改你的密码" onChange={(e: any)=>setPwd(e.target.value)}/>
                     <Button type="primary" onClick={(e) => {code.current=2; handleClick(e)}}>Submit</Button>
                 </Space.Compact >
                 <Space.Compact style={{ width: '100%' }}>
-                    <Input placeholder="修改你的邮箱" onChange={(e)=>setEmail(e.target.value)}/>
+                    <Input placeholder="修改你的邮箱" onChange={(e: any)=>setEmail(e.target.value)}/>
                     <Button type="primary" onClick={(e) => {code.current=4; handleClick(e)}}>Submit</Button>
                 </Space.Compact>
                 <Space.Compact style={{ width: '100%' }}>
-                    <Input placeholder="修改你的手机号" onChange={(e)=>setPhone(e.target.value)}/>
+                    <Input placeholder="修改你的手机号" onChange={(e: any)=>setPhone(e.target.value)}/>
                     <Button type="primary" onClick={(e) => {code.current=5; handleClick(e)}}>Submit</Button>
                 </Space.Compact>
 

@@ -10,11 +10,11 @@ import type { MenuProps } from 'antd';
 type MenuItem = Required<MenuProps>['items'][number];
 
 function getItem(
-    label,
-    key,
-    onClick,
-    icon?,
-    children?,
+    label: any,
+    key: any,
+    onClick: any,
+    icon?: any,
+    children?: any,
     type?: 'group',
 ): MenuItem {
     return {
@@ -27,7 +27,7 @@ function getItem(
     } as MenuItem;
 }
 
-const TopicMenu = ({ selectedKey, changeSelectedKey }) => {
+const TopicMenu = ({ selectedKey, changeSelectedKey }: { selectedKey: any, changeSelectedKey: any }) => {
 
     const items: MenuItem[] = [
         getItem('聊天', '1', changeSelectedKey , <MessageOutlined />),
@@ -37,7 +37,6 @@ const TopicMenu = ({ selectedKey, changeSelectedKey }) => {
 
     return (
         <Menu
-            selectkeys={selectedKey}
             defaultOpenKeys={['sub1']}
             mode="inline"
             theme="light"

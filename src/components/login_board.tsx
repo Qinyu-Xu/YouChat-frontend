@@ -10,10 +10,10 @@ import {useRouter} from "next/router";
 
 type LoginType = 'email' | 'account';
 
-export const LoginInput = (props) => {
+export const LoginInput = (props:any) => {
 
     const form = props.form;
-    const handleVerification = async (value) => {
+    const handleVerification = async (value: any) => {
         if(!form.getFieldValue('email')) {
             message.error("请先输入邮箱！");
         }
@@ -119,15 +119,15 @@ export const LoginInput = (props) => {
 );
 }
 
-const LoginBoard = (props) => {
+const LoginBoard = (props: any) => {
 
     const [form] = ProForm.useForm();
-    const { setAuth } = useContext(AuthContext);
+    const { setAuth} = useContext(AuthContext);
     const [loginType, setLoginType] = useState<LoginType>('email');
 
     const router = useRouter();
 
-    const handleUserSubmit = async (e) => {
+    const handleUserSubmit = async (e: any) => {
 
         const userInfo = {
             userName: e.username,
@@ -150,7 +150,7 @@ const LoginBoard = (props) => {
         }
     };
 
-    const handleEmailSubmit = async (e) => {
+    const handleEmailSubmit = async (e: any) => {
 
         try {
             const response = await request(

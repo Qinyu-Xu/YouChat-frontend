@@ -12,7 +12,7 @@ function Register() {
     const [initialPwd, setInitialPwd] = useState("");
     const [confirmedPwd, setConfirmedPwd] = useState("");
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e: any) => {
         e.preventDefault();
 
         const userInfo = {
