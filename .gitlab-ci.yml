@@ -17,7 +17,6 @@ build:
     - master
     - dev
 
-# TODO Start: [Student] Complete test stage
 .test:
   stage:  test
   image: node:18
@@ -41,7 +40,6 @@ style-test:
   allow_failure: true
   script:
     - node_modules/eslint/bin/eslint.js
-# TODO End
 
 deploy:
   stage: deploy
