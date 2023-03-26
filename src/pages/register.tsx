@@ -13,20 +13,21 @@ function Register() {
     const [confirmedPwd, setConfirmedPwd] = useState("");
 
     const handleSubmit = async (e: any) => {
+        console.log(e.target);
         e.preventDefault();
 
         const userInfo = {
-            email: e.email,
-            userName: e.username,
-            nickname: e.nickname,
-            password: e.password
+            email: email,
+            userName: username,
+            nickname: nickname,
+            password: initialPwd,
         }
 
         try {
             const response = await request(
-                "/user",
+                "/people/user",
                 "PUT",
-                userInfo,
+                JSON.stringify(userInfo),
             );
 
             const accessToken = response?.data?.token;

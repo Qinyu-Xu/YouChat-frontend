@@ -6,7 +6,7 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
 
 const network = axios.create({
-    baseURL: "http://localhost:8000/",
+    baseURL: "https://st-im-django-swimtogether.app.secoder.net/",
 });
 
 enum NetworkErrorType {
