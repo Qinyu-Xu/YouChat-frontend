@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Layout } from 'antd';
 
-const SideBar = ({menu}) => {
+const SideBar = ({menu}: {menu: any}) => {
     return (
         <Layout.Sider
             breakpoint={"lg"}

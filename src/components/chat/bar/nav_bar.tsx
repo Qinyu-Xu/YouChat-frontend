@@ -3,7 +3,7 @@ import { Drawer, Button } from "antd";
 import { MenuOutlined } from "@ant-design/icons";
 import styles from "@/components/chat/bar/nav_bar.module.css";
 
-const NavBar = ({ menu }) => {
+const NavBar = ({menu}: {menu: any}) => {
     const [visible, setVisible] = useState(false);
     return (
         <nav className={styles.navbar}>
@@ -16,8 +16,6 @@ const NavBar = ({ menu }) => {
             <Drawer
                 title="Topics"
                 placement="left"
-                onClick={() => setVisible(false)}
-                onClose={() => setVisible(false)}
                 visible={visible}
             >
                 {menu}

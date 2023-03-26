@@ -1,8 +1,15 @@
 import {createContext, useState} from "react";
 
-const AuthContext = createContext({});
+interface AuthContext {
+    auth: any | null,
+    setAuth: (any: any) => any | null;
+}
 
-export const AuthProvider = ({children}) => {
+const AuthContext = createContext<AuthContext>({
+    auth: undefined, setAuth(any: any): any {}
+});
+
+export const AuthProvider = ({children}: {children: any}) => {
     const [auth, setAuth] = useState({});
 
     return (

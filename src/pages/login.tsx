@@ -8,6 +8,6 @@ function Login() {
             <LoginBoard type={'login'}/>
         </main>
     );
-};
+}
 
 export default Login;

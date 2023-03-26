@@ -12,7 +12,7 @@ const Chat = () => {
     const [contentIndex, setContentIndex] = useState(0);
     const [selectedKey, setSelectedKey] = useState("0");
 
-    const changeSelectedKey = (event) => {
+    const changeSelectedKey = (event: any) => {
         const key = event.key;
         setSelectedKey(key);
         setContentIndex(+key);
