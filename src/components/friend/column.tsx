@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { request } from "@/utils/network";
 import styles from '@/styles/layout.module.css'
+import profile_type from '@/pages/friend'
+import { setPriority } from 'os';
 
 interface User {
 	id: number,
@@ -14,14 +16,30 @@ interface Group {
 
 interface FriendListProps {
 	groups?: Array<Group>,
+	setProfile?: any;
 }
 
 const FriendList = (props: FriendListProps) => {
 	const List: any[] = [];
+
+	const handleSelect = async (e) => {
+		console.log(e);
+        try {
+            const response = await request(
+                "/people/profile" + e.target.id,
+                "GET",
+				"",
+            );
+			props.setProfile(response?.data);
+        } catch(err) {
+            console.log(err);
+        }
+	};
+
 	props.groups?.map(g => {
 		g.list.map(item => {
 			List.push(
-				<div className={styles.column_item}>
+				<div className={styles.column_item} id={item.id.toString()} onClick={handleSelect}>
 					{item.nickname}
 					@
 					{g.group}
@@ -29,6 +47,7 @@ const FriendList = (props: FriendListProps) => {
 			)
 		})
 	});
+
 	return (
 		<div>
 			{List}
@@ -36,7 +55,11 @@ const FriendList = (props: FriendListProps) => {
 	);
 };
 
-function Column() {
+interface ColumnProps {
+	setProfile?: any;
+}
+
+function Column(props: ColumnProps) {
 	const [query, setQuery] = useState("");
 	const [friends, setFriends] = useState<Array<Group>>();
 
@@ -67,7 +90,7 @@ function Column() {
                     value={query}
 				/>
 			</div>
-			<FriendList groups={friends}/>
+			<FriendList groups={friends} setProfile={props.setProfile}/>
 		</div>
 	);
 };

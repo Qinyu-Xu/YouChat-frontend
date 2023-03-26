@@ -1,9 +1,13 @@
 import styles from '@/styles/layout.module.css'
 
-function Profile() {
+interface ProfileProps {
+    profile: any;
+}
+
+function Profile(props: ProfileProps) {
     return (
         <div className={styles.content}>
-            Profile
+
         </div>
     );
 };
