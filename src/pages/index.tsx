@@ -1,7 +1,7 @@
 import LoginBoard from '@/components/login_board';
 import styles from '@/styles/login.module.css'
 
-function Login() {
+function Index() {
 
     return (
         <main className={styles.login}>
@@ -10,4 +10,4 @@ function Login() {
     );
 };
 
-export default Login;
+export default Index;
