@@ -3,8 +3,8 @@ import { Layout } from "antd";
 import SideBar from "@/components/chat/bar/side_bar"
 import NavBar from "@/components/chat/bar/nav_bar";
 import TopicMenu from "@/components/chat/bar/topic_menu";
-import styles from "@/styles/chat.module.css"
-import Settings from "@/components/chat/settings";
+import Settings from "@/components/settings/settings";
+import Sidebar from "@/components/sidebar";
 
 
 const Chat = () => {
@@ -30,10 +30,10 @@ const Chat = () => {
     }, [contentIndex]);
 
     return (
-        <div className={styles.main}>
+        <div>
             <NavBar menu={Menu} />
             <Layout>
-                <SideBar menu={Menu} />
+                <Sidebar />
                 <Layout.Content className="content">
                     {content}
                 </Layout.Content>

@@ -13,7 +13,6 @@ function Register() {
     const [confirmedPwd, setConfirmedPwd] = useState("");
 
     const handleSubmit = async (e: any) => {
-        console.log(e.target);
         e.preventDefault();
 
         const userInfo = {

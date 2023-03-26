@@ -3,7 +3,7 @@ import {useRef, useState} from "react";
 import {Button, Divider, Input, message, Modal, Space, Tabs} from "antd";
 import {useRouter} from "next/router";
 
-import styles from "@/components/chat/settings.module.css";
+import styles from "@/components/settings/settings.module.css";
 import ProForm from "@ant-design/pro-form";
 import {LoginInput} from "@/components/login_board";
 
