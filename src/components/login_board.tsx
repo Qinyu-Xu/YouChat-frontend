@@ -25,7 +25,7 @@ export const LoginInput = ( props: any ) => {
             return;
         }
         let response = await request(
-            `people/email/send/${form.getFieldValue('email')}`,
+            `/api/people/email/send/${form.getFieldValue('email')}`,
             "GET",
             ""
         );
@@ -33,16 +33,19 @@ export const LoginInput = ( props: any ) => {
         else message.error(response.info);
     };
 
+    const items = [
+        {label: '账号密码', key: "account"},
+        {label: '邮箱登陆', key: 'email'},
+    ]
+
     return (
         <div>
             <Tabs
                 centered
                 activeKey={props.loginType}
                 onChange={(activeKey) => props.setLoginType(activeKey as LoginType)}
-            >
-                <Tabs.TabPane key={'account'} tab={'账号密码'} />
-                <Tabs.TabPane key={'email'} tab={'邮箱'} />
-            </Tabs>
+                items={items}
+            />
         {props.loginType === 'account' && (
         <>
             <ProFormText
@@ -138,7 +141,7 @@ const LoginBoard = () => {
 
         try {
             const response = await request(
-                "/people/user",
+                "/api/people/user",
                 "POST",
                 JSON.stringify(userInfo),
             );
@@ -158,7 +161,7 @@ const LoginBoard = () => {
 
         try {
             const response = await request(
-                "/people/email/verify/" + e.captcha,
+                "/api/people/email/verify/" + e.captcha,
                 "POST",
                 "",
             );
@@ -182,8 +185,8 @@ const LoginBoard = () => {
         <ProConfigProvider hashed={false}>
             <div style={{ backgroundColor: 'white' }}>
                 <LoginForm
-                    title="SwimChat"
-                    subTitle="前端工程师爱划水"
+                    title="YouChat"
+                    subTitle="你都对，你来说"
                     actions={routerRegister}
                     form={form}
                     onFinish={loginType==='email'?handleEmailSubmit:handleUserSubmit}

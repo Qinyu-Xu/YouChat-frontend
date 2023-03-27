@@ -6,7 +6,7 @@ import { useCookies } from "react-cookie";
 
 import styles from "@/styles/layout.module.css";
 import ProForm from "@ant-design/pro-form";
-import {LoginInput} from "@/components/login_board";
+import { LoginInput } from "@/components/login_board";
 
 const LogOut = () => {
 
@@ -29,44 +29,49 @@ const LogOut = () => {
 const SecondAuthentication = (props: any) => {
 
     const [open, setOpen] = useState(false);
-    const [loginType, setLoginType] = useState('email');
+    const [loginType, setLoginType] = useState('account');
     const [form] = ProForm.useForm();
 
     const handleAuth = () => {
         setOpen(true);
     };
+
     const handleOk = async () => {
-        props.setAuth(true);
-
-        /*if (loginType === 'email') {
-
+        if (loginType === 'email') {
+            setOpen(false);
+            props.setAuth(true);
         } else {
             const user = form.getFieldValue('username');
             const pwd = form.getFieldValue('password');
+            if( user === "" || pwd === "" ) {
+                message.error('请输入完整的信息！');
+                return;
+            }
             const response = await request(
-                "/people/modify",
+                "/api/people/modify",
                 "POST",
                 JSON.stringify({
                     userName: user,
                     password: pwd,
                 })
             );
-            if (response.code == 200) {
-                setOpen(true);
+            if (response.code == 0) {
+                message.success('二次验证成功！')
+                setOpen(false);
+                props.setAuth(true);
             } else {
                 message.error(response.info);
             }
-        }*/
+        }
     };
 
     const handleCancel = () => {
         setOpen(false);
     };
 
-
     return (
         <div>
-            <div className={styles.modifyContainer}>验证身份以修改你的个人信息</div>
+            <div>验证身份以修改你的个人信息</div>
             <br />
             <Button onClick={handleAuth}>验证身份</Button>
             <Modal title="验证你的身份" open={open} onOk={handleOk} onCancel={handleCancel}>
@@ -102,14 +107,14 @@ const EditProfile = (props: any) => {
             new_val = phone;
         }
         const response = await request(
-            "/people/modify",
+            "/api/people/modify",
             "PUT",
             JSON.stringify({
                 code: code,
                 new: new_val
             })
         )
-        if (response.code === 200) {
+        if (response.code === 0) {
             message.success('successfully change your profile!');
         } else {
             message.error(response.info);
@@ -145,11 +150,9 @@ const EditProfile = (props: any) => {
 
 const Setting = () => {
 
-
     const [isAuthenticated, setAuthentication] = useState(false);
 
     return (
-
             <div className={styles.content}>
                 <LogOut />
                 <Divider />

@@ -6,7 +6,7 @@ const nextConfig = {
     async rewrites() {
         return [{
             source: "/api/:path*",
-            destination: "https://st-im-next-swimtogether.app.secoder.net/:path*",
+            destination: "http://st-im-next-swimtogether.app.secoder.net/:path*",
         }];
     }
 };

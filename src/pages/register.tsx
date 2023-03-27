@@ -1,5 +1,5 @@
 import { useState } from "react";
-import {request} from "@/utils/network";
+import { request } from "@/utils/network";
 import styles from '@/styles/register.module.css'
 import { message } from "antd";
 import { useRouter } from "next/router";
@@ -25,7 +25,7 @@ function Register() {
 
         try {
             const response = await request(
-                "/people/user",
+                "/api/people/user",
                 "PUT",
                 JSON.stringify(userInfo),
             );
