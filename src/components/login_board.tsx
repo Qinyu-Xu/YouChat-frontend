@@ -1,19 +1,21 @@
-import { useState, useContext } from 'react';
-import AuthContext from "@/utils/auth_provider";
-import {formatParams} from "@/utils/utilities";
-import {request} from "@/utils/network";
+import ProForm from "@ant-design/pro-form";
+import { useState } from 'react';
+import { formatParams } from "@/utils/utilities";
+import { request } from "@/utils/network";
 import { MailOutlined, LockOutlined, UserOutlined,} from '@ant-design/icons';
 import { message, Tabs } from 'antd';
-import ProForm from "@ant-design/pro-form";
-import {LoginForm, ProFormText, ProFormCaptcha, ProConfigProvider} from '@ant-design/pro-components';
-import {useRouter} from "next/router";
+import { LoginForm, ProFormText, ProFormCaptcha, ProConfigProvider } from '@ant-design/pro-components';
+import { useRouter } from "next/router";
+import { useCookies } from "react-cookie";
 
 type LoginType = 'email' | 'account';
 
-export const LoginInput = (props:any) => {
+export const LoginInput = ( props: any ) => {
 
     const form = props.form;
-    const handleVerification = async (value: any) => {
+
+    // handle request to send verification code
+    const handleVerification = async () => {
         if(!form.getFieldValue('email')) {
             message.error("请先输入邮箱！");
         }
@@ -27,9 +29,9 @@ export const LoginInput = (props:any) => {
             "GET",
             ""
         );
-        if (response.code === 200) message.success('验证码发送成功!');
+        if (response.code === 0) message.success('验证码发送成功!');
         else message.error(response.info);
-    }
+    };
 
     return (
         <div>
@@ -119,11 +121,11 @@ export const LoginInput = (props:any) => {
 );
 }
 
-const LoginBoard = (props: any) => {
+const LoginBoard = () => {
 
     const [form] = ProForm.useForm();
-    const { setAuth} = useContext(AuthContext);
-    const [loginType, setLoginType] = useState<LoginType>('email');
+    const [loginType, setLoginType] = useState<LoginType>('account');
+    const [cookies, setCookie] = useCookies(['token']);
 
     const router = useRouter();
 
@@ -140,35 +142,41 @@ const LoginBoard = (props: any) => {
                 "POST",
                 JSON.stringify(userInfo),
             );
-            if(response.code !== 200) {
+            if(response.code !== 0) {
                 message.error(response?.data?.info);
             } else {
-                router.push('/chat');
+                setCookie('token', response.token, {path: "/"});
+                await router.push('/chat');
             }
         } catch(err) {
             console.log(err);
         }
+
     };
 
     const handleEmailSubmit = async (e: any) => {
 
         try {
             const response = await request(
-                "/people/email/verify?" + formatParams({token: e.captcha}),
-                "GET",
+                "/people/email/verify/" + e.captcha,
+                "POST",
                 "",
             );
-            if(response.code !== 200) {
+            if(response.code !== 0) {
                 message.error(response?.data?.info);
             } else {
-                const accessToken = response?.data?.token;
-                setAuth({accessToken});
-                await router.push('/chat')
+                setCookie('token', response.token, {path: "/"});
+                await router.push('/chat');
             }
         } catch(err) {
             console.log(err);
         }
     };
+
+    const routerRegister = <div style={{float: "right", fontSize: "14px"}}>
+        没有账号？
+        <a onClick={()=>router.push('/register')}>注册一个！</a>
+    </div>;
 
     return (
         <ProConfigProvider hashed={false}>
@@ -176,14 +184,7 @@ const LoginBoard = (props: any) => {
                 <LoginForm
                     title="SwimChat"
                     subTitle="前端工程师爱划水"
-                    actions={
-                            <>{ props.type == 'login' ?
-                            <div style={{float: "right", fontSize: "14px"}}>
-                                没有账号？
-                            <a onClick={()=>router.push('/register')}>注册一个！</a>
-                            </div> : <></>}
-                            </>
-                    }
+                    actions={routerRegister}
                     form={form}
                     onFinish={loginType==='email'?handleEmailSubmit:handleUserSubmit}
                 >

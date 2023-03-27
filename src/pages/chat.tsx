@@ -3,7 +3,7 @@ import { Layout } from "antd";
 import SideBar from "@/components/chat/bar/side_bar"
 import NavBar from "@/components/chat/bar/nav_bar";
 import TopicMenu from "@/components/chat/bar/topic_menu";
-import Settings from "@/components/settings/settings";
+import Setting from "@/components/settings/setting";
 import Sidebar from "@/components/sidebar";
 
 
@@ -22,10 +22,10 @@ const Chat = () => {
             selectedKey={selectedKey}
             changeSelectedKey={changeSelectedKey}/>;
 
-    let content = <Settings />;
+    let content = <Setting />;
     useEffect(() => {
         if (contentIndex == 1) {
-            content = <Settings />
+            content = <Setting />
         }
     }, [contentIndex]);
 

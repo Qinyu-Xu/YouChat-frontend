@@ -48,7 +48,7 @@ export const request = async (
         });
 
     if (response?.data.code === 0) {
-        return { ...response.data, code: undefined };
+        return { ...response.data, code: 0 };
     } else {
         /**
          * @note 这里的错误处理显然是极其粗糙的，大作业中你可以根据组内约定的 API 文档细化错误处理。

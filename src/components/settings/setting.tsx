@@ -1,17 +1,20 @@
-import {request} from "@/utils/network";
-import {useRef, useState} from "react";
-import {Button, Divider, Input, message, Modal, Space, Tabs} from "antd";
-import {useRouter} from "next/router";
+import { request } from "@/utils/network";
+import { useRef, useState } from "react";
+import { Button, Divider, Input, message, Modal, Space } from "antd";
+import { useRouter } from "next/router";
+import { useCookies } from "react-cookie";
 
-import styles from "@/components/settings/settings.module.css";
+import styles from "@/styles/layout.module.css";
 import ProForm from "@ant-design/pro-form";
 import {LoginInput} from "@/components/login_board";
 
 const LogOut = () => {
 
     const router = useRouter();
+    const [cookie, , removeCookie] = useCookies(['token']);
     const handleLogOut = () => {
-        alert('成功登出！')
+        removeCookie('token', {path: "/"});
+        message.success('成功登出！')
         router.push('/login');
     }
 
@@ -140,14 +143,14 @@ const EditProfile = (props: any) => {
     );
 }
 
-const Settings = () => {
+const Setting = () => {
 
 
     const [isAuthenticated, setAuthentication] = useState(false);
 
     return (
 
-            <div>
+            <div className={styles.content}>
                 <LogOut />
                 <Divider />
                 {isAuthenticated
@@ -158,4 +161,4 @@ const Settings = () => {
     );
 }
 
-export default Settings;
+export default Setting;
