@@ -4,6 +4,7 @@ import SideBar from '@/components/sidebar'
 import { useState } from 'react';
 
 interface profile_type {
+    id: number;
     nickname: string;
     username: string;
     email: string;
