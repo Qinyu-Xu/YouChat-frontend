@@ -135,8 +135,8 @@ const LoginBoard = () => {
     const handleUserSubmit = async (e: any) => {
 
         const userInfo = {
-            userName: e.username,
-            password: e.password,
+            "userName": e.username,
+            "password": e.password,
         };
 
         try {
@@ -159,11 +159,16 @@ const LoginBoard = () => {
 
     const handleEmailSubmit = async (e: any) => {
 
+        const emailInfo = {
+            "email": e.email,
+            "veri_code": e.captcha,
+        };
+
         try {
             const response = await request(
-                "/api/people/email/verify/" + e.captcha,
+                "/api/people/email/verify",
                 "POST",
-                "",
+                JSON.stringify(emailInfo),
             );
             if(response.code !== 0) {
                 message.error(response?.data?.info);

@@ -7,6 +7,7 @@ import axios, { AxiosError, AxiosResponse } from "axios";
 
 const network = axios.create({
     baseURL: "",
+    withCredentials: true
 });
 
 enum NetworkErrorType {

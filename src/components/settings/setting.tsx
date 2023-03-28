@@ -20,8 +20,8 @@ const LogOut = () => {
 
     return (
         <div>
-            <p>Your Account</p>
-            <Button onClick={handleLogOut}>LogOut</Button>
+            <p>当前的账号是：</p>
+            <Button onClick={handleLogOut}>登出</Button>
         </div>
     );
 };
@@ -31,15 +31,35 @@ const SecondAuthentication = (props: any) => {
     const [open, setOpen] = useState(false);
     const [loginType, setLoginType] = useState('account');
     const [form] = ProForm.useForm();
+    const router = useRouter();
 
     const handleAuth = () => {
         setOpen(true);
     };
 
-    const handleOk = async () => {
+    const handleOk = async (e: any) => {
         if (loginType === 'email') {
-            setOpen(false);
-            props.setAuth(true);
+            const email = form.getFieldValue('email');
+            const veri_code = form.getFieldValue('captcha');
+            if( email === "" || veri_code === "" ) {
+                message.error('请输入完整的信息！');
+                return;
+            }
+            const response = await request(
+                "api/people/modify/email",
+                "POST",
+                JSON.stringify({
+                    "email": email,
+                    "veri_code": veri_code,
+                })
+            );
+            if (response.code == 0) {
+                message.success('二次验证成功！')
+                setOpen(false);
+                props.setAuth(true);
+            } else {
+                message.error(response.info);
+            }
         } else {
             const user = form.getFieldValue('username');
             const pwd = form.getFieldValue('password');
@@ -51,8 +71,8 @@ const SecondAuthentication = (props: any) => {
                 "/api/people/modify",
                 "POST",
                 JSON.stringify({
-                    userName: user,
-                    password: pwd,
+                    "userName": user,
+                    "password": pwd,
                 })
             );
             if (response.code == 0) {
@@ -69,12 +89,40 @@ const SecondAuthentication = (props: any) => {
         setOpen(false);
     };
 
+    const handleDelete = async () => {
+        if(loginType=='email') {
+            message.error("使用邮箱验证码删除用户功能暂未开放");
+        } else {
+            const user = form.getFieldValue('username');
+            const pwd = form.getFieldValue('password');
+            if (user === "" || pwd === "") {
+                message.error('请输入完整的信息！');
+                return;
+            }
+            const response = await request(
+                "/api/people/user",
+                "DELETE",
+                JSON.stringify({
+                    "userName": user,
+                    "password": pwd,
+                })
+            );
+            if (response.code == 0) {
+                message.success('删除用户成功！');
+                setOpen(false);
+                await router.push('/login');
+            } else {
+                message.error(response.info);
+            }
+        }
+    };
+
     return (
         <div>
-            <div>验证身份以修改你的个人信息</div>
+            <div>{props.type==="modify"?"验证身份以修改你的个人信息":"验证身份以删除用户"}</div>
             <br />
             <Button onClick={handleAuth}>验证身份</Button>
-            <Modal title="验证你的身份" open={open} onOk={handleOk} onCancel={handleCancel}>
+            <Modal title="验证你的身份" open={open} onOk={props.type==="modify"?handleOk:handleDelete} onCancel={handleCancel}>
                 <ProForm form={form} submitter={{resetButtonProps: {style: {display: 'none'}}, submitButtonProps: {style: {display: 'none'}}}} >
                     <LoginInput form={form} loginType={loginType} setLoginType={setLoginType}/>
                 </ProForm>
@@ -146,6 +194,14 @@ const EditProfile = (props: any) => {
             </Space>
         </div>
     );
+};
+
+const DeleteUser = () => {
+    return (
+        <div>
+            <SecondAuthentication type={"delete"}/>
+        </div>
+    );
 }
 
 const Setting = () => {
@@ -158,7 +214,9 @@ const Setting = () => {
                 <Divider />
                 {isAuthenticated
                     ? <EditProfile setAuth={setAuthentication}/>
-                    : <SecondAuthentication setAuth={setAuthentication} />}
+                    : <SecondAuthentication setAuth={setAuthentication} type={"modify"} />}
+                <Divider />
+                 <DeleteUser />
             </div>
 
     );
