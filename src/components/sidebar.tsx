@@ -5,7 +5,7 @@ function Sidebar() {
     const router = useRouter();
     return (
         <div className={styles.sidebar}>
-            <div className={styles.sidebar_item}>
+            <div className={styles.sidebar_logo}>
                 🏊
             </div>
             <div className={styles.sidebar_item} onClick={()=>router.push('/chat')}>

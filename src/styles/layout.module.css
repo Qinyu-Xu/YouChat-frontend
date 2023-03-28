@@ -23,6 +23,17 @@
     color: white;
 }
 
+.sidebar_logo {
+    margin: 0;
+    border: 0;
+    padding: 0;
+    height: 4rem;
+    line-height: 4rem;
+    text-align: center;
+    font-size: 2rem;
+    background-color: #ddd;
+}
+
 .column {
     overflow: auto;
     margin: 0;

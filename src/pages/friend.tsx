@@ -3,16 +3,22 @@ import Profile from '@/components/friend/profile'
 import SideBar from '@/components/sidebar'
 import { useState } from 'react';
 
-interface profile_type {
+export interface profile_type {
     id: number;
     nickname: string;
     username: string;
     email: string;
     group: string;
-}
+};
 
 function Friend() {
-    const [profile, setProfile] = useState<number>(-1);
+    const [profile, setProfile] = useState<profile_type>({
+        id: 0,
+        nickname: "None",
+        username: "None",
+        email: "None",
+        group: "None",
+    });
 
     return (
         <main>
