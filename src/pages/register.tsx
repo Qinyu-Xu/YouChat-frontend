@@ -1,38 +1,42 @@
-import { useState, useContext } from "react";
-import AuthContext from "@/utils/auth_provider";
-import {request} from "@/utils/network";
+import { useState } from "react";
+import { request } from "@/utils/network";
 import styles from '@/styles/register.module.css'
+import { message } from "antd";
+import { useRouter } from "next/router";
 
 function Register() {
 
-    const { setAuth } = useContext(AuthContext);
     const [email, setEmail] = useState("");
     const [username, setUsername] = useState("");
     const [nickname, setNickname] = useState("");
     const [initialPwd, setInitialPwd] = useState("");
     const [confirmedPwd, setConfirmedPwd] = useState("");
+    const router = useRouter();
 
     const handleSubmit = async (e: any) => {
         e.preventDefault();
 
         const userInfo = {
-            email: e.email,
-            userName: e.username,
-            nickname: e.nickname,
-            password: e.password
+            email: email,
+            userName: username,
+            nickname: nickname,
+            password: initialPwd,
         }
 
         try {
             const response = await request(
-                "/user",
+                "/api/people/user",
                 "PUT",
-                userInfo,
+                JSON.stringify(userInfo),
             );
-
-            const accessToken = response?.data?.token;
-            setAuth({accessToken});
+            if(response.code === 0) {
+                message.success('成功注册！');
+                router.push('/login');
+            } else {
+                message.error(response.info);
+            }
         } catch(err) {
-
+            console.log(err);
         }
     };
 

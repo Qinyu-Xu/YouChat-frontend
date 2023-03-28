@@ -22,7 +22,7 @@ interface FriendListProps {
 const FriendList = (props: FriendListProps) => {
 	const List: any[] = [];
 
-	const handleSelect = async (e) => {
+	const handleSelect = async (e: any) => {
 		console.log(e);
         try {
             const response = await request(

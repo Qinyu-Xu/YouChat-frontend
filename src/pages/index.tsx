@@ -1,13 +1,25 @@
-import LoginBoard from '@/components/login_board';
-import styles from '@/styles/login.module.css'
+import { useRouter } from "next/router";
+import { useCookies } from "react-cookie";
+import { useEffect } from "react";
 
-function Login() {
+function Index() {
+
+    const router = useRouter();
+    const [cookies] = useCookies(['token']);
+
+    useEffect(() => {
+        if(cookies.token !== undefined) {
+            router.push('chat');
+        } else {
+            router.push('login');
+        }
+    },[])
 
     return (
-        <main className={styles.login}>
-            <LoginBoard type={'login'}/>
-        </main>
+        <div>
+            Loading...
+        </div>
     );
 }
 
-export default Login;
+export default Index;
