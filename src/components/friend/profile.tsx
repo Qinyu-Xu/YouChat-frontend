@@ -7,6 +7,7 @@ interface ProfileProps {
 }
 
 const send = async (id: number, group: string) => {
+    console.log(id, group);
     try {
         const response = await request(
             "api/people/friends",

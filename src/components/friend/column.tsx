@@ -69,7 +69,8 @@ function Column(props: ColumnProps) {
     const [cookies] = useCookies(['token']);
 
 	const handleQuery = async () => {
-		const url = "api/people/friends/" + (query == "" ? "#" : query);
+		const url = "api/people/friends/" + (query == "" ? "*" : query);
+		console.log(url);
         try {
             const response = await request(
                 url,
