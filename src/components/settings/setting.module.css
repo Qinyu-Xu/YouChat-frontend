@@ -1,0 +1,14 @@
+.border-style {
+    border-style: dashed solid;
+    background-color: #33691E;
+    width: 250px;
+    height: 150px;
+    border-radius: 9%;
+    margin-top: 20px;
+}
+
+.modify-container {
+    text-align: center;
+    width: 70vw;
+    height: 50vh;
+}
