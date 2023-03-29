@@ -18,6 +18,7 @@ const send = async (id: number, group: string) => {
             }),
         ); 
         console.log(response);
+        location.reload();
     } catch(err) {
         console.log(err);
     }
@@ -25,7 +26,7 @@ const send = async (id: number, group: string) => {
 
 function Profile(props: ProfileProps) {
     const operation: any[] = [];
-    const [group, setGroup] = useState<string>(props.profile.group);
+    const [group, setGroup] = useState("");
 
     if (props.profile.group == "Stranger") {
         operation.push(
