@@ -30,7 +30,7 @@ export const LoginInput = ( props: any ) => {
             ""
         );
         if (response.code === 0) message.success('验证码发送成功!');
-        else message.error(response.info);
+        else message.error('验证码发送失败！');
     };
 
     const items = [
@@ -128,7 +128,7 @@ const LoginBoard = () => {
 
     const [form] = ProForm.useForm();
     const [loginType, setLoginType] = useState<LoginType>('account');
-    const [cookies, setCookie] = useCookies(['token']);
+    const [cookies, setCookie] = useCookies(['token', 'id']);
 
     const router = useRouter();
 
@@ -146,9 +146,10 @@ const LoginBoard = () => {
                 JSON.stringify(userInfo),
             );
             if(response.code !== 0) {
-                message.error(response?.data?.info);
+                message.error('用户名或密码错误！');
             } else {
                 setCookie('token', response.token, {path: "/"});
+                setCookie('id', response.id, {path: "/"});
                 await router.push('/chat');
             }
         } catch(err) {
@@ -171,9 +172,10 @@ const LoginBoard = () => {
                 JSON.stringify(emailInfo),
             );
             if(response.code !== 0) {
-                message.error(response?.data?.info);
+                message.error('验证码错误！');
             } else {
                 setCookie('token', response.token, {path: "/"});
+                setCookie('id', response.id, {path: "/"});
                 await router.push('/chat');
             }
         } catch(err) {
