@@ -11,10 +11,11 @@ import { LoginInput } from "@/components/login_board";
 const LogOut = () => {
 
     const router = useRouter();
-    const [cookie, , removeCookie] = useCookies(['token']);
+    const [cookie, , removeCookie] = useCookies(['token', 'id']);
     const handleLogOut = () => {
+        removeCookie('id', {path: "/"});
         removeCookie('token', {path: "/"});
-        message.success('成功登出！')
+        message.success('成功登出！');
         router.push('/login');
     }
 
@@ -58,7 +59,7 @@ const SecondAuthentication = (props: any) => {
                 setOpen(false);
                 props.setAuth(true);
             } else {
-                message.error(response.info);
+                message.error('二次验证失败！');
             }
         } else {
             const user = form.getFieldValue('username');
@@ -80,7 +81,7 @@ const SecondAuthentication = (props: any) => {
                 setOpen(false);
                 props.setAuth(true);
             } else {
-                message.error(response.info);
+                message.error('二次验证失败！');
             }
         }
     };
@@ -112,7 +113,7 @@ const SecondAuthentication = (props: any) => {
                 setOpen(false);
                 await router.push('/login');
             } else {
-                message.error(response.info);
+                message.error('删除用户失败...');
             }
         }
     };
@@ -133,6 +134,7 @@ const SecondAuthentication = (props: any) => {
 
 const EditProfile = (props: any) => {
 
+    const [cookie, setCookie] = useCookies(['token', 'id']);
     const code = useRef(0);
     const [user, setUser] = useState(null);
     const [pwd, setPwd] = useState(null);
@@ -144,6 +146,19 @@ const EditProfile = (props: any) => {
 
     const handleClick = async (e: any) => {
         let new_val = undefined;
+        let username = null;
+
+        const profile = await request(
+            `api/people/profile/${cookie.id}`,
+            "GET",
+            ""
+        );
+        if(profile.id===0) {
+            message.error("Error!");
+            return;
+        } else {
+            username = profile.profile.username;
+        }
 
         if (code.current === 1) {
             new_val = user;
@@ -158,14 +173,15 @@ const EditProfile = (props: any) => {
             "/api/people/modify",
             "PUT",
             JSON.stringify({
-                code: code,
-                new: new_val
+                "userName": username,
+                "code": code.current,
+                "new": new_val
             })
         )
         if (response.code === 0) {
-            message.success('successfully change your profile!');
+            message.success('修改成功！');
         } else {
-            message.error(response.info);
+            message.error('修改失败！');
         }
     }
 
