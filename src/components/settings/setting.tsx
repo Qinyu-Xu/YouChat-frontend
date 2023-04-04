@@ -51,7 +51,7 @@ const SecondAuthentication = (props: any) => {
                 "POST",
                 JSON.stringify({
                     "email": email,
-                    "veri_code": veri_code,
+                    "veri_code": veri_code as string,
                 })
             );
             if (response.code == 0) {

@@ -5,14 +5,9 @@ import { useEffect } from "react";
 function Index() {
 
     const router = useRouter();
-    const [cookies] = useCookies(['token']);
 
     useEffect(() => {
-        if(cookies.token !== undefined) {
-            router.push('chat');
-        } else {
-            router.push('login');
-        }
+        router.push('login');
     },[])
 
     return (

@@ -1,6 +1,6 @@
 import ProForm from "@ant-design/pro-form";
+import { createSocket } from "@/utils/websocket";
 import { useState } from 'react';
-import { formatParams } from "@/utils/utilities";
 import { request } from "@/utils/network";
 import { MailOutlined, LockOutlined, UserOutlined,} from '@ant-design/icons';
 import { message, Tabs } from 'antd';
@@ -150,6 +150,7 @@ const LoginBoard = () => {
             } else {
                 setCookie('token', response.token, {path: "/"});
                 setCookie('id', response.id, {path: "/"});
+                await createSocket(response.id);
                 await router.push('/chat');
             }
         } catch(err) {
@@ -162,7 +163,7 @@ const LoginBoard = () => {
 
         const emailInfo = {
             "email": e.email,
-            "veri_code": e.captcha,
+            "veri_code": e.captcha as string,
         };
 
         try {
@@ -176,6 +177,7 @@ const LoginBoard = () => {
             } else {
                 setCookie('token', response.token, {path: "/"});
                 setCookie('id', response.id, {path: "/"});
+                await createSocket(response.id);
                 await router.push('/chat');
             }
         } catch(err) {
