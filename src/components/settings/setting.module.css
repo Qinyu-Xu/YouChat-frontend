@@ -1,14 +1,22 @@
-.border-style {
-    border-style: dashed solid;
-    background-color: #33691E;
-    width: 250px;
-    height: 150px;
-    border-radius: 9%;
-    margin-top: 20px;
+.profile {
+    overflow: auto;
+    margin: 0;
+    border: 0;
+    padding: 0;
+    position: fixed;
+    left: 4rem;
+    width: 20rem;
+    height: 100%;
+    background-color: #fff;
 }
 
-.modify-container {
-    text-align: center;
-    width: 70vw;
-    height: 50vh;
+.modify {
+    overflow: hidden;
+    margin: 0;
+    border: 0;
+    padding: 0;
+    position: fixed;
+    left: 24rem;
+    width: 100%;
+    height: 100%;
 }

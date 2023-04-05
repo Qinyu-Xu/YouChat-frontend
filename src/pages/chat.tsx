@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import Sidebar from "@/components/sidebar";
 import styles from "@/styles/layout.module.css"
 import ChatList from "@/components/chat/chat_list";
@@ -7,7 +7,7 @@ import ChatBoard from "@/components/chat/chat_board";
 
 const Chat = () => {
 
-
+    const [session, setSession] = useState<number>(0);
 
     return (
         <div>
@@ -15,10 +15,10 @@ const Chat = () => {
                 <Sidebar />
             </div>
             <div className={styles.column}>
-                <ChatList />
+                <ChatList setSession={setSession}/>
             </div>
             <div className={styles.content}>
-                <ChatBoard />
+                <ChatBoard sessionId={session}/>
             </div>
         </div>
     );

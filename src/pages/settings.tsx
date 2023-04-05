@@ -1,12 +1,13 @@
 import Sidebar from "@/components/sidebar";
-import Setting from "@/components/settings/setting";
-
+import UserSetting from "@/components/settings/user_setting";
+import Profile from "@/components/settings/profile";
 
 const Settings = () => {
     return (
         <div>
             <Sidebar />
-            <Setting />
+            <Profile />
+            <UserSetting />
         </div>
     )
 };

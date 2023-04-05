@@ -5,23 +5,26 @@ import { request } from "@/utils/network";
 import { message } from "antd";
 import styles from "@/styles/layout.module.css";
 
+interface ChatListProps {
+    setSession: (value: (((prevState: number) => number) | number)) => void
+}
 
-const ChatList = () => {
+const ChatList = (props: ChatListProps) => {
 
     const [cookie, setCookie] = useCookies(['token', 'id']);
-    const [list, setList] = useState(null);
+    const [list, setList] = useState([]);
     const socket = getSocket();
     const id = cookie.id;
 
     const sortList = () => {
-        list.sort((a, b) => {
-            if(a.isTop < b.isTop) return true;
-            else if(a.isTop > b.isTop) return false;
+        list.sort((a: any, b:any) => {
+            if(a.isTop < b.isTop) return 1;
+            else if(a.isTop > b.isTop) return -1;
 
-            if(a.isMute < b.isMute) return false;
-            else if(a.isMute > b.isMute) return true;
+            if(a.isMute < b.isMute) return -1;
+            else if(a.isMute > b.isMute) return 1;
 
-            return a.timestamp < b.timestamp;
+            return a.timestamp - b.timestamp;
         })
     }
 
@@ -40,7 +43,7 @@ const ChatList = () => {
     };
 
     socket.on("send", (res) => {
-        setList((list) => list.map((item) => item.sessionId !== res.sessionId ? item :{
+        setList((list: any) => list.map((item: any) => item.sessionId !== res.sessionId ? item :{
             "sessionId": item.sessionId,
             "sessionName": item.sessionName,
             "timestamp": item.timestamp,
@@ -60,8 +63,8 @@ const ChatList = () => {
     return (
         <div>
             {
-                list.map((session) => (
-                    <div className={styles.column_item}>
+                list.map((session: any) => (
+                    <div className={styles.column_item} key={session.sessionId} onClick={_ => props.setSession(session.sessionId)}>
                         <text>{session.sessionName}</text>
                         <text>{session.message}</text>
                     </div>

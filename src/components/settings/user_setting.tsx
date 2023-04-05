@@ -3,10 +3,10 @@ import { useRef, useState } from "react";
 import { Button, Divider, Input, message, Modal, Space } from "antd";
 import { useRouter } from "next/router";
 import { useCookies } from "react-cookie";
-
-import styles from "@/styles/layout.module.css";
-import ProForm from "@ant-design/pro-form";
 import { LoginInput } from "@/components/login_board";
+
+import styles from "@/components/settings/setting.module.css";
+import ProForm from "@ant-design/pro-form";
 
 const LogOut = () => {
 
@@ -218,24 +218,25 @@ const DeleteUser = () => {
             <SecondAuthentication type={"delete"}/>
         </div>
     );
-}
+};
 
-const Setting = () => {
+const UserSetting = () => {
 
     const [isAuthenticated, setAuthentication] = useState(false);
 
     return (
-            <div className={styles.content}>
+        <div>
+            <div className={styles.modify}>
                 <LogOut />
                 <Divider />
                 {isAuthenticated
                     ? <EditProfile setAuth={setAuthentication}/>
                     : <SecondAuthentication setAuth={setAuthentication} type={"modify"} />}
                 <Divider />
-                 <DeleteUser />
+                <DeleteUser />
             </div>
-
+        </div>
     );
 }
 
-export default Setting;
+export default UserSetting;
