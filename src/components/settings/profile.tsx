@@ -39,7 +39,7 @@ const Profile = () => {
             // Get this url from response in real world.
             getBase64(info.file.originFileObj as RcFile, (url) => {
                 setLoading(false);
-                setImageUrl(url);
+                setImgUrl(url);
             });
         }
     };

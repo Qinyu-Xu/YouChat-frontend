@@ -7,7 +7,7 @@ interface SingleMessageProps {
 
 const SingleMessage = (props: SingleMessageProps) => {
     const socket = getSocket();
-    const handleClick = (text) => {
+    const handleClick = (text: any) => {
         socket.emit("send", {
             "sessionId": props.session,
             "message": text
