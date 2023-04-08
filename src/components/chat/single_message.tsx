@@ -1,4 +1,3 @@
-import { getSocket } from "@/utils/websocket";
 import { Button, Input } from "antd";
 
 interface SingleMessageProps {
@@ -6,17 +5,17 @@ interface SingleMessageProps {
 }
 
 const SingleMessage = (props: SingleMessageProps) => {
-    const socket = getSocket();
+    /*
     const handleClick = (text: any) => {
         socket.emit("send", {
             "sessionId": props.session,
             "message": text
         });
-    }
+    }*/
     return (
         <div>
             <Input />
-            <Button onClick={handleClick} />
+            <Button /*onClick={handleClick}*/ />
         </div>
     );
 }

@@ -54,8 +54,6 @@ const Profile = () => {
 
     return (
         <div className={styles.profile}>
-            <Image src={`api/session/img/${user_id}`} />
-
             <text></text>
         </div>
     );

@@ -1,6 +1,5 @@
 import { useCookies } from "react-cookie";
 import { useEffect, useState } from "react";
-import { getSocket } from "@/utils/websocket";
 import { request } from "@/utils/network";
 import { message } from "antd";
 import styles from "@/styles/layout.module.css";
@@ -13,7 +12,6 @@ const ChatList = (props: ChatListProps) => {
 
     const [cookie, setCookie] = useCookies(['token', 'id']);
     const [list, setList] = useState([]);
-    const socket = getSocket();
     const id = cookie.id;
 
     const sortList = () => {
@@ -42,7 +40,7 @@ const ChatList = (props: ChatListProps) => {
         }});
     };
 
-    socket.on("send", (res) => {
+    /*socket.on("send", (res: any) => {
         setList((list: any) => list.map((item: any) => item.sessionId !== res.sessionId ? item :{
             "sessionId": item.sessionId,
             "sessionName": item.sessionName,
@@ -53,7 +51,7 @@ const ChatList = (props: ChatListProps) => {
             "isMute": item.isMute
         }));
         sortList();
-    });
+    });*/
 
     useEffect(() => {
         getList();
