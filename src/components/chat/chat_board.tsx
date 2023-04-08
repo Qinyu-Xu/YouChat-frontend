@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useCookies } from "react-cookie";
 import SingleMessage from "@/components/chat/single_message";
+import chat_styles from "@/styles/chat.module.css"
 import store from "@/utils/store";
 
 interface ChatBoardProps {
@@ -29,16 +30,18 @@ const ChatBoard = (props: ChatBoardProps) => {
         }
     })
 
-    return props.sessionId === 0 ? <div></div> :(
-        <div>
-            {messages.map((message: any) => (
-                <div key={message.messageId} >
-                    <img src={`api/session/img/${message.senderId}`} alt={"Loading..."}/>
-                    <text>
-                        {message.message}
-                    </text>
-                </div>
-            ))}
+    return (
+        <div className={chat_styles.container}>
+            <div className={chat_styles.display_board}>
+                {messages.map((message: any) => (
+                    <div key={message.messageId} >
+                        <img src={`api/session/img/${message.senderId}`} alt={"Loading..."}/>
+                        <text>
+                            {message.message}
+                        </text>
+                    </div>
+                ))}
+            </div>
             <SingleMessage session={props.sessionId}/>
         </div>
 

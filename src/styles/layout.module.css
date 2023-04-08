@@ -1,9 +1,14 @@
+.container {
+    display: flex;
+    height: 100%;
+    width: 100%;
+}
+
 .sidebar {
     overflow: hidden;
     margin: 0;
     border: 0;
     padding: 0;
-    position: fixed;
     width: 4rem;
     height: 100%;
     background-color: #eee;
@@ -39,11 +44,9 @@
     margin: 0;
     border: 0;
     padding: 0;
-    position: fixed;
-    left: 4rem;
     width: 20rem;
     height: 100%;
-    background-color: #fff;
+    background-color: #ffff;
 }
 
 .column_search {
@@ -81,14 +84,11 @@
     background-color: #f4f4f4;
 }
 
-
 .content {
     overflow: hidden;
     margin: 0;
     border: 0;
     padding: 0;
-    position: fixed;
-    left: 24rem;
-    width: 100%;
+    flex: 1;
     height: 100%;
 }

@@ -10,7 +10,7 @@ const Chat = () => {
     const [session, setSession] = useState<number>(0);
 
     return (
-        <div>
+        <div className={styles.container}>
             <div className={styles.sidebar}>
                 <Sidebar />
             </div>

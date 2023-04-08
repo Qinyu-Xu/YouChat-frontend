@@ -1,5 +1,80 @@
-.main {
-    width: 100vw;
-    height: 100vh;
-    position: fixed;
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+}
+
+.display_board {
+    overflow: auto;
+    margin: 0;
+    border: 0;
+    padding: 0;
+    width: 100%;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.message_left {
+    background-color: #ccc;
+    border-radius: 0.6rem;
+    margin: 0 0.5rem;
+    padding: 0 0.5rem;
+    color: #000;
+    height: 2.1rem;
+    float: left;
+    width: fit-content;
+    line-height: 2.1rem;
+}
+
+.message_right {
+    background-color: #20a4f1;
+    border-radius: 0.6rem;
+    margin: 0 0.5rem;
+    padding: 0 0.5rem;
+    color: #fff;
+    height: 2.1rem;
+    float: right;
+    width: fit-content;
+    line-height: 2.1rem;
+}
+
+.message {
+    width: 100%;
+    height: 3rem;
+    min-height: 3rem;
+}
+
+.input_box {
+    overflow: auto;
+    margin: 0;
+    border: 0;
+    padding: 0;
+    width: 100%;
+    height: 15rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.function_bar {
+    background-color: #eee;
+    overflow: hidden;
+    margin: 0;
+    border: 0;
+    padding: 0;
+    width: 100%;
+    height: 2.5rem;
+    line-height: 2.5rem;
+}
+
+.writing {
+    background-color: #fff;
+    overflow: auto;
+    margin: 0;
+    border: 0;
+    padding: 0;
+    outline: none;
+    flex: 1;
+    width: 100%;
 }
