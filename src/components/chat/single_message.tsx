@@ -1,17 +1,20 @@
 import { Button, Input } from "antd";
-import store from "@/utils/store";
+import { useContext } from "react";
+import {isBrowser, MyContext} from "@/utils/global";
 
 interface SingleMessageProps {
     session: number;
 }
 
 const SingleMessage = (props: SingleMessageProps) => {
-    const socket = store.getState().socket;
+    const socket: any = useContext(MyContext);
     const handleClick = (text: any) => {
-        socket.emit("send", {
+        if(isBrowser)
+            socket?.send(JSON.stringify({
+            type: "send",
             "sessionId": props.session,
             "message": text
-        });
+        }));
     }
     return (
         <div>

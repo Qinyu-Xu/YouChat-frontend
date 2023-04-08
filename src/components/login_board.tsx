@@ -1,13 +1,12 @@
 import ProForm from "@ant-design/pro-form";
-import { createSocket } from "@/utils/websocket";
-import { useState } from 'react';
+import { useContext, useState} from 'react';
 import { request } from "@/utils/network";
 import { MailOutlined, LockOutlined, UserOutlined,} from '@ant-design/icons';
 import { message, Tabs } from 'antd';
 import { LoginForm, ProFormText, ProFormCaptcha, ProConfigProvider } from '@ant-design/pro-components';
 import { useRouter } from "next/router";
 import { useCookies } from "react-cookie";
-import store from "@/utils/store";
+import {isBrowser, MyContext} from "@/utils/global";
 
 type LoginType = 'email' | 'account';
 
@@ -126,6 +125,13 @@ export const LoginInput = ( props: any ) => {
 }
 
 const LoginBoard = () => {
+    const socket:any = useContext(MyContext);
+    const initSocket = () => {
+        if(isBrowser && socket) socket.send(JSON.stringify({
+            'type': 'user_auth',
+            'id': 1
+        }));
+    };
 
     const [form] = ProForm.useForm();
     const [loginType, setLoginType] = useState<LoginType>('account');
@@ -151,8 +157,7 @@ const LoginBoard = () => {
             } else {
                 setCookie('token', response.token, {path: "/"});
                 setCookie('id', response.id, {path: "/"});
-                const socket = await createSocket(response.id);
-                store.dispatch({type: 'socketConnect', data: socket});
+                initSocket();
                 await router.push('/chat');
             }
         } catch(err) {
@@ -179,8 +184,7 @@ const LoginBoard = () => {
             } else {
                 setCookie('token', response.token, {path: "/"});
                 setCookie('id', response.id, {path: "/"});
-                const socket = await createSocket(response.id);
-                store.dispatch({type: 'socketConnect', data: socket});
+                initSocket();
                 await router.push('/chat');
             }
         } catch(err) {

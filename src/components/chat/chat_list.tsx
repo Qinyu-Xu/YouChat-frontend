@@ -1,9 +1,9 @@
 import { useCookies } from "react-cookie";
-import { useEffect, useState } from "react";
+import {useContext, useEffect, useState} from "react";
 import { request } from "@/utils/network";
 import { message } from "antd";
 import styles from "@/styles/layout.module.css";
-import store from "@/utils/store";
+import {isBrowser, MyContext} from "@/utils/global";
 
 interface ChatListProps {
     setSession: (value: (((prevState: number) => number) | number)) => void
@@ -14,15 +14,11 @@ const ChatList = (props: ChatListProps) => {
     const [cookie, setCookie] = useCookies(['token', 'id']);
     const [list, setList] = useState([]);
     const id = cookie.id;
-    const socket = store.getState().socket;
 
     const sortList = () => {
         list.sort((a: any, b:any) => {
             if(a.isTop < b.isTop) return 1;
             else if(a.isTop > b.isTop) return -1;
-
-            if(a.isMute < b.isMute) return -1;
-            else if(a.isMute > b.isMute) return 1;
 
             return a.timestamp - b.timestamp;
         })
@@ -41,19 +37,23 @@ const ChatList = (props: ChatListProps) => {
             message.error("获取聊天列表发生错误！").then(_=>_);
         }});
     };
-
-    socket.on("send", (res: any) => {
-        setList((list: any) => list.map((item: any) => item.sessionId !== res.sessionId ? item :{
-            "sessionId": item.sessionId,
-            "sessionName": item.sessionName,
-            "timestamp": item.timestamp,
-            "type": "text",
-            "message": res.message,
-            "isTop": item.isTop,
-            "isMute": item.isMute
-        }));
-        sortList();
-    });
+    const socket: any = useContext(MyContext);
+    if(isBrowser && socket) {
+        socket.addEventListener("message", (res: any) => {
+            if (res.type === 'send') {
+                setList((list: any) => list.map((item: any) => item.sessionId !== res.sessionId ? item : {
+                    "sessionId": item.sessionId,
+                    "sessionName": item.sessionName,
+                    "timestamp": item.timestamp,
+                    "type": "text",
+                    "message": res.message,
+                    "isTop": item.isTop,
+                    "isMute": item.isMute
+                }));
+                sortList();
+            }
+        });
+    }
 
     useEffect(() => {
         getList();

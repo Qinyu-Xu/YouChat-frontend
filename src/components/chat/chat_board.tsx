@@ -1,25 +1,30 @@
-import { useState } from "react";
+import {useContext, useState} from "react";
 import { useCookies } from "react-cookie";
 import SingleMessage from "@/components/chat/single_message";
-import store from "@/utils/store";
+import {isBrowser, MyContext} from "@/utils/global";
 
 interface ChatBoardProps {
     sessionId: number;
 }
 
 const ChatBoard = (props: ChatBoardProps) => {
-
+    const socket: any = useContext(MyContext);
     const [cookie, setCookie] = useCookies(["id"]);
     const [messages, setMessages] = useState<any>([]);
     const id = cookie.id;
-    const socket = store.getState().socket;
 
-    socket.emit("pull", {"sessionId": props.sessionId, "messageScale": 30});
-    socket.on("pull", (res: any) => {
-        setMessages(res.messages);
+    if(isBrowser && socket) socket.send(JSON.stringify({
+        type: "pull",
+        "sessionId": props.sessionId,
+        "messageScale": 30})
+    );
+    if(isBrowser && socket)
+        socket.addEventListener("message", (res: any) => {
+        if(res.type === 'pull') setMessages(res.messages);
     })
-    socket.on("send", (res: any) => {
-        if(res.sessionId === props.sessionId) {
+    if(isBrowser && socket)
+        socket.addEventListener("message", (res: any) => {
+        if( res.type === 'send' && res.sessionId === props.sessionId) {
             setMessages((messages: any) => [...messages, {
                 "senderId": res.senderId,
                 "timestamp": res.timestamp,
