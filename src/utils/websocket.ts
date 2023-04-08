@@ -1,14 +1,14 @@
-import {io, Socket} from "socket.io-client";
-
-export let socket: Socket;
+import {io} from "socket.io-client";
 
 export const createSocket = async (id: number) => {
-    socket = io('api/ws/message');
+
+    const socket = io('api/ws/message');
     socket.on('connect', ()=>{
 
     });
     socket.emit("user_auth", {
         "id": id
     });
+    return socket;
 };
 

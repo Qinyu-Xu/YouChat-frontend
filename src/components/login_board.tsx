@@ -7,6 +7,7 @@ import { message, Tabs } from 'antd';
 import { LoginForm, ProFormText, ProFormCaptcha, ProConfigProvider } from '@ant-design/pro-components';
 import { useRouter } from "next/router";
 import { useCookies } from "react-cookie";
+import store from "@/utils/store";
 
 type LoginType = 'email' | 'account';
 
@@ -150,7 +151,8 @@ const LoginBoard = () => {
             } else {
                 setCookie('token', response.token, {path: "/"});
                 setCookie('id', response.id, {path: "/"});
-                await createSocket(response.id);
+                const socket = await createSocket(response.id);
+                store.dispatch({type: 'socketConnect', data: socket});
                 await router.push('/chat');
             }
         } catch(err) {
@@ -177,7 +179,8 @@ const LoginBoard = () => {
             } else {
                 setCookie('token', response.token, {path: "/"});
                 setCookie('id', response.id, {path: "/"});
-                await createSocket(response.id);
+                const socket = await createSocket(response.id);
+                store.dispatch({type: 'socketConnect', data: socket});
                 await router.push('/chat');
             }
         } catch(err) {

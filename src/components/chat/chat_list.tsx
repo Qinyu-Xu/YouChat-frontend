@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { request } from "@/utils/network";
 import { message } from "antd";
 import styles from "@/styles/layout.module.css";
+import store from "@/utils/store";
 
 interface ChatListProps {
     setSession: (value: (((prevState: number) => number) | number)) => void
@@ -13,6 +14,7 @@ const ChatList = (props: ChatListProps) => {
     const [cookie, setCookie] = useCookies(['token', 'id']);
     const [list, setList] = useState([]);
     const id = cookie.id;
+    const socket = store.getState().socket;
 
     const sortList = () => {
         list.sort((a: any, b:any) => {
@@ -40,7 +42,7 @@ const ChatList = (props: ChatListProps) => {
         }});
     };
 
-    /*socket.on("send", (res: any) => {
+    socket.on("send", (res: any) => {
         setList((list: any) => list.map((item: any) => item.sessionId !== res.sessionId ? item :{
             "sessionId": item.sessionId,
             "sessionName": item.sessionName,
@@ -51,7 +53,7 @@ const ChatList = (props: ChatListProps) => {
             "isMute": item.isMute
         }));
         sortList();
-    });*/
+    });
 
     useEffect(() => {
         getList();
