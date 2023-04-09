@@ -160,6 +160,7 @@ const LoginBoard = () => {
                 setCookie('token', response.token, {path: "/"});
                 setCookie('id', response.id, {path: "/"});
                 initSocket();
+                store.dispatch({type: 'getId', data: response.id});
                 await router.push('/chat');
             }
         } catch(err) {
@@ -187,6 +188,7 @@ const LoginBoard = () => {
                 setCookie('token', response.token, {path: "/"});
                 setCookie('id', response.id, {path: "/"});
                 initSocket();
+                store.dispatch({type: 'getId', data: response.id});
                 await router.push('/chat');
             }
         } catch(err) {

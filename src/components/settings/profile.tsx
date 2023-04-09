@@ -6,8 +6,9 @@ import { Button, Image, message, Upload } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import type { UploadChangeParam } from 'antd/es/upload';
 import type { RcFile, UploadFile, UploadProps } from "antd/es/upload/interface";
+import store from "@/utils/store";
 
-const fileToBase64 = (file) =>
+const fileToBase64 = (file: any) =>
     new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.readAsDataURL(file);
@@ -15,12 +16,12 @@ const fileToBase64 = (file) =>
         reader.onerror = (error) => reject(error);
     });
 
-const customUpload = async (options) => {
+const customUpload = async (options: any) => {
     const { onSuccess, onError, file } = options;
 
     try {
         const base64 = await fileToBase64(file);
-        const response = await request("api/session/img", "PUT", {
+        const response = await request(`api/people/img/${store.getState().userId}`, "PUT", {
             "img": base64,
         });
         onSuccess();
@@ -30,7 +31,7 @@ const customUpload = async (options) => {
     }
 };
 
-const beforeUpload = (file) => {
+const beforeUpload = (file:any) => {
     const isImage = file.type.startsWith('image/');
     if (!isImage) {
         message.error('You can only upload image files!');
@@ -59,20 +60,6 @@ const Profile = () => {
     const user_id = cookie.id;
     let response;
 
-    const handleChange: UploadProps['onChange'] = (info: UploadChangeParam<UploadFile>) => {
-        if (info.file.status === 'uploading') {
-            setLoading(true);
-            return;
-        }
-        if (info.file.status === 'done') {
-            // Get this url from response in real world.
-            getBase64(info.file.originFileObj as RcFile, (url) => {
-                setLoading(false);
-                setImgUrl(url);
-            });
-        }
-    };
-
     useEffect(() => {
         request("api/people/profile"+user_id, "GET", "").then(res => {
             if(res.code === 0) { response = res; }
@@ -82,7 +69,7 @@ const Profile = () => {
 
     return (
         <div className={styles.profile}>
-            <text></text>
+            <ImageUpload />
         </div>
     );
 };
