@@ -17,33 +17,40 @@
 }
 
 .message_left {
-    background-color: #ccc;
-    border-radius: 0.6rem;
-    margin: 0 0.5rem;
-    padding: 0 0.5rem;
+    background-color: #f4f4f4;
+    border-radius: 0.5rem;
+    margin: 0;
+    padding: 0.25rem 0.5rem;
     color: #000;
-    height: 2.1rem;
     float: left;
     width: fit-content;
-    line-height: 2.1rem;
+    max-width: 70%;
+    line-height: 1.25rem;
+    word-wrap: break-word;
+    word-break: break-all;
+}
+
+.headshot_left {
+    width: 1.5rem;
+    height: 1.5rem;
 }
 
 .message_right {
-    background-color: #20a4f1;
-    border-radius: 0.6rem;
-    margin: 0 0.5rem;
-    padding: 0 0.5rem;
+    background-color: #208ffd;
+    border-radius: 0.5rem;
+    margin: 0;
+    padding: 0.25rem 0.5rem;
     color: #fff;
-    height: 2.1rem;
     float: right;
     width: fit-content;
-    line-height: 2.1rem;
+    max-width: 70%;
+    line-height: 1.25rem;
+    word-wrap: break-word;
+    word-break: break-all;
 }
 
 .message {
-    width: 100%;
-    height: 3rem;
-    min-height: 3rem;
+    padding: 0.25rem 0.5rem;
 }
 
 .input_box {
@@ -58,12 +65,13 @@
 }
 
 .function_bar {
-    background-color: #eee;
+    background-color: #f8f8f8;
     overflow: hidden;
     margin: 0;
-    border: 0;
+    border-width: 0.2px 0 0.2px 0;
+    border-style: solid;
+    border-color: #eee;
     padding: 0;
-    width: 100%;
     height: 2.5rem;
     line-height: 2.5rem;
 }
@@ -71,10 +79,10 @@
 .writing {
     background-color: #fff;
     overflow: auto;
+    font-size: 1rem;
     margin: 0;
     border: 0;
-    padding: 0;
+    padding: 0.5rem;
     outline: none;
     flex: 1;
-    width: 100%;
 }

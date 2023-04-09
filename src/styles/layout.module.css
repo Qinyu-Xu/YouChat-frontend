@@ -24,7 +24,7 @@
     font-size: 2rem;
 }
 .sidebar_item:hover {
-    background-color: #bbb;
+    background-color: #ddd;
     color: white;
 }
 
@@ -42,7 +42,9 @@
 .column {
     overflow: auto;
     margin: 0;
-    border: 0;
+    border-width: 0 0.2px 0 0.2px;
+    border-style: solid;
+    border-color: #ddd;
     padding: 0;
     width: 20rem;
     height: 100%;
@@ -56,7 +58,7 @@
     height: 4rem;
     line-height: 4rem;
     text-align: center;
-    background-color: #f4f4f4;
+    background-color: #eee;
 }
 
 .search_bar {
@@ -69,7 +71,7 @@
     border-radius: 0.5rem;
     padding-left: 0.5rem;
     padding-right: 0.5rem;
-    background-color: #ddd;
+    background-color: #fff;
 }
 
 .column_item {
@@ -81,7 +83,7 @@
     text-align: center;
 }
 .column_item:hover {
-    background-color: #f4f4f4;
+    background-color: #f8f8f8;
 }
 
 .content {

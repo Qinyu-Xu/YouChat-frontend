@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useCookies } from "react-cookie";
 import SingleMessage from "@/components/chat/single_message";
-import chat_styles from "@/styles/chat.module.css"
+import styles from "@/styles/chat.module.css"
 import store from "@/utils/store";
 
 interface ChatBoardProps {
@@ -9,6 +9,35 @@ interface ChatBoardProps {
 }
 
 const ChatBoard = (props: ChatBoardProps) => {
+    return (
+        <div className={styles.container}>
+            <div className={styles.display_board}>
+                <div className={styles.message}>
+                    <div className={styles.message_left}>
+                        test
+                    </div>
+                </div>
+                <div className={styles.message}>
+                    <div className={styles.message_right}>
+                        test
+                    </div>
+                </div>
+                <div className={styles.message}>
+                    <div className={styles.message_left}>
+                        test<br/>
+                        testtesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttest
+                    </div>
+                </div>
+                <div className={styles.message}>
+                    <div className={styles.message_left}>
+                        6
+                    </div>
+                </div>
+            </div>
+            <SingleMessage session={props.sessionId}/>
+        </div>
+
+    )
 
     const [cookie, setCookie] = useCookies(["id"]);
     const [messages, setMessages] = useState<any>([]);
