@@ -4,8 +4,6 @@ import { useEffect, useState } from "react";
 import { request } from "@/utils/network";
 import { Button, Image, message, Upload } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
-import type { UploadChangeParam } from 'antd/es/upload';
-import type { RcFile, UploadFile, UploadProps } from "antd/es/upload/interface";
 import store from "@/utils/store";
 
 const fileToBase64 = (file: any) =>
@@ -18,7 +16,6 @@ const fileToBase64 = (file: any) =>
 
 const customUpload = async (options: any) => {
     const { onSuccess, onError, file } = options;
-
     try {
         const base64 = await fileToBase64(file);
         const response = await request(`api/people/img/${store.getState().userId}`, "PUT", {
@@ -54,10 +51,7 @@ const ImageUpload = () => {
 
 const Profile = () => {
 
-    const [cookie, setCookie] = useCookies(['id']);
-    const [loading, setLoading] = useState(false);
-    const [imgUrl, setImgUrl] = useState<string>();
-    const user_id = cookie.id;
+    const user_id = store.getState().userId;
     let response;
 
     useEffect(() => {

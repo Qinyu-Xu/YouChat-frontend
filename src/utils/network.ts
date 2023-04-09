@@ -7,6 +7,7 @@ import axios, {AxiosError} from "axios";
 
 const network = axios.create({
     baseURL: "",
+    withCredentials: true,
 });
 
 enum NetworkErrorType {
@@ -39,14 +40,7 @@ export const request = async (
 ) => {
     const response = await network.request({ method, url, data })
         .catch((err: AxiosError) => {
-            if(err.code === 'ERR_BAD_REQUEST') {
-                return {
-                    data: {
-                        code: 1,
-                        info: "Error: Not Found!"
-                    }
-                };
-            }
+            return {data: {code: 1, info: "Error!"}};
         });
     if (response?.data.code === 0) {
         return { ...response.data, code: 0 };
