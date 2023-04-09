@@ -3,7 +3,7 @@ import { legacy_createStore as createStore } from "redux";
 export const isBrowser = typeof(window) !== 'undefined';
 
 const defaultState = {
-    webSocket: isBrowser ? new WebSocket("ws://st-im-django-swimtogether.app.secoder.net/ws/message/") : null,
+    webSocket: isBrowser ? new WebSocket("wss://st-im-django-swimtogether.app.secoder.net/ws/message/") : null,
     userId: 0,
     csrf: '',
 }
