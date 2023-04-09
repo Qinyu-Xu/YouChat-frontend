@@ -1,14 +1,15 @@
-import {useContext, useState} from "react";
+import {useState} from "react";
 import { useCookies } from "react-cookie";
 import SingleMessage from "@/components/chat/single_message";
-import {isBrowser, MyContext} from "@/utils/global";
+import {isBrowser} from "@/utils/store";
+import store from "@/utils/store";
 
 interface ChatBoardProps {
     sessionId: number;
 }
 
 const ChatBoard = (props: ChatBoardProps) => {
-    const socket: any = useContext(MyContext);
+    const socket: any = store.getState().webSocket;
     const [cookie, setCookie] = useCookies(["id"]);
     const [messages, setMessages] = useState<any>([]);
     const id = cookie.id;

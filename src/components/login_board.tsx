@@ -1,12 +1,13 @@
 import ProForm from "@ant-design/pro-form";
-import { useContext, useState} from 'react';
-import { request } from "@/utils/network";
+import { useState } from 'react';
+import { request} from "@/utils/network";
 import { MailOutlined, LockOutlined, UserOutlined,} from '@ant-design/icons';
 import { message, Tabs } from 'antd';
 import { LoginForm, ProFormText, ProFormCaptcha, ProConfigProvider } from '@ant-design/pro-components';
 import { useRouter } from "next/router";
 import { useCookies } from "react-cookie";
-import {isBrowser, MyContext} from "@/utils/global";
+import { isBrowser } from "@/utils/store";
+import store from "@/utils/store";
 
 type LoginType = 'email' | 'account';
 
@@ -125,7 +126,15 @@ export const LoginInput = ( props: any ) => {
 }
 
 const LoginBoard = () => {
-    const socket:any = useContext(MyContext);
+
+    const socket:any = store.getState().webSocket;
+    const [form] = ProForm.useForm();
+    const [loginType, setLoginType] = useState<LoginType>('account');
+    const [cookies, setCookie] = useCookies(['token', 'id']);
+    const router = useRouter();
+
+    if(isBrowser && socket)socket.addEventListener('user_auth', (event: any) => {console.log(event);})
+
     const initSocket = () => {
         if(isBrowser && socket) socket.send(JSON.stringify({
             'type': 'user_auth',
@@ -133,14 +142,7 @@ const LoginBoard = () => {
         }));
     };
 
-    const [form] = ProForm.useForm();
-    const [loginType, setLoginType] = useState<LoginType>('account');
-    const [cookies, setCookie] = useCookies(['token', 'id']);
-
-    const router = useRouter();
-
     const handleUserSubmit = async (e: any) => {
-
         const userInfo = {
             "userName": e.username,
             "password": e.password,

@@ -1,13 +1,13 @@
 import { Button, Input } from "antd";
-import { useContext } from "react";
-import {isBrowser, MyContext} from "@/utils/global";
+import {isBrowser} from "@/utils/store";
+import store from "@/utils/store"
 
 interface SingleMessageProps {
     session: number;
 }
 
 const SingleMessage = (props: SingleMessageProps) => {
-    const socket: any = useContext(MyContext);
+    const socket: any = store.getState().webSocket;
     const handleClick = (text: any) => {
         if(isBrowser)
             socket?.send(JSON.stringify({

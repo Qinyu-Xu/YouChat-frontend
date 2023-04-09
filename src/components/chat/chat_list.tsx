@@ -1,9 +1,10 @@
 import { useCookies } from "react-cookie";
-import {useContext, useEffect, useState} from "react";
+import {useEffect, useState} from "react";
 import { request } from "@/utils/network";
 import { message } from "antd";
 import styles from "@/styles/layout.module.css";
-import {isBrowser, MyContext} from "@/utils/global";
+import {isBrowser} from "@/utils/store";
+import store from "@/utils/store";
 
 interface ChatListProps {
     setSession: (value: (((prevState: number) => number) | number)) => void
@@ -37,7 +38,7 @@ const ChatList = (props: ChatListProps) => {
             message.error("获取聊天列表发生错误！").then(_=>_);
         }});
     };
-    const socket: any = useContext(MyContext);
+    const socket: any = store.getState().webSocket;
     if(isBrowser && socket) {
         socket.addEventListener("message", (res: any) => {
             if (res.type === 'send') {
