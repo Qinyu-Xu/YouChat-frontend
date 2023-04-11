@@ -2,7 +2,7 @@ import {useState} from "react";
 import { useCookies } from "react-cookie";
 import SingleMessage from "@/components/chat/single_message";
 import {isBrowser} from "@/utils/store";
-import store from "@/utils/store";
+import {store} from "@/utils/store";
 
 interface ChatBoardProps {
     sessionId: number;

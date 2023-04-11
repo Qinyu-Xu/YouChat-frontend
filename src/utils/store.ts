@@ -1,12 +1,19 @@
 import { legacy_createStore as createStore } from "redux";
+import { persistStore, persistReducer } from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
 
 export const isBrowser = typeof(window) !== 'undefined';
 
 const defaultState = {
-    webSocket: isBrowser ? new WebSocket("wss://st-im-django-swimtogether.app.secoder.net/ws/message/") : null,
+    webSocket: null,
     userId: 0,
     csrf: '',
 }
+
+const persistConfig = {
+    key: 'root',
+    storage,
+};
 
 const reducer = (state = defaultState, action: any) => {
       switch(action.type) {
@@ -21,4 +28,7 @@ const reducer = (state = defaultState, action: any) => {
       }
 };
 
-export default createStore(reducer);
+const persistedReducer = persistReducer(persistConfig, reducer);
+const store = createStore(persistedReducer);
+const persistor = persistStore(store);
+export {store, persistor};

@@ -4,7 +4,7 @@ import { request } from "@/utils/network";
 import { message } from "antd";
 import styles from "@/styles/layout.module.css";
 import {isBrowser} from "@/utils/store";
-import store from "@/utils/store";
+import {store} from "@/utils/store";
 
 interface ChatListProps {
     setSession: (value: (((prevState: number) => number) | number)) => void
@@ -31,7 +31,7 @@ const ChatList = (props: ChatListProps) => {
             "GET",
             ""
         ).then((response ) => {
-        if( response.id === 0 ) {
+        if( response.code === 0 ) {
             setList(response.data);
             sortList();
         } else {

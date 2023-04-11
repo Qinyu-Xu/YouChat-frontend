@@ -1,6 +1,6 @@
 import { Button, Input } from "antd";
 import {isBrowser} from "@/utils/store";
-import store from "@/utils/store"
+import {store} from "@/utils/store"
 
 interface SingleMessageProps {
     session: number;

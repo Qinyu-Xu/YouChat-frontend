@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { request } from "@/utils/network";
 import { Button, Image, message, Upload } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
-import store from "@/utils/store";
+import {store} from "@/utils/store";
 
 const fileToBase64 = (file: any) =>
     new Promise((resolve, reject) => {
@@ -51,18 +51,33 @@ const ImageUpload = () => {
 
 const Profile = () => {
 
-    const user_id = store.getState().userId;
-    let response;
+    const [response, setResponse] = useState(null);
 
     useEffect(() => {
-        request("api/people/profile"+user_id, "GET", "").then(res => {
-            if(res.code === 0) { response = res; }
+        request("api/people/profile/" + store.getState().userId, "GET", "").then(res => {
+            if(res.code === 0) { setResponse(res);}
             else { message.error("获取用户信息错误！").then(r => "error"); }
         })}, []
     );
 
     return (
         <div className={styles.profile}>
+            { response === null
+                ?
+                (<div>
+                    Loading...
+                </div>)
+                :
+                (<div>
+                    UserName : {response.profile.username}
+                    <br />
+                    NickName: {response.profile.nickname}
+                    <br />
+                    Your Email: {response.profile.email}
+                </div>)
+            }
+            <br />
+
             <ImageUpload />
         </div>
     );

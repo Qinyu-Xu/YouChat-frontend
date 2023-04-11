@@ -7,7 +7,7 @@ import { LoginForm, ProFormText, ProFormCaptcha, ProConfigProvider } from '@ant-
 import { useRouter } from "next/router";
 import { useCookies } from "react-cookie";
 import { isBrowser } from "@/utils/store";
-import store from "@/utils/store";
+import { store } from "@/utils/store";
 
 type LoginType = 'email' | 'account';
 
@@ -126,19 +126,19 @@ export const LoginInput = ( props: any ) => {
 }
 
 const LoginBoard = () => {
-
     const socket:any = store.getState().webSocket;
     const [form] = ProForm.useForm();
     const [loginType, setLoginType] = useState<LoginType>('account');
     const [cookies, setCookie] = useCookies(['token', 'id']);
     const router = useRouter();
 
-    if(isBrowser && socket)socket.addEventListener('user_auth', (event: any) => {console.log(event);})
+    if(isBrowser && socket)
+        socket.addEventListener('user_auth', (event: any) => {console.log(event);})
 
     const initSocket = () => {
         if(isBrowser && socket) socket.send(JSON.stringify({
-            'type': 'user_auth',
-            'id': 1
+            type: 'user_auth',
+            id: 1
         }));
     };
 
