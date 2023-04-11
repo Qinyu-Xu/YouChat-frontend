@@ -2,18 +2,17 @@ import { Button, Input } from "antd";
 import styles from "@/styles/chat.module.css"
 import {isBrowser} from "@/utils/store";
 import {store} from "@/utils/store"
+import CircularJson from 'circular-json';
 
-interface SingleMessageProps {
-    session: number;
-}
 
-const SingleMessage = (props: SingleMessageProps) => {
+
+const SingleMessage = (props: any) => {
     const socket: any = store.getState().webSocket;
     const handleClick = (text: any) => {
-        if(isBrowser)
-            socket?.send(JSON.stringify({
+        if(isBrowser && socket && socket.readyState===true)
+            socket?.send(CircularJson.stringify({
             type: "send",
-            "sessionId": props.session,
+            "sessionId": props.sessionId,
             "message": text
         }));
     }
@@ -37,7 +36,7 @@ const SingleMessage = (props: SingleMessageProps) => {
                 </div>
             </div>
             <textarea className={styles.writing}/>
-            {/* <Button onClick={handleClick} /> */}
+            <Button onClick={handleClick} >发送</Button>
         </div>
     );
 }

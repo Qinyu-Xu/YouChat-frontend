@@ -138,7 +138,7 @@ const LoginBoard = () => {
     const initSocket = () => {
         if(isBrowser && socket) socket.send(JSON.stringify({
             type: 'user_auth',
-            id: 1
+            id: store.getState().userId
         }));
     };
 
@@ -159,8 +159,8 @@ const LoginBoard = () => {
             } else {
                 setCookie('token', response.token, {path: "/"});
                 setCookie('id', response.id, {path: "/"});
-                initSocket();
                 store.dispatch({type: 'getId', data: response.id});
+                initSocket();
                 await router.push('/chat');
             }
         } catch(err) {
@@ -187,8 +187,8 @@ const LoginBoard = () => {
             } else {
                 setCookie('token', response.token, {path: "/"});
                 setCookie('id', response.id, {path: "/"});
-                initSocket();
                 store.dispatch({type: 'getId', data: response.id});
+                initSocket();
                 await router.push('/chat');
             }
         } catch(err) {

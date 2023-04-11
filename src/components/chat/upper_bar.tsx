@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
-import { DownOutlined } from '@ant-design/icons';
-import type { MenuProps } from 'antd';
-import {Button, Checkbox, Dropdown, Input, List, message, Modal, Space} from 'antd';
+import {DownOutlined} from '@ant-design/icons';
+import type {MenuProps} from 'antd';
+import {Checkbox, Dropdown, Input, List, Modal, Space} from 'antd';
 import {request} from "@/utils/network";
 import {formatParams} from "@/utils/utilities";
 import {store} from "@/utils/store"
@@ -22,15 +22,20 @@ const CreateSession = (props: any) => {
     const handleOk = () => {
         request("api/session/chatroom", "PUT", JSON.stringify({
             userId: store.getState().userId,
-            sessionId: name,
-            inital: selected,
+            sessionName: name,
+            initial: selected,
         })).then(_=>props.setOpen(false));
     }
-
     const handleCancel = () => {
         props.setOpen(false);
     };
 
+    const onChange = (item: any) => {
+        return (e: any) => {
+            if (e.target.checked) setSelected((selected: any) => [...selected, item.id]);
+            else setSelected((selected: any) => selected.filter((x: any) => x !== item.id));
+        };
+    }
     return (
 
         <Modal title={"选择好友创建一个群聊"} open={props.open} onOk={handleOk} onCancel={handleCancel}>
@@ -51,11 +56,9 @@ const CreateSession = (props: any) => {
                             dataSource={friends}
                             renderItem={(item) => (
                                 <List.Item key={item.id}>
-                                    <Checkbox onchange={(e) => {
-                                        if(e.target.checked) setSelected((selected: any) => [...selected, item.id])
-                                        else setSelected((selected: any) => selected.filter((x: any) => x !== item.id))
-                                    }}/>
-                                    {item.username}
+                                    <Checkbox onChange={onChange(item)}>
+                                    </Checkbox>
+                                    {item.userName}
                                 </List.Item>
                             )}
                         />
