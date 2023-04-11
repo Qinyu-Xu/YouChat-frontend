@@ -1,6 +1,7 @@
 import {useState} from "react";
 import { useCookies } from "react-cookie";
 import SingleMessage from "@/components/chat/single_message";
+import styles from "@/styles/chat.module.css"
 import {isBrowser} from "@/utils/store";
 import {store} from "@/utils/store";
 
@@ -9,6 +10,71 @@ interface ChatBoardProps {
 }
 
 const ChatBoard = (props: ChatBoardProps) => {
+    return (
+        <div className={styles.container}>
+            <div className={styles.title_bar}>
+                Mystery Man
+            </div>
+            <div className={styles.display_board}>
+                <div className={styles.message}>
+                    <div className={styles.headshot_left}>
+                        <img src="/headshot/00.svg"/>
+                    </div>
+                    <div className={styles.message_left}>
+                        test
+                    </div>
+                </div>
+                <div className={styles.message}>
+                    <div className={styles.headshot_right}>
+                        <img src="/headshot/01.svg"/>
+                    </div>
+                    <div className={styles.message_right}>
+                        test
+                    </div>
+                </div>
+                <div className={styles.message}>
+                    <div className={styles.headshot_left}>
+                        <img src="/headshot/00.svg"/>
+                    </div>
+                    <div className={styles.message_left}>
+                        test<br/>
+                        testtesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttest
+                    </div>
+                </div>
+                <div className={styles.message}>
+                    <div className={styles.headshot_right}>
+                        <img src="/headshot/01.svg"/>
+                    </div>
+                    <div className={styles.message_right}>
+                        6
+                    </div>
+                </div>
+                <div className={styles.message}>
+                    <div className={styles.headshot_left}>
+                        <img src="/headshot/00.svg"/>
+                    </div>
+                    <div className={styles.message_left}>
+                        test<br/>
+                        fdfdf<br/>
+                        fdfdf<br/>
+                    </div>
+                </div>
+                <div className={styles.message}>
+                    <div className={styles.headshot_left}>
+                        <img src="/headshot/00.svg"/>
+                    </div>
+                    <div className={styles.message_left}>
+                        test<br/>
+                        fdfdf<br/>
+                        fdfdf<br/>
+                    </div>
+                </div>
+            </div>
+            <SingleMessage session={props.sessionId}/>
+        </div>
+
+    )
+
     const socket: any = store.getState().webSocket;
     const [cookie, setCookie] = useCookies(["id"]);
     const [messages, setMessages] = useState<any>([]);
@@ -35,16 +101,18 @@ const ChatBoard = (props: ChatBoardProps) => {
         }
     })
 
-    return props.sessionId === 0 ? <div></div> :(
-        <div>
-            {messages.map((message: any) => (
-                <div key={message.messageId} >
-                    <img src={`api/session/img/${message.senderId}`} alt={"Loading..."}/>
-                    <text>
-                        {message.message}
-                    </text>
-                </div>
-            ))}
+    return (
+        <div className={chat_styles.container}>
+            <div className={chat_styles.display_board}>
+                {messages.map((message: any) => (
+                    <div key={message.messageId} >
+                        <img src={`api/session/img/${message.senderId}`} alt={"Loading..."}/>
+                        <text>
+                            {message.message}
+                        </text>
+                    </div>
+                ))}
+            </div>
             <SingleMessage session={props.sessionId}/>
         </div>
 
