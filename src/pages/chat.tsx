@@ -3,6 +3,7 @@ import Sidebar from "@/components/sidebar";
 import styles from "@/styles/layout.module.css"
 import ChatList from "@/components/chat/chat_list";
 import ChatBoard from "@/components/chat/chat_board";
+import UpperBar from "@/components/chat/upper_bar";
 
 
 const Chat = () => {
@@ -15,6 +16,7 @@ const Chat = () => {
                 <Sidebar />
             </div>
             <div className={styles.column}>
+                <UpperBar />
                 <ChatList setSession={setSession}/>
             </div>
             { session !== 0
