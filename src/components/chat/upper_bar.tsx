@@ -86,7 +86,7 @@ const UpperBar = () => {
         <div className={styles.column_search}>
             <input className={styles.chat_search_bar}
                 type="text"
-                placeholder="🔎"
+                placeholder="Search"
                 onChange={(e) => { setQuery(e.target.value); }}
                 value={query}
             />
