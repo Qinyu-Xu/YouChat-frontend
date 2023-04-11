@@ -8,11 +8,13 @@
 .title_bar {
     margin: 0;
     width: 100%;
-    height: auto;
-    padding: 0.5rem 1rem 0.5rem 1rem;
-    /* border-width: 0 0 0.5px 0;
+    height: 4rem;
+    line-height: 4rem;
+    padding: 0 1.5rem 0 1.5rem;
+    /* background-color: #eee; */
+    border-width: 0 0 0.5px 0;
     border-style: solid;
-    border-color: #ddd; */
+    border-color: #ddd;
     font-size: 1.5rem;
 }
 
@@ -36,7 +38,7 @@
     float: left;
     width: fit-content;
     max-width: 70%;
-    line-height: 1.25rem;
+    line-height: 1.5rem;
     word-wrap: break-word;
     word-break: break-all;
 }
@@ -62,7 +64,7 @@
     float: right;
     width: fit-content;
     max-width: 70%;
-    line-height: 1.25rem;
+    line-height: 1.5rem;
     word-wrap: break-word;
     word-break: break-all;
 }
@@ -80,7 +82,7 @@
 }
 
 .message {
-    padding: 0.25rem 0.5rem;
+    padding: 0.5rem 0.5rem;
 }
 
 .input_box {

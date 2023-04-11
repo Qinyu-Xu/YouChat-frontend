@@ -7,8 +7,12 @@ const Settings = () => {
     return (
         <div className={styles.container}>
             <Sidebar />
-            <Profile />
-            <UserSetting />
+            <div className={styles.content}>
+                <Profile />
+            </div>
+            <div className={styles.content}>
+                <UserSetting />
+            </div>
         </div>
     )
 };

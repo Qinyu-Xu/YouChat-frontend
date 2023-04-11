@@ -5,6 +5,7 @@ import {Checkbox, Dropdown, Input, List, Modal, Space} from 'antd';
 import {request} from "@/utils/network";
 import {formatParams} from "@/utils/utilities";
 import {store} from "@/utils/store"
+import styles from "@/styles/layout.module.css";
 
 const CreateSession = (props: any) => {
 
@@ -77,6 +78,7 @@ const items: MenuProps['items'] = [
 ];
 
 const UpperBar = () => {
+	const [query, setQuery] = useState("");
 
     const [open, setOpen] = useState(false);
     const onClick: MenuProps['onClick'] = ({ key }) => {
@@ -84,15 +86,20 @@ const UpperBar = () => {
     };
 
     return (
-        <div>
-            <Dropdown menu={{ items, onClick }}>
-                <a onClick={(e) => e.preventDefault()}>
-                    <Space>
-                        更多操作
-                        <DownOutlined />
-                    </Space>
-                </a>
-            </Dropdown>
+        <div className={styles.column_search}>
+            <input className={styles.chat_search_bar}
+                type="text"
+                placeholder="Search"
+                onChange={(e) => { setQuery(e.target.value); }}
+                value={query}
+            />
+            <div className={styles.add_button}>
+                <img src="/ui/add.svg"
+                    onClick={(e)=>{
+                        setOpen(true);
+                    }}
+                />
+            </div>
             <CreateSession open={open} setOpen={setOpen}/>
         </div>
     )

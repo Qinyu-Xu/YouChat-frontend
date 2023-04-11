@@ -1,4 +1,5 @@
-import styles from '@/styles/layout.module.css'
+import styles from '@/styles/profile.module.css'
+import { Button, Input } from "antd";
 import { request } from "@/utils/network";
 import { useState } from 'react';
 
@@ -30,22 +31,22 @@ function Profile(props: ProfileProps) {
 
     if (props.profile.group == "Stranger") {
         operation.push(
-            <button onClick={() => { send(props.profile.id, "RequestTo"); }}>
+            <Button onClick={() => { send(props.profile.id, "RequestTo"); }}>
                 Request
-            </button>
+            </Button>
         );
     }
     else if (props.profile.group == "RequestFrom") {
         operation.push(
-            <button onClick={() => { send(props.profile.id, "Default"); }}>
+            <Button onClick={() => { send(props.profile.id, "Default"); }}>
                 Accept
-            </button>
+            </Button>
         );
         operation.push(<br/>);
         operation.push(
-            <button onClick={() => { send(props.profile.id, "Stranger"); }}>
+            <Button onClick={() => { send(props.profile.id, "Stranger"); }}>
                 Reject
-            </button>
+            </Button>
         );
     }
     else if (props.profile.group == "RequestTo") {
@@ -53,30 +54,35 @@ function Profile(props: ProfileProps) {
     }
     else {
         operation.push(
-            <button onClick={() => { send(props.profile.id, "Stranger"); }}>
+            <Button onClick={() => { send(props.profile.id, "Stranger"); }}>
                 Delete
-            </button>
+            </Button>
         );
         operation.push(<br/>);
         operation.push(
-            <div>
-                <input type="text"
+            <div style={{display: "flex"}}>
+                <Input type="text"
                     onChange={(e) => { setGroup(e.target.value); }}
                     value={group}
                 />
-                <button onClick={() => { send(props.profile.id, group); }}>
+                <Button onClick={() => { send(props.profile.id, group); }}>
                     Move
-                </button>
+                </Button>
             </div>
         )
     }
 
     return (
-        <div className={styles.content}>
-            nickname: {props.profile.nickname}<br/>
-            username: {props.profile.username}<br/>
-            email: {props.profile.email}<br/>
-            group: {props.profile.group}<br/>
+        <div className={styles.profile}>
+            Nickname: {props.profile.nickname}
+            <br/>
+            Username: {props.profile.username}
+            <br/>
+            Email: {props.profile.email}
+            <br/>
+            Group: {props.profile.group}
+            <br/>
+            <br/>
             {operation}
         </div>
     );
