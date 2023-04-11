@@ -5,7 +5,6 @@ import { useRouter } from "next/router";
 import { useCookies } from "react-cookie";
 import { LoginInput } from "@/components/login_board";
 
-import styles from "@/components/settings/setting.module.css";
 import ProForm from "@ant-design/pro-form";
 
 const LogOut = () => {
@@ -226,7 +225,6 @@ const UserSetting = () => {
 
     return (
         <div>
-            <div className={styles.modify}>
                 <LogOut />
                 <Divider />
                 {isAuthenticated
@@ -234,7 +232,6 @@ const UserSetting = () => {
                     : <SecondAuthentication setAuth={setAuthentication} type={"modify"} />}
                 <Divider />
                 <DeleteUser />
-            </div>
         </div>
     );
 }

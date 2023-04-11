@@ -54,22 +54,43 @@
     border: 0;
     padding: 0;
     height: 4rem;
-    line-height: 4rem;
-    text-align: center;
     background-color: #eee;
+    display: flex;
+    flex-direction: row;
 }
 
 .search_bar {
-    width: 16rem;
-    height: 1.8rem;
+    flex: 1;
+    height: 1rem;
+    border-radius: 0.5rem;
+    margin: 1rem;
+    padding: 0.5rem;
     border: 0;
     font-size: 1rem;
     font-family: inherit;
     color: #444;
-    border-radius: 0.5rem;
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
     background-color: #fff;
+}
+
+.chat_search_bar {
+    flex: 1;
+    height: 1rem;
+    border-radius: 0.5rem;
+    margin: 1rem 0 1rem 1rem;
+    padding: 0.5rem;
+    border: 0;
+    font-size: 1rem;
+    font-family: inherit;
+    color: #444;
+    background-color: #fff;
+}
+
+.add_button {
+    margin: 1rem;
+    border: 0;
+    padding: 0;
+    width: 2rem;
+    height: 2rem;
 }
 
 .column_item {

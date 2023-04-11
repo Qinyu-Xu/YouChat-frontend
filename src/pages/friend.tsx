@@ -25,7 +25,9 @@ function Friend() {
         <div className={styles.container}>
             <SideBar/>
             <Column setProfile={setProfile}/>
-            <Profile profile={profile}/>
+            <div className={styles.content}>
+                <Profile profile={profile}/>
+            </div>
         </div>
     );
 }

@@ -1,10 +1,10 @@
-import styles from "@/components/settings/setting.module.css";
 import { useCookies } from "react-cookie";
 import { useEffect, useState } from "react";
 import { request } from "@/utils/network";
 import { Button, Image, message, Upload } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
-import {store} from "@/utils/store";
+import { store } from "@/utils/store";
+import styles  from "@/styles/profile.module.css";
 
 const fileToBase64 = (file: any) =>
     new Promise((resolve, reject) => {
@@ -62,6 +62,8 @@ const Profile = () => {
 
     return (
         <div className={styles.profile}>
+            <ImageUpload />
+            <br/>
             { response === null
                 ?
                 (<div>
@@ -69,16 +71,14 @@ const Profile = () => {
                 </div>)
                 :
                 (<div>
-                    UserName : {response.profile.username}
+                    Nickname: {response.profile.nickname}
                     <br />
-                    NickName: {response.profile.nickname}
+                    Username: {response.profile.username}
                     <br />
-                    Your Email: {response.profile.email}
+                    Email: {response.profile.email}
                 </div>)
             }
             <br />
-
-            <ImageUpload />
         </div>
     );
 };
