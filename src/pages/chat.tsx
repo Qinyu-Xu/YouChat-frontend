@@ -11,7 +11,7 @@ const Chat = () => {
     const [session, setSession] = useState<number>(0);
 
     return (
-        <div>
+        <div className={styles.container}>
             <div className={styles.sidebar}>
                 <Sidebar />
             </div>
@@ -19,15 +19,14 @@ const Chat = () => {
                 <UpperBar />
                 <ChatList setSession={setSession}/>
             </div>
-            { session !== 0
-                ?
+          {/* x */}
                 <div className={styles.content}>
                     <ChatBoard sessionId={session}/>
                 </div>
-                :
+                {/* :
                 <div>
                 </div>
-            }
+            } */}
         </div>
     );
 }

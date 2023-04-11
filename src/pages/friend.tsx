@@ -1,6 +1,7 @@
 import Column from '@/components/friend/column'
 import Profile from '@/components/friend/profile'
 import SideBar from '@/components/sidebar'
+import styles from '@/styles/layout.module.css'
 import { useState } from 'react';
 
 export interface profile_type {
@@ -21,11 +22,11 @@ function Friend() {
     });
 
     return (
-        <main>
+        <div className={styles.container}>
             <SideBar/>
             <Column setProfile={setProfile}/>
             <Profile profile={profile}/>
-        </main>
+        </div>
     );
 }
 
