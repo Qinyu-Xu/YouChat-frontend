@@ -11,26 +11,34 @@ const ChatBoard = (props: any) => {
     const [messages, setMessages] = useState<any>([]);
     const id = cookie.id;
 
-    if(isBrowser && socket && socket.readyState == true) socket.send(JSON.stringify({
-        type: "pull",
-        "sessionId": props.session.sessionId,
-        "messageScale": 30})
-    );
-    if(isBrowser && socket && socket.readyState == true)
+    if(isBrowser && socket !== null && socket.readyState === 1) {
+        socket.send(JSON.stringify({
+                type: "pull",
+                sessionId: props.session.sessionId,
+                messageScale: 30
+            })
+        );
+    }
+    if(isBrowser && socket != null && socket.readyState === 1) {
         socket.addEventListener("message", (res: any) => {
-        if(res.type === 'pull') setMessages(res.messages);
-    })
-    if(isBrowser && socket && socket.readyState == true)
+            res = eval("("+res.data+")");
+            if (res.type === 'pull') {
+                setMessages(res.messages);
+            }
+        })
+    }
+    if(isBrowser && socket != null && socket.readyState === 1) {
         socket.addEventListener("message", (res: any) => {
-        if( res.type === 'send' && res.sessionId === props.session.sessionId) {
-            setMessages((messages: any) => [...messages, {
-                "senderId": res.senderId,
-                "timestamp": res.timestamp,
-                "message": res.message,
-                "messageId": res.messageId
-            }]);
-        }
-    })
+            if (res.data.type === 'send' && res.data.sessionId === props.session.sessionId) {
+                setMessages((messages: any) => [...messages, {
+                    senderId: res.senderId,
+                    timestamp: res.timestamp,
+                    message: res.message,
+                    messageId: res.messageId
+                }]);
+            }
+        })
+    }
 
     return (
         <div className={styles.container}>

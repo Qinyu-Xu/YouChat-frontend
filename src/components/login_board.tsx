@@ -132,14 +132,13 @@ const LoginBoard = () => {
     const [cookies, setCookie] = useCookies(['token', 'id']);
     const router = useRouter();
 
-    if(isBrowser && socket)
-        socket.addEventListener('user_auth', (event: any) => {console.log(event);})
-
     const initSocket = () => {
-        if(isBrowser && socket) socket.send(JSON.stringify({
-            type: 'user_auth',
-            id: store.getState().userId
-        }));
+        if(isBrowser && socket !== null) {
+            socket.send(JSON.stringify({
+                type: 'user_auth',
+                id: store.getState().userId
+            }));
+        }
     };
 
     const handleUserSubmit = async (e: any) => {
