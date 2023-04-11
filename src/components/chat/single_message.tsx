@@ -1,18 +1,21 @@
 import { Button, Input } from "antd";
 import styles from "@/styles/chat.module.css"
-import store from "@/utils/store";
+import {isBrowser} from "@/utils/store";
+import {store} from "@/utils/store"
 
 interface SingleMessageProps {
     session: number;
 }
 
 const SingleMessage = (props: SingleMessageProps) => {
-    const socket = store.getState().socket;
+    const socket: any = store.getState().webSocket;
     const handleClick = (text: any) => {
-        socket.emit("send", {
+        if(isBrowser)
+            socket?.send(JSON.stringify({
+            type: "send",
             "sessionId": props.session,
             "message": text
-        });
+        }));
     }
     return (
         <div className={styles.input_box}>

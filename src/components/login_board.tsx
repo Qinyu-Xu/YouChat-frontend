@@ -1,13 +1,13 @@
 import ProForm from "@ant-design/pro-form";
-import { createSocket } from "@/utils/websocket";
 import { useState } from 'react';
-import { request } from "@/utils/network";
+import { request} from "@/utils/network";
 import { MailOutlined, LockOutlined, UserOutlined,} from '@ant-design/icons';
 import { message, Tabs } from 'antd';
 import { LoginForm, ProFormText, ProFormCaptcha, ProConfigProvider } from '@ant-design/pro-components';
 import { useRouter } from "next/router";
 import { useCookies } from "react-cookie";
-import store from "@/utils/store";
+import { isBrowser } from "@/utils/store";
+import { store } from "@/utils/store";
 
 type LoginType = 'email' | 'account';
 
@@ -126,15 +126,23 @@ export const LoginInput = ( props: any ) => {
 }
 
 const LoginBoard = () => {
-
+    const socket:any = store.getState().webSocket;
     const [form] = ProForm.useForm();
     const [loginType, setLoginType] = useState<LoginType>('account');
     const [cookies, setCookie] = useCookies(['token', 'id']);
-
     const router = useRouter();
 
-    const handleUserSubmit = async (e: any) => {
+    if(isBrowser && socket)
+        socket.addEventListener('user_auth', (event: any) => {console.log(event);})
 
+    const initSocket = () => {
+        if(isBrowser && socket) socket.send(JSON.stringify({
+            type: 'user_auth',
+            id: 1
+        }));
+    };
+
+    const handleUserSubmit = async (e: any) => {
         const userInfo = {
             "userName": e.username,
             "password": e.password,
@@ -151,8 +159,8 @@ const LoginBoard = () => {
             } else {
                 setCookie('token', response.token, {path: "/"});
                 setCookie('id', response.id, {path: "/"});
-                const socket = await createSocket(response.id);
-                store.dispatch({type: 'socketConnect', data: socket});
+                initSocket();
+                store.dispatch({type: 'getId', data: response.id});
                 await router.push('/chat');
             }
         } catch(err) {
@@ -179,8 +187,8 @@ const LoginBoard = () => {
             } else {
                 setCookie('token', response.token, {path: "/"});
                 setCookie('id', response.id, {path: "/"});
-                const socket = await createSocket(response.id);
-                store.dispatch({type: 'socketConnect', data: socket});
+                initSocket();
+                store.dispatch({type: 'getId', data: response.id});
                 await router.push('/chat');
             }
         } catch(err) {

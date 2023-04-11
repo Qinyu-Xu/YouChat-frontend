@@ -3,11 +3,11 @@
  *       我们推荐你在大作业中也尝试写一个网络请求 wrapper，本文件可以用作参考
  */
 
-import axios, { AxiosError, AxiosResponse } from "axios";
+import axios, {AxiosError} from "axios";
 
 const network = axios.create({
     baseURL: "",
-    withCredentials: true
+    withCredentials: true,
 });
 
 enum NetworkErrorType {
@@ -40,14 +40,7 @@ export const request = async (
 ) => {
     const response = await network.request({ method, url, data })
         .catch((err: AxiosError) => {
-            if(err.code === 'ERR_BAD_REQUEST') {
-                return {
-                    data: {
-                        code: 1,
-                        info: "Error: Not Found!"
-                    }
-                };
-            }
+            return {data: {code: 1, info: "Error!"}};
         });
     if (response?.data.code === 0) {
         return { ...response.data, code: 0 };
@@ -55,3 +48,19 @@ export const request = async (
         return { ...response?.data };
     }
 };
+
+const csrf_token = async () => {
+    return await request('api/csrf/get_token', 'GET', '');
+}
+
+const get_token = () => {
+    csrf_token().then((res: any) => {
+        const token = res.token;
+        network.interceptors.request.use(config => {
+            config.headers['X-CSRFToken'] = token;
+            return config;
+        });
+    });
+};
+
+get_token();

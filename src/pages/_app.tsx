@@ -1,16 +1,20 @@
 import type { AppProps } from 'next/app'
 import {CookiesProvider} from "react-cookie";
 import React from "react";
-import '@/styles/global.css'
-import store from "@/utils/store";
+import {isBrowser, persistor, store} from '@/utils/store';
+import { PersistGate } from 'redux-persist/integration/react';
 import {Provider} from "react-redux";
+import '@/styles/global.css'
 
 export default function App({ Component, pageProps }: AppProps) {
-  return (
-      <CookiesProvider>
-          <Provider store={store}>
-              <Component {...pageProps} />
-          </Provider>
-      </CookiesProvider>
+    if(isBrowser) store.dispatch({type: 'socketConnect', data:new WebSocket("wss://st-im-django-swimtogether.app.secoder.net/ws/message/")})
+    return (
+        <Provider store={store} >
+            <PersistGate loading={null} persistor={persistor}>
+                <CookiesProvider>
+                    <Component {...pageProps} />
+                </CookiesProvider>
+            </PersistGate>
+        </Provider>
   )
-}
+};

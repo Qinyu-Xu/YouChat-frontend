@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { request } from "@/utils/network";
-import styles from '@/styles/register.module.css'
+import styles from '@/styles/register.module.css';
 import { message } from "antd";
 import { useRouter } from "next/router";
 

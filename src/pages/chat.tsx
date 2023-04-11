@@ -17,9 +17,15 @@ const Chat = () => {
             <div className={styles.column}>
                 <ChatList setSession={setSession}/>
             </div>
-            <div className={styles.content}>
-                <ChatBoard sessionId={session}/>
-            </div>
+            { session !== 0
+                ?
+                <div className={styles.content}>
+                    <ChatBoard sessionId={session}/>
+                </div>
+                :
+                <div>
+                </div>
+            }
         </div>
     );
 }
