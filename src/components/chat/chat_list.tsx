@@ -6,11 +6,8 @@ import styles from "@/styles/layout.module.css";
 import {isBrowser} from "@/utils/store";
 import {store} from "@/utils/store";
 
-interface ChatListProps {
-    setSession: (value: (((prevState: number) => number) | number)) => void
-}
 
-const ChatList = (props: ChatListProps) => {
+const ChatList = (props: any) => {
 
     const [cookie, setCookie] = useCookies(['token', 'id']);
     const [list, setList] = useState([]);
@@ -65,9 +62,8 @@ const ChatList = (props: ChatListProps) => {
         <div>
             {
                 list.map((session: any) => (
-                    <div className={styles.column_item} key={session.sessionId} onClick={_ => props.setSession(session.sessionId)}>
-                        <text>{session.sessionName}</text>
-                        <text>{session.message}</text>
+                    <div className={styles.column_item} key={session.sessionId} onClick={ _ => {props.setSession(session)}}>
+                        <p>{session.sessionName}</p>
                     </div>
                 ))
             }

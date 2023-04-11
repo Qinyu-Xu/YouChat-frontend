@@ -1563,6 +1563,11 @@
   dependencies:
     tslib "^2.4.0"
 
+"@types/circular-json@^0.4.0":
+  version "0.4.0"
+  resolved "https://registry.npmmirror.com/@types/circular-json/-/circular-json-0.4.0.tgz#7401f7e218cfe87ad4c43690da5658b9acaf51be"
+  integrity sha512-7+kYB7x5a7nFWW1YPBh3KxhwKfiaI4PbZ1RvzBU91LZy7lWJO822CI+pqzSre/DZ7KsCuMKdHnLHHFu8AyXbQg==
+
 "@types/cookie@^0.3.3":
   version "0.3.3"
   resolved "https://registry.npmmirror.com/@types/cookie/-/cookie-0.3.3.tgz#85bc74ba782fb7aa3a514d11767832b0e3bc6803"
@@ -2325,6 +2330,11 @@ ci-info@^3.2.0:
   version "3.8.0"
   resolved "https://registry.npmmirror.com/ci-info/-/ci-info-3.8.0.tgz#81408265a5380c929f0bc665d62256628ce9ef91"
   integrity sha512-eXTggHWSooYhq49F2opQhuHWgzucfF2YgODK4e1566GQs5BIfP30B0oenwBJHfWxAs2fyPB1s7Mg949zLf61Yw==
+
+circular-json@^0.5.9:
+  version "0.5.9"
+  resolved "https://registry.npmmirror.com/circular-json/-/circular-json-0.5.9.tgz#932763ae88f4f7dead7a0d09c8a51a4743a53b1d"
+  integrity sha512-4ivwqHpIFJZBuhN3g/pEcdbnGUywkBblloGbkglyloVjjR3uT6tieI89MVOfbP2tHX5sgb01FuLgAOzebNlJNQ==
 
 class-utils@^0.3.5:
   version "0.3.6"
