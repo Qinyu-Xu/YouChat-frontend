@@ -12,26 +12,61 @@ interface ChatBoardProps {
 const ChatBoard = (props: ChatBoardProps) => {
     return (
         <div className={styles.container}>
+            <div className={styles.title_bar}>
+                Mystery Man
+            </div>
             <div className={styles.display_board}>
                 <div className={styles.message}>
+                    <div className={styles.headshot_left}>
+                        <img src="/headshot/00.svg"/>
+                    </div>
                     <div className={styles.message_left}>
                         test
                     </div>
                 </div>
                 <div className={styles.message}>
+                    <div className={styles.headshot_right}>
+                        <img src="/headshot/01.svg"/>
+                    </div>
                     <div className={styles.message_right}>
                         test
                     </div>
                 </div>
                 <div className={styles.message}>
+                    <div className={styles.headshot_left}>
+                        <img src="/headshot/00.svg"/>
+                    </div>
                     <div className={styles.message_left}>
                         test<br/>
                         testtesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttest
                     </div>
                 </div>
                 <div className={styles.message}>
-                    <div className={styles.message_left}>
+                    <div className={styles.headshot_right}>
+                        <img src="/headshot/01.svg"/>
+                    </div>
+                    <div className={styles.message_right}>
                         6
+                    </div>
+                </div>
+                <div className={styles.message}>
+                    <div className={styles.headshot_left}>
+                        <img src="/headshot/00.svg"/>
+                    </div>
+                    <div className={styles.message_left}>
+                        test<br/>
+                        fdfdf<br/>
+                        fdfdf<br/>
+                    </div>
+                </div>
+                <div className={styles.message}>
+                    <div className={styles.headshot_left}>
+                        <img src="/headshot/00.svg"/>
+                    </div>
+                    <div className={styles.message_left}>
+                        test<br/>
+                        fdfdf<br/>
+                        fdfdf<br/>
                     </div>
                 </div>
             </div>

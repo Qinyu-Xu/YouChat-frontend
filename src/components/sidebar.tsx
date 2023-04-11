@@ -9,13 +9,13 @@ function Sidebar() {
                 🏊
             </div>
             <div className={styles.sidebar_item} onClick={()=>router.push('/chat')}>
-                💬
+                <img src="ui/message.svg"/>
             </div>
             <div className={styles.sidebar_item} onClick={()=>router.push('/friend')}>
-                👥
+                <img src="ui/peoples.svg"/>
             </div>
             <div className={styles.sidebar_item} onClick={()=>router.push('/settings')}>
-                ⚙️
+                <img src="ui/setting.svg"/>
             </div>
         </div>
     );

@@ -17,11 +17,9 @@
 .sidebar_item {
     margin: 0;
     border: 0;
-    padding: 0;
-    height: 4rem;
-    line-height: 4rem;
-    text-align: center;
-    font-size: 2rem;
+    padding: 1rem;
+    height: 2rem;
+    width: 2rem;
 }
 .sidebar_item:hover {
     background-color: #ddd;
@@ -42,7 +40,7 @@
 .column {
     overflow: auto;
     margin: 0;
-    border-width: 0 0.2px 0 0.2px;
+    border-width: 0 0.5px 0 0;
     border-style: solid;
     border-color: #ddd;
     padding: 0;

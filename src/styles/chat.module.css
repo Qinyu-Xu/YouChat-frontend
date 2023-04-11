@@ -5,11 +5,22 @@
     width: 100%;
 }
 
+.title_bar {
+    margin: 0;
+    width: 100%;
+    height: auto;
+    padding: 0.5rem 1rem 0.5rem 1rem;
+    /* border-width: 0 0 0.5px 0;
+    border-style: solid;
+    border-color: #ddd; */
+    font-size: 1.5rem;
+}
+
 .display_board {
     overflow: auto;
     margin: 0;
     border: 0;
-    padding: 0;
+    padding: 0.5rem 0 0 0;
     width: 100%;
     flex: 1;
     display: flex;
@@ -31,8 +42,15 @@
 }
 
 .headshot_left {
-    width: 1.5rem;
-    height: 1.5rem;
+    border-radius: 0.25rem;
+    margin: 0 0.5rem 0 0.25rem;
+    border-width: 0.5px;
+    /* border-style: solid; */
+    /* border-color: #ddd; */
+    padding: 0;
+    float: left;
+    width: 2rem;
+    height: 2rem;
 }
 
 .message_right {
@@ -47,6 +65,18 @@
     line-height: 1.25rem;
     word-wrap: break-word;
     word-break: break-all;
+}
+
+.headshot_right {
+    border-radius: 0.25rem;
+    margin: 0 0.25rem 0 0.5rem;
+    border-width: 0.5px;
+    /* border-style: solid; */
+    /* border-color: #ddd; */
+    padding: 0;
+    float: right;
+    width: 2rem;
+    height: 2rem;
 }
 
 .message {
@@ -65,15 +95,22 @@
 }
 
 .function_bar {
-    background-color: #f8f8f8;
+    /* background-color: #f8f8f8; */
     overflow: hidden;
-    margin: 0;
-    border-width: 0.2px 0 0.2px 0;
+    border-width: 0.5px 0 0 0;
     border-style: solid;
-    border-color: #eee;
-    padding: 0;
-    height: 2.5rem;
-    line-height: 2.5rem;
+    border-color: #ddd;
+    height: 2rem;
+    display: flex;
+    flex-direction: row;
+}
+
+.function_button {
+    height: 1.5rem;
+    width: 1.5rem;
+    border: 0;
+    margin: 0.5rem 0.5rem 0rem 0.5rem;
+
 }
 
 .writing {
@@ -82,7 +119,7 @@
     font-size: 1rem;
     margin: 0;
     border: 0;
-    padding: 0.5rem;
+    padding: 0.5rem 0.5rem 0.5rem 0.5rem;
     outline: none;
     flex: 1;
 }

@@ -17,15 +17,14 @@ const Chat = () => {
             <div className={styles.column}>
                 <ChatList setSession={setSession}/>
             </div>
-            { session !== 0
-                ?
+          {/* x */}
                 <div className={styles.content}>
                     <ChatBoard sessionId={session}/>
                 </div>
-                :
+                {/* :
                 <div>
                 </div>
-            }
+            } */}
         </div>
     );
 }
