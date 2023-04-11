@@ -14,10 +14,10 @@ const CreateSession = (props: any) => {
     const [name, setName] = useState('');
 
     useEffect(() => {
-        request("api/friend"+formatParams({id: store.getState().id}), "GET", "").then((res: any) => {
+        request("api/people/friends?"+formatParams({id: store.getState().userId}), "GET", "").then((res: any) => {
             setFriends(res.friend);
             setLoad(false);
-        })}, [])
+        })}, []);
 
     const handleOk = () => {
         request("api/session/chatroom", "PUT", JSON.stringify({
@@ -60,9 +60,7 @@ const CreateSession = (props: any) => {
                             )}
                         />
                     </div>
-                )})
-                )
-            }
+                )}
         </Modal>
 
     );
