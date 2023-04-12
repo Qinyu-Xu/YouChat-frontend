@@ -66,26 +66,6 @@ const ChatBoard = (props: any) => {
                             </div>
                         </div>
                 ))}
-                {
-                    /*
-                                    <div className={styles.message}>
-                    <div className={styles.headshot_left}>
-                        <img src="/headshot/00.svg"/>
-                    </div>
-                    <div className={styles.message_left}>
-                        $ax^2+bx+c=0$ 的解是什么？
-                    </div>
-                </div>
-                <div className={styles.message}>
-                    <div className={styles.headshot_right}>
-                        <img src="/headshot/01.svg"/>
-                    </div>
-                    <div className={styles.message_right}>
-                        x _ 1,2 = \frac -b \pm \sqrt b^2-4ac 2a$
-                    </div>
-                </div>
-                    */
-                }
             </div>
             <SingleMessage sessionId={props.session.sessionId}/>
         </div>
