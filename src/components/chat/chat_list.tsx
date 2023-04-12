@@ -65,7 +65,7 @@ const ChatList = (props: any) => {
             {
                 list.map((session: any) => (
                     <div className={styles.column_item} key={session.sessionId} onClick={ _ => {props.setSession(session)}}>
-                        <p>{session.sessionName}</p>
+                        {session.sessionName}
                     </div>
                 ))
             }
