@@ -51,7 +51,7 @@ const ImageUpload = () => {
 
 const Profile = () => {
 
-    const [response, setResponse] = useState(null);
+    const [response, setResponse] = useState<any>(null);
 
     useEffect(() => {
         request("api/people/profile/" + store.getState().userId, "GET", "").then(res => {

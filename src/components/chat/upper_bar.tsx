@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react';
-import {DownOutlined} from '@ant-design/icons';
 import type {MenuProps} from 'antd';
-import {Checkbox, Dropdown, Input, List, Modal, Space} from 'antd';
+import {Checkbox, Input, List, Modal} from 'antd';
 import {request} from "@/utils/network";
 import {formatParams} from "@/utils/utilities";
 import {store} from "@/utils/store"
@@ -10,7 +9,7 @@ import styles from "@/styles/layout.module.css";
 const CreateSession = (props: any) => {
 
     const [load, setLoad] = useState(true);
-    const [friends, setFriends] = useState(null);
+    const [friends, setFriends] = useState([]);
     const [selected, setSelected] = useState([store.getState().userId]);
     const [name, setName] = useState('');
 
@@ -55,7 +54,7 @@ const CreateSession = (props: any) => {
                             size="large"
                             pagination={{pageSize: 3,}}
                             dataSource={friends}
-                            renderItem={(item) => (
+                            renderItem={(item: any) => (
                                 <List.Item key={item.id}>
                                     <Checkbox onChange={onChange(item)}>
                                     </Checkbox>

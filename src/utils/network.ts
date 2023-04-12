@@ -15,32 +15,13 @@ enum NetworkErrorType {
     UNKNOWN_ERROR,
 }
 
-export class NetworkError extends Error {
-    type: NetworkErrorType;
-    message: string;
-
-    constructor(
-        _type: NetworkErrorType,
-        _message: string,
-    ) {
-        super();
-
-        this.type = _type;
-        this.message = _message;
-    }
-
-    toString(): string { return this.message; }
-    valueOf(): Object { return this.message; }
-}
-
 export const request = async (
     url: string,
     method: "GET" | "POST" | "PUT" | "DELETE",
     data?: any,
 ) => {
-    const response = await network.request({ method, url, data })
-        .catch((err: AxiosError) => {
-            return {data: {code: 1, info: "Error!"}};
+    const response = await network.request({ method, url, data }).catch((err: AxiosError) => {
+            return {data: {code: -1, info: "Error!"}};
         });
     if (response?.data.code === 0) {
         return { ...response.data, code: 0 };

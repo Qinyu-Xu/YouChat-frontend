@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import { useCookies } from "react-cookie";
 import SingleMessage from "@/components/chat/single_message";
 import styles from "@/styles/chat.module.css"
@@ -11,14 +11,18 @@ const ChatBoard = (props: any) => {
     const [messages, setMessages] = useState<any>([]);
     const id = cookie.id;
 
-    if(isBrowser && socket !== null && socket.readyState === 1) {
-        socket.send(JSON.stringify({
-                type: "pull",
-                sessionId: props.session.sessionId,
-                messageScale: 30
-            })
-        );
-    }
+    useEffect(() => {
+        if (isBrowser && socket !== null && socket.readyState === 1) {
+            socket.send(JSON.stringify({
+                    type: "pull",
+                    sessionId: props.session.sessionId,
+                    messageScale: 30
+                })
+            );
+
+        }
+    }, [props.session.sessionId]);
+
     if(isBrowser && socket != null && socket.readyState === 1) {
         socket.addEventListener("message", (res: any) => {
             res = eval("("+res.data+")");
@@ -30,15 +34,16 @@ const ChatBoard = (props: any) => {
     if(isBrowser && socket != null && socket.readyState === 1) {
         socket.addEventListener("message", (res: any) => {
             if (res.data.type === 'send' && res.data.sessionId === props.session.sessionId) {
-                setMessages((messages: any) => [...messages, {
+                setMessages((messages: any) => [{
                     senderId: res.senderId,
                     timestamp: res.timestamp,
                     message: res.message,
                     messageId: res.messageId
-                }]);
+                }, ...messages,]);
             }
         })
     }
+
 
     return (
         <div className={styles.container}>
@@ -46,9 +51,9 @@ const ChatBoard = (props: any) => {
                 {props.session.sessionName}
             </div>
             <div className={styles.display_board}>
-                {messages.map((message: any) =>
+                {messages.map((message: any, index: any) =>
                     message.senderId === store.getState().userId ? (
-                        <div className={styles.message} key={message.messageId}>
+                        <div className={styles.message} key={index+1}>
                             <div className={styles.headshot_right}>
                                 <img src="/headshot/01.svg"/>
                             </div>
@@ -57,7 +62,7 @@ const ChatBoard = (props: any) => {
                             </div>
                         </div>
                     ) : (
-                        <div className={styles.message} key={message.messageId}>
+                        <div className={styles.message} key={index+1}>
                             <div className={styles.headshot_left}>
                                 <img src="/headshot/02.svg"/>
                             </div>

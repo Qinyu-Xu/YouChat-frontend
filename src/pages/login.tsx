@@ -1,4 +1,4 @@
-import LoginBoard from '@/components/login_board';
+import LoginBoard from '@/components/login/login_board';
 
 function Login() {
     return (

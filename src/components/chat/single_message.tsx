@@ -1,4 +1,4 @@
-import { Button, Input } from "antd";
+import { Button } from "antd";
 import styles from "@/styles/chat.module.css"
 import {isBrowser} from "@/utils/store";
 import {store} from "@/utils/store"
@@ -18,7 +18,7 @@ const SingleMessage = (props: any) => {
             }));
         }
     }
-    socket.addEventListener("close", (e) => console.log(e));
+
     return (
         <div className={styles.input_box}>
             <div className={styles.function_bar}>

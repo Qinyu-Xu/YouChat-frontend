@@ -11,7 +11,7 @@ const ChatList = (props: any) => {
 
     const [cookie, setCookie] = useCookies(['token', 'id']);
     const [list, setList] = useState([]);
-    const id = cookie.id;
+    const id = store.getState().userId;
 
     const sortList = () => {
         list.sort((a: any, b:any) => {
@@ -35,9 +35,11 @@ const ChatList = (props: any) => {
             message.error("获取聊天列表发生错误！").then(_=>_);
         }});
     };
+
     const socket: any = store.getState().webSocket;
     if(isBrowser && socket) {
         socket.addEventListener("message", (res: any) => {
+            res = eval("("+res.data+")");
             if (res.type === 'send') {
                 setList((list: any) => list.map((item: any) => item.sessionId !== res.sessionId ? item : {
                     "sessionId": item.sessionId,

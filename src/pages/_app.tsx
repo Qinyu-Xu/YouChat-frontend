@@ -7,7 +7,8 @@ import {Provider} from "react-redux";
 import '@/styles/global.css'
 
 export default function App({ Component, pageProps }: AppProps) {
-    if(isBrowser && store.getState().webSocket.readyState !== 1) {
+    const socket: any = store.getState().webSocket;
+    if(isBrowser && ( socket === null || socket.readyState !== 1 )) {
         store.dispatch({
             type: 'socketConnect',
             data: new WebSocket("wss://st-im-django-swimtogether.app.secoder.net/ws/message/")
