@@ -1,11 +1,24 @@
 import { useState } from "react";
 import { request } from "@/utils/network";
-import styles from '@/styles/register.module.css'
-import { message } from "antd";
+import styles from '@/styles/register.module.css';
+import { message, Form, Button, Input, Typography } from "antd";
 import { useRouter } from "next/router";
 
-function Register() {
+const { Title } = Typography;
 
+const formItemLayout = {
+    labelCol: {
+      xs: { span: 24 },
+      sm: { span: 8 },
+    },
+    wrapperCol: {
+      xs: { span: 24 },
+      sm: { span: 16 },
+    },
+  };
+
+function Register() {
+    const [form] = Form.useForm();
     const [email, setEmail] = useState("");
     const [username, setUsername] = useState("");
     const [nickname, setNickname] = useState("");
@@ -33,6 +46,7 @@ function Register() {
                 message.success('成功注册！');
                 router.push('/login');
             } else {
+                console.log(response);
                 message.error(response.info);
             }
         } catch(err) {
@@ -41,48 +55,141 @@ function Register() {
     };
 
     return (
-        <main className={styles.register}>
-            <form onSubmit={handleSubmit}>
-                <h1>Register</h1>
-                <label htmlFor="email">Email:</label>
-                <input
-                    type="text"
-                    id="email"
-                    onChange={(e) => setEmail(e.target.value)}
-                    value={email}
-                    required
-                />
-                <br/>
-                <label htmlFor="username">Username:</label>
-                <input
-                    type="text"
-                    id="username"
-                    onChange={(e) => setUsername(e.target.value)}
-                    value={username}
-                    required
-                />
-                <br/>
-                <label htmlFor="nickname">Nickname:</label>
-                <input
-                    type="text"
-                    id="nickname"
-                    onChange={(e) => setNickname(e.target.value)}
-                    value={nickname}
-                    required
-                />
-                <br/>
-                <label htmlFor="password">Password:</label>
-                <input
-                    type="password"
-                    id="password"
-                    onChange={(e) => setInitialPwd(e.target.value)}
-                    value={initialPwd}
-                    required
-                />
-                <br/>
-                <button>Submit</button>
-            </form>
-        </main>
+        <div className={styles.register}>
+            <Title level={2}>Register</Title>
+            <br/>
+            <Form
+                {...formItemLayout}
+                form={form}
+                name="Register"
+                style={{ maxWidth: 600 }}
+                scrollToFirstError
+                >
+                <Form.Item
+                    name="email"
+                    label="E-mail"
+                    rules={[
+                    {
+                        type: 'email',
+                        message: 'The input is not valid E-mail!',
+                    },
+                    {
+                        required: true,
+                        message: 'Please input your E-mail!',
+                    },
+                    {
+                        max: 40,
+                        message: 'Too long!',
+                    },
+                    ]}
+                >
+                    <Input 
+                        onChange={(e) => setEmail(e.target.value)}
+                        value={email}
+                    />
+                </Form.Item>
+                <Form.Item
+                    name="password"
+                    label="Password"
+                    rules={[
+                    {
+                        required: true,
+                        message: 'Please input your password!',
+                    },
+                    {
+                        min: 5,
+                        message: 'Too short!',
+                    },
+                    {
+                        max: 20,
+                        message: 'Too long!',
+                    },
+                    ]}
+                    hasFeedback
+                >
+                    <Input.Password
+                        onChange={(e) => setInitialPwd(e.target.value)}
+                        value={initialPwd}
+                    />
+                </Form.Item>
+                <Form.Item
+                    name="confirm"
+                    label="Confirm Pwd"
+                    dependencies={['password']}
+                    hasFeedback
+                    rules={[
+                    {
+                        required: true,
+                        message: 'Please confirm your password!',
+                    },
+                    ({ getFieldValue }) => ({
+                        validator(_, value) {
+                        if (!value || getFieldValue('password') === value) {
+                            return Promise.resolve();
+                        }
+                        return Promise.reject(new Error('The two passwords that you entered do not match!'));
+                        },
+                    }),
+                    ]}
+                >
+                    <Input.Password />
+                </Form.Item>
+                <Form.Item
+                    name="username"
+                    label="Username"
+                    rules={[
+                        { 
+                            required: true, 
+                            message: 'Please input your username!', 
+                            whitespace: true 
+                        },
+                        {
+                            min: 5,
+                            message: 'Too short!',
+                        },
+                        {
+                            max: 20,
+                            message: 'Too long!',
+                        },
+                    ]}
+                >
+                    <Input 
+                        onChange={(e) => setUsername(e.target.value)}
+                        value={username}
+                    />
+                </Form.Item>
+                <Form.Item
+                    name="nickname"
+                    label="Nickname"
+                    tooltip="What do you want others to call you?"
+                    rules={[
+                        { 
+                            required: true, 
+                            message: 'Please input your nickname!', 
+                            whitespace: true 
+                        },
+                        {
+                            min: 1,
+                            message: 'Too short!',
+                        },
+                        {
+                            max: 10,
+                            message: 'Too long!',
+                        },
+                    ]}
+                >
+                    <Input 
+                        onChange={(e) => setNickname(e.target.value)}
+                        value={nickname}
+                    />
+                </Form.Item>
+                <Form.Item wrapperCol={{ xs: { span: 24, offset: 0 }, sm: { span: 16, offset: 8 } }}>
+                    <Button type="primary" htmlType="submit" onClick={handleSubmit}>
+                        Submit
+                    </Button>
+                </Form.Item>
+            </Form>
+        </div>
     );
 };
 
