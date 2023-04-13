@@ -11,7 +11,7 @@ export default function App({ Component, pageProps }: AppProps) {
 
     useEffect(() => {
         if (isBrowser && (socket === null || socket.readyState !== 1)) {
-            console.log(1);
+            console.log("connect");
             store.dispatch({
                 type: 'socketConnect',
                 data: new WebSocket("wss://st-im-django-swimtogether.app.secoder.net/ws/message/")

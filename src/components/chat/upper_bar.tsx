@@ -16,9 +16,9 @@ const CreateSession = (props: any) => {
     useEffect(() => {
         request("api/people/friends?"+formatParams({id: store.getState().userId}), "GET", "").then((res: any) => {
             setFriends(res.friend);
-            setFriends((friends) => friends.filter((friend) => friend.id !== store.getState().userId));
+            setFriends((friends) => friends.filter((friend: any) => friend && friend.id !== store.getState().userId));
             setLoad(false);
-        })}, []);
+        })}, [open]);
 
     const handleOk = () => {
         request("api/session/chatroom", "PUT", JSON.stringify({
@@ -27,7 +27,7 @@ const CreateSession = (props: any) => {
             initial: selected,
         })).then(_=> {
             props.setOpen(false);
-            props.setRefresh((s) => !s);
+            props.setRefresh((s: any) => !s);
         });
     }
     const handleCancel = () => {
