@@ -8,6 +8,7 @@ import {useState} from "react";
 const SingleMessage = (props: any) => {
     const socket: any = store.getState().webSocket;
     const [text, setText] = useState("");
+
     const handleClick = (e: any) => {
         if(isBrowser && socket !== null && socket.readyState===1) {
             socket.send(CircularJson.stringify({

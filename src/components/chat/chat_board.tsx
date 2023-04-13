@@ -1,49 +1,50 @@
-import {useEffect, useState} from "react";
-import { useCookies } from "react-cookie";
+import { useEffect, useState } from "react";
 import SingleMessage from "@/components/chat/single_message";
 import styles from "@/styles/chat.module.css"
-import {isBrowser} from "@/utils/store";
-import {store} from "@/utils/store";
+import { isBrowser } from "@/utils/store";
+import { store } from "@/utils/store";
+
+const socket: any = store.getState().webSocket;
 
 const ChatBoard = (props: any) => {
-    const socket: any = store.getState().webSocket;
-    const [cookie, setCookie] = useCookies(["id"]);
-    const [messages, setMessages] = useState<any>([]);
-    const id = cookie.id;
 
+    const [messages, setMessages] = useState([]);
     useEffect(() => {
-        if (isBrowser && socket !== null && socket.readyState === 1) {
+
+        const handleSend = (res: any) => {
+            res = eval("(" + res.data + ")");
+            if (res.type === 'send' && res.sessionId === props.session.sessionId) {
+                getPull();
+            }
+        };
+
+        const handlePull = (res: any) => {
+            res = eval("(" + res.data + ")")
+            if ( res.type === 'pull' ) {
+                setMessages(res.messages);
+            }
+        };
+
+        const getPull = () => {
             socket.send(JSON.stringify({
                     type: "pull",
                     sessionId: props.session.sessionId,
-                    messageScale: 30
+                    messageScale: 100
                 })
             );
+        };
 
+        if(isBrowser && socket != null && socket.readyState === 1) {
+            socket.addEventListener("message", handleSend);
+            socket.addEventListener("message", handlePull);
+            getPull();
         }
+
+        return () => {
+            socket.removeEventListener('message', handleSend);
+            socket.removeEventListener('message', handlePull);
+        };
     }, [props.session.sessionId]);
-
-    if(isBrowser && socket != null && socket.readyState === 1) {
-        socket.addEventListener("message", (res: any) => {
-            res = eval("("+res.data+")");
-            if (res.type === 'pull') {
-                setMessages(res.messages);
-            }
-        })
-    }
-    if(isBrowser && socket != null && socket.readyState === 1) {
-        socket.addEventListener("message", (res: any) => {
-            if (res.data.type === 'send' && res.data.sessionId === props.session.sessionId) {
-                setMessages((messages: any) => [{
-                    senderId: res.senderId,
-                    timestamp: res.timestamp,
-                    message: res.message,
-                    messageId: res.messageId
-                }, ...messages,]);
-            }
-        })
-    }
-
 
     return (
         <div className={styles.container}>

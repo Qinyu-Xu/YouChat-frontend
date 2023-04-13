@@ -1,4 +1,3 @@
-import { useCookies } from "react-cookie";
 import { useEffect, useState } from "react";
 import { request } from "@/utils/network";
 import { Button, Image, message, Upload } from "antd";
