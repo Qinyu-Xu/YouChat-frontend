@@ -16,6 +16,7 @@ const CreateSession = (props: any) => {
     useEffect(() => {
         request("api/people/friends?"+formatParams({id: store.getState().userId}), "GET", "").then((res: any) => {
             setFriends(res.friend);
+            setFriends((friends) => friends.filter((friend) => friend.id !== store.getState().userId));
             setLoad(false);
         })}, []);
 
@@ -24,7 +25,10 @@ const CreateSession = (props: any) => {
             userId: store.getState().userId,
             sessionName: name,
             initial: selected,
-        })).then(_=>props.setOpen(false));
+        })).then(_=> {
+            props.setOpen(false);
+            props.setRefresh((s) => !s);
+        });
     }
     const handleCancel = () => {
         props.setOpen(false);
@@ -76,10 +80,11 @@ const items: MenuProps['items'] = [
     },
 ];
 
-const UpperBar = () => {
+const UpperBar = (props: any) => {
 	const [query, setQuery] = useState("");
 
     const [open, setOpen] = useState(false);
+
     const onClick: MenuProps['onClick'] = ({ key }) => {
         if( key === '1' ) setOpen(true);
     };
@@ -99,7 +104,7 @@ const UpperBar = () => {
                     }}
                 />
             </div>
-            <CreateSession open={open} setOpen={setOpen}/>
+            <CreateSession open={open} setOpen={setOpen} setRefresh={props.setRefresh}/>
         </div>
     )
 }

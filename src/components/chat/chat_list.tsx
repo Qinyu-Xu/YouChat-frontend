@@ -55,7 +55,7 @@ const ChatList = (props: any) => {
     useEffect(() => {
         getList();
         sortList();
-    }, []);
+    }, [props.refresh]);
 
     return (
         <div>
