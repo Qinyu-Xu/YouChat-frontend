@@ -90,6 +90,7 @@ function Column(props: ColumnProps) {
 			<div className={styles.column_search}>
 				<input className={styles.search_bar}
                     type="text"
+					placeholder="Search"
                     onChange={(e) => { setQuery(e.target.value); }}
                     value={query}
 				/>
