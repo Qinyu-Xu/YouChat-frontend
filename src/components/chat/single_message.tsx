@@ -31,6 +31,7 @@ const SingleMessage = (props: any) => {
                 messageType: "text"
             }));
         }
+        setText("");
     };
 
     const handleEmoji = (e: any) => {

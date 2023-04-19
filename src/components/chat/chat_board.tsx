@@ -52,6 +52,12 @@ const ChatBoard = (props: any) => {
         };
     }, [props.session.sessionId]);
 
+    const messagesEndRef = useRef(null);
+    const scrollToBottom = () => {
+        messagesEndRef.current.scrollIntoView();
+    };
+    useEffect(scrollToBottom, [messages]);
+
     return (
         <div className={styles.container}>
             <div className={styles.title_bar}>
@@ -78,6 +84,7 @@ const ChatBoard = (props: any) => {
                             </div>
                         </div>
                 ))}
+                <div ref={messagesEndRef} />
             </div>
             <SingleMessage sessionId={props.session.sessionId}/>
         </div>
