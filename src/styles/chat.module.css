@@ -11,10 +11,6 @@
     height: 4rem;
     line-height: 4rem;
     padding: 0 1.5rem 0 1.5rem;
-    /* background-color: #eee; */
-    border-width: 0 0 0.5px 0;
-    border-style: solid;
-    border-color: #ddd;
     font-size: 1.5rem;
 }
 
@@ -30,7 +26,8 @@
 }
 
 .message_left {
-    background-color: #f4f4f4;
+    background-color: rgba(255, 255, 255, 0.5);
+    box-shadow: 1px 1px 2px #888888;
     border-radius: 0.5rem;
     margin: 0;
     padding: 0.25rem 0.5rem;
@@ -48,9 +45,7 @@
 .headshot_left {
     border-radius: 0.25rem;
     margin: 0 0.5rem 0 0.25rem;
-    border-width: 0.5px;
-    /* border-style: solid; */
-    /* border-color: #ddd; */
+    border: 0;
     padding: 0;
     float: left;
     width: 2rem;
@@ -58,7 +53,8 @@
 }
 
 .message_right {
-    background-color: #208ffd;
+    background-color: rgba(51, 125, 235, 0.75);
+    box-shadow: 1px 1px 2px #888888;
     border-radius: 0.5rem;
     margin: 0;
     padding: 0.25rem 0.5rem;
@@ -76,9 +72,7 @@
 .headshot_right {
     border-radius: 0.25rem;
     margin: 0 0.25rem 0 0.5rem;
-    border-width: 0.5px;
-    /* border-style: solid; */
-    /* border-color: #ddd; */
+    border: 0;
     padding: 0;
     float: right;
     width: 2rem;
@@ -101,11 +95,7 @@
 }
 
 .function_bar {
-    /* background-color: #f8f8f8; */
     overflow: hidden;
-    border-width: 0.5px 0 0 0;
-    border-style: solid;
-    border-color: #ddd;
     height: 2rem;
     display: flex;
     flex-direction: row;
@@ -120,7 +110,7 @@
 }
 
 .writing {
-    background-color: #fff;
+    background-color: rgba(255, 255, 255, 0);
     overflow: auto;
     font-size: 1rem;
     margin: 0;
@@ -136,7 +126,7 @@
     width: 19.5rem;
     height: 11.5rem;
     position: fixed;
-    background-color: #eee;
+    background-color: rgba(255, 255, 255, 0.5);
     text-align: center;
     left: 24.5rem;
     bottom: 15.5rem;
@@ -149,9 +139,9 @@
     padding: 0;
     border: 0;
     text-align: center;
-    background-color: #eee;
+    background-color: rgba(255, 255, 255, 0.0);
 }
 
 .emoji_item:hover {
-    background-color: #ddd;
+    background-color: rgba(255, 255, 255, 0.5);
 }
