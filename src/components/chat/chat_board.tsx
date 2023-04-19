@@ -3,6 +3,7 @@ import SingleMessage from "@/components/chat/single_message";
 import styles from "@/styles/chat.module.css"
 import { isBrowser } from "@/utils/store";
 import { store } from "@/utils/store";
+import Linkify from "react-linkify";
 
 const socket: any = store.getState().webSocket;
 
@@ -55,7 +56,7 @@ const ChatBoard = (props: any) => {
     useEffect(() => {
         document
         ?.getElementById('THEEND')
-        ?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+        ?.scrollIntoView()
     }, [messages]);
 
     return (
@@ -71,7 +72,7 @@ const ChatBoard = (props: any) => {
                                 <img src="/headshot/01.svg"/>
                             </div>
                             <div className={styles.message_right}>
-                                {message.message}
+                                <Linkify>{message.message}</Linkify>
                             </div>
                         </div>
                     ) : (
@@ -80,7 +81,7 @@ const ChatBoard = (props: any) => {
                                 <img src="/headshot/02.svg"/>
                             </div>
                             <div className={styles.message_left}>
-                                {message.message}
+                                <Linkify>{message.message}</Linkify>
                             </div>
                         </div>
                 ))}
