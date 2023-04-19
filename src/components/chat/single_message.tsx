@@ -24,9 +24,11 @@ const SingleMessage = (props: any) => {
         if(isBrowser && socket !== null && socket.readyState===1) {
             socket.send(CircularJson.stringify({
                 type: "send",
+                id: store.getState().userId,
                 sessionId: props.sessionId,
                 timestamp: Date.now(),
                 message: text,
+                messageType: "text"
             }));
         }
     };

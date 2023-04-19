@@ -17,6 +17,7 @@ const ChatBoard = (props: any) => {
             setLoading(false);
             socket.send(JSON.stringify({
                     type: "pull",
+                    id: store.getState().userId,
                     sessionId: props.session.sessionId,
                     messageScale: 100
                 })
