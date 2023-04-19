@@ -4,6 +4,42 @@ import styles from "@/styles/chat.module.css"
 import { isBrowser } from "@/utils/store";
 import { store } from "@/utils/store";
 import Linkify from "react-linkify";
+import type { MenuProps } from 'antd';
+import { Dropdown } from 'antd';
+
+const left_items: MenuProps['items'] = [
+    {
+      key: '1',
+      label: (<text>回复</text>),
+    },
+    {
+      key: '2',
+      label: (<text>翻译</text>),
+    },
+    {
+      key: '3',
+      label: (<text>语⾳转⽂字</text>),
+    },
+];
+
+const right_items: MenuProps['items'] = [
+    {
+      key: '0',
+      label: (<text>撤回</text>),
+    },
+    {
+      key: '1',
+      label: (<text>回复</text>),
+    },
+    {
+      key: '2',
+      label: (<text>翻译</text>),
+    },
+    {
+      key: '3',
+      label: (<text>语⾳转⽂字</text>),
+    },
+];
 
 const socket: any = store.getState().webSocket;
 
@@ -71,18 +107,22 @@ const ChatBoard = (props: any) => {
                             <div className={styles.headshot_right}>
                                 <img src="/headshot/01.svg"/>
                             </div>
-                            <div className={styles.message_right}>
-                                <Linkify>{message.message}</Linkify>
-                            </div>
+                            <Dropdown menu={{ items: right_items }} placement="topLeft" trigger={['contextMenu']}>
+                                <div className={styles.message_right}>
+                                    <Linkify>{message.message}</Linkify>
+                                </div>
+                            </Dropdown>
                         </div>
                     ) : (
                         <div className={styles.message} key={index+1}>
                             <div className={styles.headshot_left}>
                                 <img src="/headshot/02.svg"/>
                             </div>
-                            <div className={styles.message_left}>
-                                <Linkify>{message.message}</Linkify>
-                            </div>
+                            <Dropdown menu={{ items: left_items }} placement="topLeft"  trigger={['contextMenu']}>
+                                <div className={styles.message_left}>
+                                    <Linkify>{message.message}</Linkify>
+                                </div>
+                            </Dropdown>
                         </div>
                 ))}
                 <div id="THEEND"/>
