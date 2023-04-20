@@ -4,7 +4,6 @@ import { message } from "antd";
 import styles from "@/styles/layout.module.css";
 import {store} from "@/utils/store";
 
-
 const ChatList = (props: any) => {
 
     const [list, setList] = useState([]);

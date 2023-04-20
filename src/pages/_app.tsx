@@ -1,5 +1,4 @@
 import type { AppProps } from 'next/app'
-import {CookiesProvider} from "react-cookie";
 import React, {useEffect} from "react";
 import {isBrowser, persistor, store} from '@/utils/store';
 import { PersistGate } from 'redux-persist/integration/react';
@@ -33,9 +32,7 @@ export default function App({ Component, pageProps }: AppProps) {
     return (
         <Provider store={store} >
             <PersistGate loading={null} persistor={persistor}>
-                <CookiesProvider>
-                    <Component {...pageProps} />
-                </CookiesProvider>
+                <Component {...pageProps} />
             </PersistGate>
         </Provider>
   )

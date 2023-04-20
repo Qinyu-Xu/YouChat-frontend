@@ -56,7 +56,7 @@ const ChatBoard = (props: any) => {
                     type: "pull",
                     id: store.getState().userId,
                     sessionId: props.session.sessionId,
-                    messageScale: 100
+                    messageScale: 30
                 })
             );
             setLoading(true);
@@ -127,7 +127,7 @@ const ChatBoard = (props: any) => {
                 ))}
                 <div id="THEEND"/>
             </div>
-            <SingleMessage sessionId={props.session.sessionId}/>
+            <SingleMessage sessionId={props.session.sessionId} setMessages={setMessages}/>
         </div>
     )
 };

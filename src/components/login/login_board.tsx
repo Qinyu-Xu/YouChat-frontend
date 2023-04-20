@@ -4,7 +4,6 @@ import { request} from "@/utils/network";
 import { message } from 'antd';
 import { LoginForm, ProConfigProvider } from '@ant-design/pro-components';
 import { useRouter } from "next/router";
-import { useCookies } from "react-cookie";
 import { isBrowser } from "@/utils/store";
 import { store } from "@/utils/store";
 import LoginInput from "@/components/login/login_input";
@@ -15,7 +14,6 @@ const LoginBoard = () => {
     const socket:any = store.getState().webSocket;
     const [form] = ProForm.useForm();
     const [loginType, setLoginType] = useState<LoginType>('account');
-    const [cookies, setCookie] = useCookies(['token', 'id']);
     const router = useRouter();
 
     const initSocket = () => {
@@ -42,7 +40,6 @@ const LoginBoard = () => {
             if(response.code !== 0) {
                 message.error('用户名或密码错误！');
             } else {
-                setCookie('token', response.token, {path: "/"});
                 store.dispatch({type: 'getId', data: response.id});
                 initSocket();
                 await router.push('/chat');
@@ -69,7 +66,6 @@ const LoginBoard = () => {
             if(response.code !== 0) {
                 message.error('验证码错误！');
             } else {
-                setCookie('token', response.token, {path: "/"});
                 store.dispatch({type: 'getId', data: response.id});
                 initSocket();
                 await router.push('/chat');
