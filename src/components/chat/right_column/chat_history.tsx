@@ -1,35 +1,36 @@
-import {Divider, Modal, MenuProps, Menu, TimePicker, DatePicker} from "antd";
+import {Divider, Modal, MenuProps, Menu, DatePicker} from "antd";
 import {useState} from "react";
 
-const TimestampPicker = () => {
-    return <div>
-        选择开始时间：
-        <DatePicker />
-        <TimePicker />
-        <br /> <br />
-        选择结束时间
-        <DatePicker />
-        <TimePicker />
-        <br />
+const { RangePicker } = DatePicker;
 
+const TimestampPicker = () => {
+    const [begin, setBegin] = useState(null);
+    const [end, setEnd] = useState(null);
+    const handleChange = (e: any) => {
+        setBegin(e[0]);
+        setEnd(e[1]);
+    }
+
+    return <div>
+        <RangePicker showTime onChange={handleChange}/>
     </div>
 };
 
 const AllPicker = () => {
     return <div>
-        ALL
+
     </div>
 };
 
 const TypePicker = () => {
     return <div>
-        TYPE
+
     </div>
 }
 
 const MemberPicker = () => {
     return <div>
-        MEMBER
+        
     </div>
 
 }

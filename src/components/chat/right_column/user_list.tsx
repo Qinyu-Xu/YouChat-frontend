@@ -13,7 +13,7 @@ const UserList = (props: any) => {
             itemLayout="horizontal"
             dataSource={data}
             bordered={true}
-            renderItem={(item, index) => (
+            renderItem={(item: any, index: any) => (
                 <List.Item>
                     {item.name}
                 </List.Item>

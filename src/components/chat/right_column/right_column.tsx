@@ -7,11 +7,14 @@ import {RightOutlined, UnorderedListOutlined} from "@ant-design/icons";
 import ChatHistory from "@/components/chat/right_column/chat_history";
 import UserList from "@/components/chat/right_column/user_list";
 
-export const MenuShow = _ => {
-    const handleClick = _ => {
+export const MenuShow = (_: any) => {
+    const handleClick = (_: any) => {
         const item = document.getElementById("mySidenav");
-        if(item.style.right ===  "-20rem")  item.style.right = "0";
-        else item.style.right = "-20rem";
+        if(item) {
+            if (item.style.right === "-20rem") item.style.right = "0";
+            else if(item.style.right === "0") item.style.right = "-20rem";
+            else item.style.right = "0";
+        }
     }
     return (
         <UnorderedListOutlined onClick={handleClick}> </UnorderedListOutlined>
