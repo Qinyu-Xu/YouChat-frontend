@@ -4,7 +4,6 @@ import { message } from "antd";
 import styles from "@/styles/layout.module.css";
 import {store} from "@/utils/store";
 
-
 const ChatList = (props: any) => {
 
     const [list, setList] = useState([]);
@@ -16,7 +15,7 @@ const ChatList = (props: any) => {
             else if(a.isTop > b.isTop) return -1;
             return a.timestamp - b.timestamp;
         })
-    }
+    };
 
     const getList = () => {
         request(
@@ -25,7 +24,22 @@ const ChatList = (props: any) => {
             ""
         ).then((response ) => {
         if( response.code === 0 ) {
-            setList(response.data);
+            const l = (response.data);
+            for(let i = 0; i < l.length; ++i) {
+                if(l[i].sessionType === 1) {
+                    request(
+                        "api/session/chatroom?id=" + l[i].sessionId,
+                        "GET",
+                        "").then((res: any) => {
+                            l[i].sessionName =
+                                (res.members.filter((member: any) =>
+                                    member.id !== store.getState().userId)
+                                )[0].nickname;
+                            setList(l);
+                        }
+                    )
+                }
+            }
             sortList();
         } else {
             message.error("获取聊天列表发生错误！").then(_=>_);

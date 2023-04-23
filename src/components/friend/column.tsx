@@ -20,7 +20,6 @@ interface FriendListProps {
 
 const FriendList = (props: FriendListProps) => {
 	const List: any[] = [];
-    const [cookies] = useCookies(['token']);
 
 	const handleSelect = async (e: any) => {
 		console.log(e);
@@ -30,7 +29,7 @@ const FriendList = (props: FriendListProps) => {
             const response = await request(
                 url,
                 "GET",
-                cookies,
+                "",
             );
 			props.setProfile(response?.profile);
 			console.log(response.profile);
@@ -66,7 +65,6 @@ interface ColumnProps {
 function Column(props: ColumnProps) {
 	const [query, setQuery] = useState("");
 	const [friends, setFriends] = useState<Array<Group>>();
-    const [cookies] = useCookies(['token']);
 
 	const handleQuery = async () => {
 		const url = "api/people/friends/" + (query == "" ? "*" : query);
@@ -75,7 +73,7 @@ function Column(props: ColumnProps) {
             const response = await request(
                 url,
                 "GET",
-                cookies,
+                "",
             );
 			setFriends(response?.friendList);
 			console.log(response.friendList);

@@ -5,7 +5,6 @@ import ChatList from "@/components/chat/chat_list";
 import ChatBoard from "@/components/chat/chat_board";
 import UpperBar from "@/components/chat/upper_bar";
 
-
 const Chat = () => {
 
     const [session, setSession] = useState(null);

@@ -1,5 +1,4 @@
 import type { AppProps } from 'next/app'
-import {CookiesProvider} from "react-cookie";
 import React, {useEffect} from "react";
 import {isBrowser, persistor, store} from '@/utils/store';
 import { PersistGate } from 'redux-persist/integration/react';
@@ -11,7 +10,7 @@ export default function App({ Component, pageProps }: AppProps) {
 
     useEffect(() => {
         if (isBrowser && (socket === null || socket.readyState !== 1)) {
-            console.log("connect");
+            console.log("Websocket Connecting...");
             store.dispatch({
                 type: 'socketConnect',
                 data: new WebSocket("wss://st-im-django-swimtogether.app.secoder.net/ws/message/")
@@ -19,6 +18,7 @@ export default function App({ Component, pageProps }: AppProps) {
             socket = store.getState().webSocket;
             if (socket !== null) {
                 socket.addEventListener("open", () => {
+                    console.log("Websocket Connected!");
                     if (store.getState().userId !== 0) {
                         socket.send(JSON.stringify({
                             type: 'user_auth',
@@ -26,6 +26,9 @@ export default function App({ Component, pageProps }: AppProps) {
                         }));
                     }
                 })
+                socket.onclose = () => {
+                    console.log("Websocket Closed :(");
+                };
             }
         }
     }, []);
@@ -33,9 +36,7 @@ export default function App({ Component, pageProps }: AppProps) {
     return (
         <Provider store={store} >
             <PersistGate loading={null} persistor={persistor}>
-                <CookiesProvider>
-                    <Component {...pageProps} />
-                </CookiesProvider>
+                <Component {...pageProps} />
             </PersistGate>
         </Provider>
   )

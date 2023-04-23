@@ -11,10 +11,6 @@
     height: 4rem;
     line-height: 4rem;
     padding: 0 1.5rem 0 1.5rem;
-    /* background-color: #eee; */
-    border-width: 0 0 0.5px 0;
-    border-style: solid;
-    border-color: #ddd;
     font-size: 1.5rem;
 }
 
@@ -30,14 +26,17 @@
 }
 
 .message_left {
-    background-color: #f4f4f4;
+    background-color: rgba(255, 255, 255, 0.5);
+    box-shadow: 1px 1px 2px #888888;
     border-radius: 0.5rem;
     margin: 0;
     padding: 0.25rem 0.5rem;
     color: #000;
     float: left;
     width: fit-content;
+    min-width: 0.5rem;
     max-width: 70%;
+    min-height: 1.5rem;
     line-height: 1.5rem;
     word-wrap: break-word;
     word-break: break-all;
@@ -46,9 +45,7 @@
 .headshot_left {
     border-radius: 0.25rem;
     margin: 0 0.5rem 0 0.25rem;
-    border-width: 0.5px;
-    /* border-style: solid; */
-    /* border-color: #ddd; */
+    border: 0;
     padding: 0;
     float: left;
     width: 2rem;
@@ -56,14 +53,17 @@
 }
 
 .message_right {
-    background-color: #208ffd;
+    background-color: rgba(51, 125, 235, 0.75);
+    box-shadow: 1px 1px 2px #888888;
     border-radius: 0.5rem;
     margin: 0;
     padding: 0.25rem 0.5rem;
     color: #fff;
     float: right;
     width: fit-content;
+    min-width: 0.5rem;
     max-width: 70%;
+    min-height: 1.5rem;
     line-height: 1.5rem;
     word-wrap: break-word;
     word-break: break-all;
@@ -72,9 +72,7 @@
 .headshot_right {
     border-radius: 0.25rem;
     margin: 0 0.25rem 0 0.5rem;
-    border-width: 0.5px;
-    /* border-style: solid; */
-    /* border-color: #ddd; */
+    border: 0;
     padding: 0;
     float: right;
     width: 2rem;
@@ -97,11 +95,7 @@
 }
 
 .function_bar {
-    /* background-color: #f8f8f8; */
     overflow: hidden;
-    border-width: 0.5px 0 0 0;
-    border-style: solid;
-    border-color: #ddd;
     height: 2rem;
     display: flex;
     flex-direction: row;
@@ -116,7 +110,7 @@
 }
 
 .writing {
-    background-color: #fff;
+    background-color: rgba(255, 255, 255, 0);
     overflow: auto;
     font-size: 1rem;
     margin: 0;
@@ -124,4 +118,38 @@
     padding: 0.5rem 0.5rem 0.5rem 0.5rem;
     outline: none;
     flex: 1;
+}
+
+.emoji_board {
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+    width: 19.5rem;
+    height: 11.5rem;
+    position: fixed;
+    background-color: rgba(255, 255, 255, 0.5);
+    text-align: center;
+    left: 24.5rem;
+    bottom: 15.5rem;
+}
+
+.emoji_item {
+    width: 1.6rem;
+    height: 1.6rem;
+    font-size: 1rem;
+    padding: 0;
+    border: 0;
+    text-align: center;
+    background-color: rgba(255, 255, 255, 0.0);
+}
+
+.emoji_item:hover {
+    background-color: rgba(255, 255, 255, 0.5);
+}
+
+.menu_show {
+    z-index: 999;
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    font-size: 1.6rem;
 }
