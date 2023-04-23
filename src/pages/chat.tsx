@@ -4,8 +4,6 @@ import styles from "@/styles/layout.module.css"
 import ChatList from "@/components/chat/chat_list";
 import ChatBoard from "@/components/chat/chat_board";
 import UpperBar from "@/components/chat/upper_bar";
-import RightColumn from "@/components/chat/right_column";
-
 
 const Chat = () => {
 
@@ -26,7 +24,6 @@ const Chat = () => {
                     <ChatBoard session={session}/>
                 </div>
             }
-            <RightColumn session={session}/>
         </div>
     );
 }
