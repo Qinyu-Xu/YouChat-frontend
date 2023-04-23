@@ -6,6 +6,7 @@ import { store } from "@/utils/store";
 import Linkify from "react-linkify";
 import type { MenuProps } from 'antd';
 import { Dropdown } from 'antd';
+import {MenuShow} from "@/components/chat/right_column";
 
 const left_items: MenuProps['items'] = [
     {

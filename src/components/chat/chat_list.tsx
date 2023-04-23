@@ -3,6 +3,7 @@ import { request } from "@/utils/network";
 import { message } from "antd";
 import styles from "@/styles/layout.module.css";
 import {store} from "@/utils/store";
+import {MenuShow} from "@/components/chat/right_column";
 
 const ChatList = (props: any) => {
 
@@ -58,6 +59,7 @@ const ChatList = (props: any) => {
 
     return (
         <div>
+            <MenuShow />
             {
                 list.map((session: any) => (
                     <div className={styles.column_item} key={session.sessionId} onClick={ _ => {props.setSession(session);}}>
