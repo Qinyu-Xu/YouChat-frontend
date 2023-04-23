@@ -4,8 +4,8 @@ import {useState} from "react";
 import {request} from "@/utils/network";
 import {store} from "@/utils/store";
 import {RightOutlined, UnorderedListOutlined} from "@ant-design/icons";
-import ChatHistory from "@/components/chat/chat_history";
-import UserList from "@/components/chat/user_list";
+import ChatHistory from "@/components/chat/right_column/chat_history";
+import UserList from "@/components/chat/right_column/user_list";
 
 export const MenuShow = _ => {
     const handleClick = _ => {
@@ -91,7 +91,7 @@ const RightColumn = (props: any) => {
         <br />
         设置置顶<Switch defaultChecked onChange={handleTop} />
         <br />
-        <ChatHistory open={open} setOpen={setOpen} />
+        <ChatHistory open={open} setOpen={setOpen} members={props.members}/>
     </div>
 }
 

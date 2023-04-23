@@ -6,9 +6,9 @@ import { store } from "@/utils/store";
 import Linkify from "react-linkify";
 import type { MenuProps } from 'antd';
 import {Dropdown} from 'antd';
-import {MenuShow} from "@/components/chat/right_column";
+import {MenuShow} from "@/components/chat/right_column/right_column";
 import {request} from "@/utils/network";
-import RightColumn from "@/components/chat/right_column";
+import RightColumn from "@/components/chat/right_column/right_column";
 
 const left_items: MenuProps['items'] = [
     {
