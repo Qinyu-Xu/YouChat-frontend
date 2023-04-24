@@ -87,9 +87,6 @@ const RightColumn = (props: any) => {
             <RightOutlined />
         </div>
         <br />
-
-
-
         <Divider />
         设置静音<Switch defaultChecked onChange={handleMute} />
         <br />

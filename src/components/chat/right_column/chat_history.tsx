@@ -1,7 +1,13 @@
-import {Divider, Modal, MenuProps, Menu, DatePicker} from "antd";
+import {Divider, Modal, MenuProps, Menu, DatePicker, Select, SelectProps} from "antd";
 import {useState} from "react";
 
 const { RangePicker } = DatePicker;
+
+const AllPicker = () => {
+    return <div>
+
+    </div>
+};
 
 const TimestampPicker = () => {
     const [begin, setBegin] = useState(null);
@@ -16,21 +22,43 @@ const TimestampPicker = () => {
     </div>
 };
 
-const AllPicker = () => {
-    return <div>
-
-    </div>
-};
-
 const TypePicker = () => {
+    const handleChange = () => {};
+    const options: any = [
+        { value: '文本', label: 'text' },
+        { value: '图片', label: 'image' },
+        { value: '语音', label: 'audio' },
+    ]
     return <div>
-
+        <Select
+            defaultValue="text"
+            style={{ width: 120 }}
+            onChange={handleChange}
+            options={options}
+        />
     </div>
 }
 
-const MemberPicker = () => {
+const MemberPicker = (props: any) => {
+
+    const options: any = props.members.map((member: any) => {
+        return {
+            label: member.nickname,
+            value: member.id
+        }
+    });
+    const default_val = options[0];
+    const handleChange = (e: any) => {console.log(e);};
+
     return <div>
-        
+        <Select
+            mode="multiple"
+            style={{ width: '50%' }}
+            allowClear
+            defaultValue={default_val}
+            onChange={handleChange}
+            options={options}
+        />
     </div>
 
 }
@@ -44,44 +72,17 @@ const ChatHistory = (props: any) => {
         }, {
             label: '按消息类型',
             key: 'type',
-            children: [
-                {
-                    label: '对话',
-                    key: 'text',
-                },
-                {
-                    label: '图片',
-                    key: 'image',
-                },
-                {
-                    label: '语音',
-                    key: 'audio',
-                },
-            ],
         }, {
             label: '按时间顺序',
             key: 'time',
         }, {
             label: '按发送成员',
             key: 'member',
-            children: props.members.map((member: any) => {
-                return {
-                    label: member.nickname,
-                    key: member.nickname
-                };
-            })
         },
     ];
 
     const [current, setCurrent] = useState('all');
-    const [keyPath, setKeyPath] = useState('');
-    const onClick: MenuProps['onClick'] = (e) => {
-        setCurrent(e.key);
-        console.log(e.keyPath);
-        if(e.keyPath.length === 1) setKeyPath(e.key);
-        else setKeyPath(e.keyPath[1]);
-
-    }
+    const onClick: MenuProps['onClick'] = (e: any) => setCurrent(e.key);
     const handleOk = () => props.setOpen(false);
     const handleCancel = () => props.setOpen(false);
 
@@ -90,13 +91,13 @@ const ChatHistory = (props: any) => {
             <Divider />
             <Menu onClick={onClick} selectedKeys={[current]} mode="horizontal" items={items} />
             <br />
-            {keyPath === 'all'
+            {current === 'all'
                 ? <AllPicker />
-                : (keyPath === 'type'
+                : (current === 'type'
                     ? <TypePicker />
-                    : (keyPath === 'time'
+                    : (current === 'time'
                         ? <TimestampPicker />
-                        : <MemberPicker />
+                        : <MemberPicker members={props.members}/>
                         )
                     )
             }

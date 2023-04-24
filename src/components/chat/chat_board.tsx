@@ -1,11 +1,11 @@
-import {useEffect, useRef, useState} from "react";
+import {useEffect, useState} from "react";
 import SingleMessage from "@/components/chat/single_message";
 import styles from "@/styles/chat.module.css"
 import { isBrowser } from "@/utils/store";
 import { store } from "@/utils/store";
 import Linkify from "react-linkify";
 import type { MenuProps } from 'antd';
-import {Dropdown} from 'antd';
+import {Avatar, Dropdown} from 'antd';
 import {MenuShow} from "@/components/chat/right_column/right_column";
 import {request} from "@/utils/network";
 import RightColumn from "@/components/chat/right_column/right_column";
@@ -44,26 +44,48 @@ const right_items: MenuProps['items'] = [
     },
 ];
 
-const socket: any = store.getState().webSocket;
-
 const ChatBoard = (props: any) => {
 
     const [messages, setMessages] = useState([]);
-    const [members, setMembers] = useState([]);
+    const [members, setMembers] = useState<any>([]);
+    const [count, setCount] = useState(0);
+    const [images, setImages] = useState<Map<number,string>>(new Map());
 
     useEffect(() => {
-            request(
-                "/api/session/chatroom?id="+props.session.sessionId,
-                "GET",
-                ""
-            ).then((res: any) => {
-                setMembers(res.members);
-            });
-        }, []
+        request(
+            "/api/session/chatroom?id="+props.session.sessionId,
+            "GET",
+            ""
+        ).then((res: any) => {
+            setCount(0);
+            setMembers(res.members);
+        });
+        }, [props.session.sessionId]
     );
 
     useEffect(() => {
+        for (let i = 0; i < members.length; ++i) {
+            request("api/people/img/" + members[i].id, "GET", "").then((r: any) => {
+                const newMap: any = new Map(images);
+                if (r.img === '') {
+                    newMap.set(members[i].id, `/headshot/01.svg`);
+                } else {
+                    newMap.set(members[i].id, r.img);
+                }
+                setImages(newMap);
+            }).then(() => setCount(count => count + 1));
+        }
+    }, [members]);
+
+    useEffect(() => {
+        if(count === members.length && count !== 0) {
+            setMessages(messages => [...messages]);
+        }
+    }, [count]);
+
+    useEffect(() => {
         const getPull = () => {
+            const socket: any = store.getState().webSocket;
             socket.send(JSON.stringify({
                     type: "pull",
                     id: store.getState().userId,
@@ -85,6 +107,7 @@ const ChatBoard = (props: any) => {
                 setMessages((messages) => messages.reverse());
             }
         };
+        const socket: any = store.getState().webSocket;
         if(isBrowser && socket != null && socket.readyState === 1) {
             socket.addEventListener("message", handleSend);
             socket.addEventListener("message", handlePull);
@@ -94,15 +117,13 @@ const ChatBoard = (props: any) => {
             socket.removeEventListener('message', handleSend);
             socket.removeEventListener('message', handlePull);
         };
-    }, [props.session.sessionId]);
+    }, [props.session.sessionId, store.getState().webSocket]);
 
     useEffect(() => {
         document
         ?.getElementById('THEEND')
         ?.scrollIntoView()
     }, [messages]);
-
-
 
     return (
         <div className={styles.container}>
@@ -118,7 +139,11 @@ const ChatBoard = (props: any) => {
                     message.senderId === store.getState().userId ? (
                         <div className={styles.message} key={index+1}>
                             <div className={styles.headshot_right}>
-                                <img src="/headshot/01.svg"/>
+                                {
+                                    images.has(message.senderId)
+                                        ? <Avatar src={images.get(message.senderId)} />
+                                        : <Avatar src="/headshot/01.svg"/>
+                                }
                             </div>
                             <Dropdown menu={{ items: right_items }} placement="topLeft" trigger={['contextMenu']}>
                                 <div className={styles.message_right}>
@@ -129,7 +154,11 @@ const ChatBoard = (props: any) => {
                     ) : (
                         <div className={styles.message} key={index+1}>
                             <div className={styles.headshot_left}>
-                                <img src="/headshot/02.svg"/>
+                                {
+                                    images.has(message.senderId)
+                                        ? <Avatar src={images.get(message.senderId)} />
+                                        : <Avatar src="/headshot/02.svg"/>
+                                }
                             </div>
                             <Dropdown menu={{ items: left_items }} placement="topLeft"  trigger={['contextMenu']}>
                                 <div className={styles.message_left}>
