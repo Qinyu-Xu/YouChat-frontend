@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { request } from "@/utils/network";
-import {Avatar, Button, Image, message, Upload} from "antd";
+import {Avatar, Button, Image, message, Skeleton, Spin, Upload} from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { store } from "@/utils/store";
 import styles  from "@/styles/profile.module.css";
@@ -48,11 +48,17 @@ const Profile = () => {
 
     const [response, setResponse] = useState<any>(null);
     const [image, setImage] = useState<any>('/headshot/01.svg');
+    const [pload, setPload] = useState(false);
+    const [iload, setIload] = useState(false);
 
     useEffect(() => {
         request("api/people/profile/" + store.getState().userId, "GET", "").then(res => {
-            if(res.code === 0) { setResponse(res);}
-            else { message.error("获取用户信息错误！").then(r => "error"); }
+            if(res.code === 0) {
+                setResponse(res);
+                setPload(true);
+            }  else {
+                message.error("获取用户信息错误！").then(r => "error");
+            }
         })
         }, []
     );
@@ -61,33 +67,38 @@ const Profile = () => {
         request("api/people/img/"+store.getState().userId, "GET", "").then(res => {
             if(res.code === 0) {
                 setImage(res.img);
+                setIload(true);
             }
         })
     }, []);
 
-    return (
+    return iload && pload
+        ?
+        (
         <div className={styles.profile}>
             <Avatar size={300} src={image} />
             <br /><br />
             <ImageUpload setImage={setImage}/>
             <br/>
-            { response === null
-                ?
-                (<div>
-                    Loading...
-                </div>)
-                :
-                (<div>
+
+                <div>
                     Nickname: {response.profile.nickname}
                     <br />
                     Username: {response.profile.username}
                     <br />
                     Email: {response.profile.email}
-                </div>)
-            }
+                </div>
+
             <br />
         </div>
-    );
+        )
+        :
+        (
+        <div className={styles.profile}>
+            <Spin />
+        </div>
+        )
+        ;
 };
 
 export default Profile;

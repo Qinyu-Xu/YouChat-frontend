@@ -5,10 +5,11 @@ import { isBrowser } from "@/utils/store";
 import { store } from "@/utils/store";
 import Linkify from "react-linkify";
 import type { MenuProps } from 'antd';
-import {Avatar, Dropdown} from 'antd';
+import {Avatar, Dropdown, Skeleton} from 'antd';
 import {MenuShow} from "@/components/chat/right_column/right_column";
 import {request} from "@/utils/network";
 import RightColumn from "@/components/chat/right_column/right_column";
+import {DEFAULT_SVG, readSvgAsBase64} from "@/utils/utilities";
 
 const left_items: MenuProps['items'] = [
     {
@@ -50,6 +51,9 @@ const ChatBoard = (props: any) => {
     const [members, setMembers] = useState<any>([]);
     const [count, setCount] = useState(0);
     const [images, setImages] = useState<Map<number,string>>(new Map());
+    const [iload, setIload] = useState(false);
+    const [mload, setMload] = useState(false);
+    const D = DEFAULT_SVG;
 
     useEffect(() => {
         request(
@@ -67,11 +71,8 @@ const ChatBoard = (props: any) => {
         for (let i = 0; i < members.length; ++i) {
             request("api/people/img/" + members[i].id, "GET", "").then((r: any) => {
                 const newMap: any = new Map(images);
-                if (r.img === '') {
-                    newMap.set(members[i].id, `/headshot/01.svg`);
-                } else {
-                    newMap.set(members[i].id, r.img);
-                }
+                if (r.img === "") newMap.set(members[i].id, D);
+                else newMap.set(members[i].id, r.img);
                 setImages(newMap);
             }).then(() => setCount(count => count + 1));
         }
@@ -80,6 +81,7 @@ const ChatBoard = (props: any) => {
     useEffect(() => {
         if(count === members.length && count !== 0) {
             setMessages(messages => [...messages]);
+            setIload(true);
         }
     }, [count]);
 
@@ -105,6 +107,7 @@ const ChatBoard = (props: any) => {
             if ( res.type === 'pull' ) {
                 setMessages(res.messages);
                 setMessages((messages) => messages.reverse());
+                setMload(true);
             }
         };
         const socket: any = store.getState().webSocket;
@@ -125,7 +128,9 @@ const ChatBoard = (props: any) => {
         ?.scrollIntoView()
     }, [messages]);
 
-    return (
+    return iload && mload
+        ?
+        (
         <div className={styles.container}>
             <div className={styles.title_bar}>
                 {props.session.sessionName}
@@ -139,11 +144,7 @@ const ChatBoard = (props: any) => {
                     message.senderId === store.getState().userId ? (
                         <div className={styles.message} key={index+1}>
                             <div className={styles.headshot_right}>
-                                {
-                                    images.has(message.senderId)
-                                        ? <Avatar src={images.get(message.senderId)} />
-                                        : <Avatar src="/headshot/01.svg"/>
-                                }
+                                <Avatar src={images.get(message.senderId)} />
                             </div>
                             <Dropdown menu={{ items: right_items }} placement="topLeft" trigger={['contextMenu']}>
                                 <div className={styles.message_right}>
@@ -154,11 +155,7 @@ const ChatBoard = (props: any) => {
                     ) : (
                         <div className={styles.message} key={index+1}>
                             <div className={styles.headshot_left}>
-                                {
-                                    images.has(message.senderId)
-                                        ? <Avatar src={images.get(message.senderId)} />
-                                        : <Avatar src="/headshot/02.svg"/>
-                                }
+                                <Avatar src={images.get(message.senderId)} />
                             </div>
                             <Dropdown menu={{ items: left_items }} placement="topLeft"  trigger={['contextMenu']}>
                                 <div className={styles.message_left}>
@@ -172,7 +169,11 @@ const ChatBoard = (props: any) => {
             <SingleMessage sessionId={props.session.sessionId} setMessages={setMessages}/>
             <RightColumn session={props.session} members={members}/>
         </div>
-    )
+        )
+        :
+        (
+            <Skeleton />
+        )
 };
 
 export default ChatBoard;

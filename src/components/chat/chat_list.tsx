@@ -1,12 +1,13 @@
 import {useEffect, useState} from "react";
 import { request } from "@/utils/network";
-import { message } from "antd";
+import {message, Skeleton, Spin} from "antd";
 import styles from "@/styles/layout.module.css";
 import {store} from "@/utils/store";
 
 const ChatList = (props: any) => {
 
     const [list, setList] = useState([]);
+    const [load, setLoad] = useState(false);
     const id = store.getState().userId;
 
     const sortList = () => {
@@ -41,6 +42,7 @@ const ChatList = (props: any) => {
                 }
             }
             sortList();
+            setLoad(true);
         } else {
             message.error("获取聊天列表发生错误！").then(_=>_);
         }});
@@ -71,7 +73,9 @@ const ChatList = (props: any) => {
         sortList();
     }, [props.refresh]);
 
-    return (
+    return load
+        ?
+        (
         <div>
             {
                 list.map((session: any) => (
@@ -81,7 +85,10 @@ const ChatList = (props: any) => {
                 ))
             }
         </div>
-    );
+        )
+        :
+        <Spin />
+        ;
 };
 
 export default ChatList;

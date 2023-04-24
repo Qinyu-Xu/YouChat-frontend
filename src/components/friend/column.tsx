@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { request } from "@/utils/network";
 import styles from '@/styles/layout.module.css'
 import { useCookies } from 'react-cookie';
+import {Skeleton, Spin} from "antd";
 
 interface User {
 	id: number,
@@ -65,10 +66,10 @@ interface ColumnProps {
 function Column(props: ColumnProps) {
 	const [query, setQuery] = useState("");
 	const [friends, setFriends] = useState<Array<Group>>();
+	const [load, setLoad] = useState(false);
 
 	const handleQuery = async () => {
 		const url = "api/people/friends/" + (query == "" ? "*" : query);
-		console.log(url);
         try {
             const response = await request(
                 url,
@@ -76,14 +77,15 @@ function Column(props: ColumnProps) {
                 "",
             );
 			setFriends(response?.friendList);
-			console.log(response.friendList);
+			setLoad(true);
         } catch(err) {
             console.log(err);
         }
 	};
 	useEffect(() => { handleQuery(); }, [query]);
 
-	return (
+	return load ?
+		(
 		<div className={styles.column}>
 			<div className={styles.column_search}>
 				<input className={styles.search_bar}
@@ -95,7 +97,14 @@ function Column(props: ColumnProps) {
 			</div>
 			<FriendList groups={friends} setProfile={props.setProfile}/>
 		</div>
-	);
+		)
+		:
+		(
+			<div className={styles.column}>
+				<Spin />
+			</div>
+		)
+		;
 };
 
 export default Column;
