@@ -56,6 +56,8 @@ const ChatBoard = (props: any) => {
     const D = DEFAULT_SVG;
 
     useEffect(() => {
+        setMload(false);
+        setIload(false);
         request(
             "/api/session/chatroom?id="+props.session.sessionId,
             "GET",
@@ -71,8 +73,7 @@ const ChatBoard = (props: any) => {
         for (let i = 0; i < members.length; ++i) {
             request("api/people/img/" + members[i].id, "GET", "").then((r: any) => {
                 const newMap: any = new Map(images);
-                if (r.img === "") newMap.set(members[i].id, D);
-                else newMap.set(members[i].id, r.img);
+                newMap.set(members[i].id, r.img);
                 setImages(newMap);
             }).then(() => setCount(count => count + 1));
         }
