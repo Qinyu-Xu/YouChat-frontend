@@ -3,8 +3,9 @@ import { request } from "@/utils/network";
 import {message, Skeleton, Spin} from "antd";
 import styles from "@/styles/layout.module.css";
 import {store} from "@/utils/store";
+import MessageItem from "./message_item";
 
-const ChatList = (props: any) => {
+const LeftColumn = (props: any) => {
 
     const [list, setList] = useState([]);
     const [load, setLoad] = useState(false);
@@ -79,8 +80,8 @@ const ChatList = (props: any) => {
         <div>
             {
                 list.map((session: any) => (
-                    <div className={styles.column_item} key={session.sessionId} onClick={ _ => {props.setSession(session);}}>
-                        {session.sessionName}
+                    <div key={session.sessionId} onClick={ _ => {props.setSession(session);}}>
+                        <MessageItem session={session}/>
                     </div>
                 ))
             }
@@ -91,4 +92,4 @@ const ChatList = (props: any) => {
         ;
 };
 
-export default ChatList;
+export default LeftColumn;
