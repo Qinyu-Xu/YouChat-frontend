@@ -1,9 +1,10 @@
-import { Button } from "antd";
+import {Button, message} from "antd";
 import styles from "@/styles/chat.module.css"
 import {isBrowser} from "@/utils/store";
 import {store} from "@/utils/store"
 import CircularJson from 'circular-json';
 import {useState} from "react";
+import {fileToBase64} from "@/utils/utilities";
 
 const emoji_list = [
     '😀', '😂', '🤣', '😅', '😆', '😉', '😊', '😋', '😎', '😍', '🥰', '😘',
@@ -43,6 +44,42 @@ const SingleMessage = (props: any) => {
         setText("");
     };
 
+    const handleImageClick = () => {
+        const imgInput = document.getElementById("imgInput");
+        imgInput.click();
+    };
+
+    const handleFileSelect = (e: any) => {
+        const file = e.target.files[0];
+        if(file) {
+            if (!file.type.startsWith("image/")) {
+                message.error("请上传图片！");
+            } else {
+                fileToBase64(file).then((res) => {
+                    const socket: any = store.getState().webSocket;
+                    socket.send(CircularJson.stringify({
+                        type: "send",
+                        id: store.getState().userId,
+                        sessionId: props.sessionId,
+                        timestamp: Date.now(),
+                        message: res,
+                        messageType: "photo"
+                    }));
+                    const addM = {
+                        "senderId": store.getState().userId,
+                        "timestamp": Date.now(),
+                        "messageId": Date.now(),
+                        "message": res,
+                        "messageType": "photo"
+                    };
+                    props.setMessages((message: any) => [...message, addM]);
+                })
+            }
+        }
+        const imgInput = document.getElementById("imgInput");
+        imgInput.value = "";
+    }
+
     const handleEmoji = (e: any) => {
         setText(text + e.target.id);
     };
@@ -70,7 +107,8 @@ const SingleMessage = (props: any) => {
                 }}>
                     <img src="ui/emoji.svg"/>
                 </div>
-                <div className={styles.function_button}>
+                <div className={styles.function_button} onClick={handleImageClick}>
+                    <input type="file" id="imgInput" style={{display: "none"}} onChange={handleFileSelect} />
                     <img src="ui/pic.svg"/>
                 </div>
                 <div className={styles.function_button}>

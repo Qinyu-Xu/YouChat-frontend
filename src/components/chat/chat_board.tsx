@@ -148,9 +148,23 @@ const ChatBoard = (props: any) => {
                                 <Avatar src={images.get(message.senderId)} />
                             </div>
                             <Dropdown menu={{ items: right_items }} placement="topLeft" trigger={['contextMenu']}>
-                                <div className={styles.message_right}>
-                                    <Linkify>{message.message}</Linkify>
-                                </div>
+                                {
+                                    message.messageType === "text"
+                                    ?
+                                    <div className={styles.message_right}>
+                                        <Linkify>{message.message}</Linkify>
+                                    </div>
+                                    :
+                                    message.messageType === "photo"
+                                    ?
+                                    <div>
+
+                                    </div>
+                                    :
+                                    <div>
+
+                                    </div>
+                                }
                             </Dropdown>
                         </div>
                     ) : (
@@ -159,9 +173,11 @@ const ChatBoard = (props: any) => {
                                 <Avatar src={images.get(message.senderId)} />
                             </div>
                             <Dropdown menu={{ items: left_items }} placement="topLeft"  trigger={['contextMenu']}>
-                                <div className={styles.message_left}>
-                                    <Linkify>{message.message}</Linkify>
-                                </div>
+                                {
+                                    <div className={styles.message_left}>
+                                        <Linkify>{message.message}</Linkify>
+                                    </div>
+                                }
                             </Dropdown>
                         </div>
                 ))}
