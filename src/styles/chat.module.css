@@ -179,3 +179,16 @@
     right: 1rem;
     font-size: 1.6rem;
 }
+
+.send {
+    position: fixed;
+    bottom: 1rem;
+    right: 1rem;
+}
+
+.audio {
+    position: fixed;
+    bottom: 13%;
+    font-size: large;
+    right: 35%;
+}
