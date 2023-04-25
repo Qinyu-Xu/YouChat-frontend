@@ -23,23 +23,25 @@ const SingleMessage = (props: any) => {
 
     const handleClick = (e: any) => {
         if(isBrowser && socket !== null && socket.readyState===1) {
-            const message = {
-                type: "send",
-                id: store.getState().userId,
-                sessionId: props.sessionId,
-                timestamp: Date.now(),
-                message: text,
-                messageType: "text"
-            };
-            const addM = {
-                "senderId": store.getState().userId,
-                "timestamp": Date.now(),
-                "messageId": Date.now(),
-                "message": text,
-                "messageType": "text"
+            if(text !== "") {
+                const message = {
+                    type: "send",
+                    id: store.getState().userId,
+                    sessionId: props.sessionId,
+                    timestamp: Date.now(),
+                    message: text,
+                    messageType: "text"
+                };
+                const addM = {
+                    "senderId": store.getState().userId,
+                    "timestamp": Date.now(),
+                    "messageId": Date.now(),
+                    "message": text,
+                    "messageType": "text"
+                }
+                socket.send(CircularJson.stringify(message));
+                props.setMessages((message: any) => [...message, addM]);
             }
-            socket.send(CircularJson.stringify(message));
-            props.setMessages((message: any) => [...message, addM]);
         }
         setText("");
     };

@@ -5,11 +5,10 @@ import { isBrowser } from "@/utils/store";
 import { store } from "@/utils/store";
 import Linkify from "react-linkify";
 import type { MenuProps } from 'antd';
-import {Avatar, Dropdown, Skeleton} from 'antd';
+import {Avatar, Dropdown, Image, Skeleton} from 'antd';
 import {MenuShow} from "@/components/chat/right_column/right_column";
 import {request} from "@/utils/network";
 import RightColumn from "@/components/chat/right_column/right_column";
-import {DEFAULT_SVG, readSvgAsBase64} from "@/utils/utilities";
 
 const left_items: MenuProps['items'] = [
     {
@@ -53,7 +52,6 @@ const ChatBoard = (props: any) => {
     const [images, setImages] = useState<Map<number,string>>(new Map());
     const [iload, setIload] = useState(false);
     const [mload, setMload] = useState(false);
-    const D = DEFAULT_SVG;
 
     useEffect(() => {
         setMload(false);
@@ -157,8 +155,8 @@ const ChatBoard = (props: any) => {
                                     :
                                     message.messageType === "photo"
                                     ?
-                                    <div>
-
+                                    <div className={styles.photo_right}>
+                                        <Image src={message.message} />
                                     </div>
                                     :
                                     <div>
@@ -174,9 +172,21 @@ const ChatBoard = (props: any) => {
                             </div>
                             <Dropdown menu={{ items: left_items }} placement="topLeft"  trigger={['contextMenu']}>
                                 {
-                                    <div className={styles.message_left}>
-                                        <Linkify>{message.message}</Linkify>
-                                    </div>
+                                    message.messageType === "text"
+                                        ?
+                                        <div className={styles.message_left}>
+                                            <Linkify>{message.message}</Linkify>
+                                        </div>
+                                        :
+                                        message.messageType === "photo"
+                                            ?
+                                            <div className={styles.photo_left}>
+                                                <Image src={message.message} />
+                                            </div>
+                                            :
+                                            <div>
+
+                                            </div>
                                 }
                             </Dropdown>
                         </div>
