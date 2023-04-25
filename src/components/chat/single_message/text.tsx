@@ -34,7 +34,7 @@ const TextBoard = (props: any) => {
     };
 
     return (
-        <div>
+        <div className={styles.writing_box}>
             <textarea
                 className={styles.writing}
                 onChange={(e: any) => props.setText(e.target.value)}

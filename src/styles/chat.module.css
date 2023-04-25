@@ -135,13 +135,20 @@
 
 }
 
+.writing_box {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
 .writing {
     background-color: rgba(255, 255, 255, 0);
     overflow: auto;
     font-size: 1rem;
-    margin: 0;
+    margin: 0.5rem 0 0 0;
     border: 0;
-    padding: 0.5rem 0.5rem 0.5rem 0.5rem;
+    padding: 0 0.5rem 0 0.5rem;
+    resize: none;
     outline: none;
     flex: 1;
 }
