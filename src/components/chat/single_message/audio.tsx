@@ -13,7 +13,7 @@ const AudioInput = (props: any) => {
     let chuncks = [];
      */
 
-    const handleSpeech = () => props.setAudio(audio => !audio);
+    const handleSpeech = () => props.setAudio((audio: any) => !audio);
     useEffect(() => {
         // initMediaRecorder();
         /*
@@ -84,7 +84,7 @@ const AudioInput = (props: any) => {
 }
 
 export const AudioIcon = (props: any) => {
-    const handleSpeech = () => {props.setAudio(audio => !audio);}
+    const handleSpeech = () => {props.setAudio((audio: any) => !audio);}
     return (
         <div className={styles.function_button} onClick={handleSpeech}>
             <img src="ui/microphone.svg"/>
