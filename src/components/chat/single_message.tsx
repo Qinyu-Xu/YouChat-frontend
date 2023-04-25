@@ -106,9 +106,18 @@ const SingleMessage = (props: any) => {
     // 发送语音
     const [mediaRecorder, setMediaRecorder] = useState<any>(null);
     const [mediaStream, setMediaStream] = useState<any>(null);
-    const [recordedChunks, setRecordedChunks] = useState<any>([]);
+    let chuncks = [];
 
     const handleSpeech = () => setAudio(audio => !audio);
+    useEffect(() => {
+        // initMediaRecorder();
+        return () => {
+            setRecording(false);
+            setMediaRecorder(null);
+            setMediaStream(null);
+        }
+    }, [props.sessionId]);
+
     const initMediaRecorder = async () => {
         try {
             const stream: any = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -121,40 +130,38 @@ const SingleMessage = (props: any) => {
     };
 
     useEffect(() => {
-        initMediaRecorder();
-        return () => {
-            setRecording(false);
-            setMediaRecorder(null);
-        }
-    }, [props.sessionId]);
-
-    const startSpeechRecognition = () => {
-        if(!recording) {
-            setRecordedChunks([]);
-            setRecording(recording => !recording);
-            mediaRecorder.start();
-        } else {
-            setRecording(recording => !recording);
-            mediaRecorder.stop();
-        }
-    }
-
-    useEffect(() => {
+        /*
         if (mediaRecorder) {
             mediaRecorder.ondataavailable = (e: any) => {
-                if (e.data.size > 0) {
-                    setRecordedChunks((prevChunks: any) => [...prevChunks, e.data]);
-                    console.log(recordedChunks);
-                }
+                if (e.data.size > 0)
+                    chuncks.push(e.data);
             };
             mediaRecorder.onstop = async () => {
-                const audioBlob = new Blob(recordedChunks);
+                const audioBlob = new Blob(chuncks);
                 const base64Audio = await fileToBase64(audioBlob);
                 console.log('Base64 Audio:', base64Audio);
-                mediaStream.getAudioTracks().forEach((track: MediaStreamTrack) => track.stop());
-            };
+                mediaStream.getAudioTracks().forEach((track) => {track.stop();})
+            }
         }
+        */
+
     }, [mediaRecorder]);
+
+    const startSpeechRecognition = () => {
+        /* if(!recording) {
+            if(mediaRecorder) {
+                if (mediaStream)
+                    mediaStream.getAudioTracks().forEach((track) => {track.enabled = true});
+                chuncks = [];
+                setRecording(true);
+                mediaRecorder.start();
+            }
+        } else {
+            setRecording(false);
+            mediaRecorder.stop();
+        }
+        */
+    }
 
 
     return (
