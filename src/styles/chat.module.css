@@ -281,7 +281,7 @@
 
 .message_item_title {
     height: 1.25rem;
-    width: 11rem;
+    width: 10rem;
     line-height: 1.25rem;
     text-align: left;
     text-overflow: ellipsis;
@@ -290,7 +290,7 @@
 
 .message_item_content {
     height: 1.25rem;
-    width: 12.5rem;
+    width: 12rem;
     line-height: 1.25rem;
     font-size: 0.75rem;
     text-align: left;
