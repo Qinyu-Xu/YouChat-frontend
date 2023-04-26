@@ -69,7 +69,7 @@ const ChatBoard = (props: any) => {
         for (let i = 0; i < members.length; ++i) {
             request("api/people/img/" + members[i].id, "GET", "").then((r: any) => {
                 if(images.every((image: any) => image.id !== members[i].id)) {
-                    setImages(images => [...images, {id: members[i].id, image: r.img}]);
+                    setImages((images: any) => [...images, {id: members[i].id, image: r.img}]);
                 }
             }).then(() => {});
         }

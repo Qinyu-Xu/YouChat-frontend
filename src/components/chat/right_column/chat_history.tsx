@@ -1,16 +1,21 @@
 import {Divider, Modal, MenuProps, Menu, DatePicker, Select, SelectProps, List, Avatar, Image} from "antd";
 import {useEffect, useState} from "react";
-import {request} from "@/utils/network";
 import {isBrowser, store} from "@/utils/store";
-
+import type { Dayjs } from 'dayjs';
+import dayjs from "dayjs";
 const { RangePicker } = DatePicker;
+
+type Generic = string;
+type GenericFn = (value: Dayjs) => string;
+
+export type FormatType = Generic | GenericFn | Array<Generic | GenericFn>;
 
 const AllPicker = (props: any) => {
     return <div>
         <List
             itemLayout="horizontal"
             dataSource={props.messages}
-            renderItem={(item, index) => (
+            renderItem={(item: any, index: number) => (
                 <List.Item>
                     <List.Item.Meta
                         avatar={<Avatar src={
@@ -30,19 +35,24 @@ const AllPicker = (props: any) => {
 };
 
 const TimestampPicker = (props: any) => {
-    const [begin, setBegin] = useState(null);
-    const [end, setEnd] = useState(null);
+    const [begin, setBegin] = useState<any>(0);
+    const [end, setEnd] = useState<any>(2000000000000);
     const handleChange = (e: any) => {
-        setBegin(e[0]);
-        setEnd(e[1]);
+        if(e) {
+            setBegin(dayjs(e[0]).unix() * 1000);
+            setEnd(dayjs(e[1]).unix() * 1000);
+        } else {
+            setBegin(0);
+            setEnd(2000000000000);
+        }
     }
 
     return <div>
-        <RangePicker showTime onChange={handleChange}/>
+        <RangePicker showTime onChange={handleChange} />
         <List
             itemLayout="horizontal"
-            dataSource={props.messages}
-            renderItem={(item, index) => (
+            dataSource={props.messages.filter((message: any) => message.timestamp >= begin && message.timestamp <= end)}
+            renderItem={(item: any, index: number) => (
                 <List.Item>
                     <List.Item.Meta
                         avatar={<Avatar src={
@@ -79,7 +89,7 @@ const TypePicker = (props: any) => {
         <List
             itemLayout="horizontal"
             dataSource={props.messages.filter((message: any) => message.messageType === type)}
-            renderItem={(item, index) => (
+            renderItem={(item: any, index: number) => (
                 <List.Item>
                     <List.Item.Meta
                         avatar={<Avatar src={
@@ -99,7 +109,7 @@ const TypePicker = (props: any) => {
 }
 
 const MemberPicker = (props: any) => {
-    const [selected, setSelected] = useState([]);
+    const [selected, setSelected] = useState<any>([]);
     const [msg, setMsg] = useState([]);
     const options: any = props.members.map((member: any) => {
         return {
@@ -125,7 +135,7 @@ const MemberPicker = (props: any) => {
         <List
             itemLayout="horizontal"
             dataSource={msg}
-            renderItem={(item, index) => (
+            renderItem={(item: any, index: number) => (
                 <List.Item>
                     <List.Item.Meta
                         avatar={<Avatar src={

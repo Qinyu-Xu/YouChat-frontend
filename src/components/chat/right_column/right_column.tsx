@@ -61,32 +61,35 @@ const RightColumn = (props: any) => {
     const handleInvite = () => {};
 
     return <div id="mySidenav" className={styles.sidenav}>
-        群成员
+        {props.session.sessionType === 1 ? "" : (<div>群成员<br/></div>)}
         <UserList members={props.members}/>
-        <Divider />
-        群名：
-        <br />
-        <div onClick={handleBoard}>
+        {props.session.sessionType === 1 ? <div></div> :
+            <div>
+            <Divider/>
+            群名：{props.session.sessionName}
+            <br /> <br/>
+            <div onClick={handleBoard}>
             群公告
             <RightOutlined />
-        </div>
-        <br />
-        <Divider />
-        <div onClick={handleInvite}>
+            </div>
+            <br />
+            <div onClick={handleInvite}>
             管理群成员
             <RightOutlined />
-        </div>
-        <br/>
-        <div onClick={handleMana}>
+            </div>
+            <br/>
+            <div onClick={handleMana}>
             设置管理员
             <RightOutlined />
-        </div>
-        <br/>
+            </div>
+            <br/>
+            </div>
+        }
+        <Divider />
         <div onClick={handleHistory}>
             消息记录
             <RightOutlined />
         </div>
-        <br />
         <Divider />
         设置静音<Switch defaultChecked onChange={handleMute} />
         <br />

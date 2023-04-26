@@ -7,8 +7,8 @@ const UserList = (props: any) => {
             name: member.nickname
         }
     })
-    return (<div>
-
+    return (
+        <div>
         <List
             itemLayout="horizontal"
             dataSource={data}

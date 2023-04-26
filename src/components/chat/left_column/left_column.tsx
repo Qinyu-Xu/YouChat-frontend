@@ -7,7 +7,7 @@ import MessageItem from "./message_item";
 
 const LeftColumn = (props: any) => {
 
-    const [list, setList] = useState([]);
+    const [list, setList] = useState<any>([]);
     const [load, setLoad] = useState(false);
     const id = store.getState().userId;
 
