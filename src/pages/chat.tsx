@@ -7,6 +7,7 @@ import UpperBar from "@/components/chat/upper_bar";
 
 const Chat = () => {
 
+    const [list, setList] = useState<any>([]);
     const [session, setSession] = useState(null);
     const [refresh, setRefresh] = useState(0);
 
@@ -17,7 +18,8 @@ const Chat = () => {
             </div>
             <div className={styles.column}>
                 <UpperBar setRefresh={setRefresh}/>
-                <LeftColumn setSession={setSession} refresh={refresh}/>
+                <LeftColumn setSession={setSession} refresh={refresh}
+                    list={list} setList={setList}/>
             </div>
             { session === null ? <div></div> :
                 <div className={styles.content}>

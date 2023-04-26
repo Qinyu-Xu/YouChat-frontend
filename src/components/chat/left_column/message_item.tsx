@@ -30,7 +30,12 @@ const MessageItem = (props: any) => {
     });
 
     return (
-        <div className={styles.message_item}>
+        <div className={
+            props.session.isTop ?
+                styles.message_item_istop
+            :
+                styles.message_item}>
+
             <Avatar className={styles.message_item_left} src={image}/>
             <div className={styles.message_item_right}>
                 <div className={styles.message_item_title}>

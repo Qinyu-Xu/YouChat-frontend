@@ -1,6 +1,7 @@
 import {useEffect, useState} from "react";
 import { request } from "@/utils/network";
 import {message, Skeleton, Spin} from "antd";
+import { isBrowser } from "@/utils/store";
 import styles from "@/styles/layout.module.css";
 import {store} from "@/utils/store";
 import MessageItem from "./message_item";
@@ -12,11 +13,10 @@ const LeftColumn = (props: any) => {
     const id = store.getState().userId;
 
     const sortList = () => {
-        list.sort((a: any, b:any) => {
-            if(a.isTop < b.isTop) return 1;
-            else if(a.isTop > b.isTop) return -1;
-            return a.timestamp - b.timestamp;
-        })
+        setList((list : any) => list.sort((a: any, b:any) => {
+            if(a.isTop !== b.isTop) return - a.isTop + b.isTop;
+            return - a.timestamp + b.timestamp;
+        }));
     };
 
     const getList = () => {
@@ -60,30 +60,34 @@ const LeftColumn = (props: any) => {
             setLoad(true);
     }, [list]);
 
-    /*
-    if(isBrowser && socket) {
-        socket.addEventListener("message", (res: any) => {
-            console.log(res.data);
-            const msg = (eval("("+res.data+")"));
-            if (msg.type === 'send') {
-                setList((list: any) => list.map((item: any) => item.sessionId !== msg.sessionId ? item : {
-                    "sessionId": item.sessionId,
-                    "sessionName": item.sessionName,
-                    "timestamp": item.timestamp,
-                    "type": "text",
-                    "message": res.message,
-                    "isTop": item.isTop,
-                    "isMute": item.isMute
-                }));
-                sortList();
-            }
-        });
-    }*/
-
     useEffect(() => {
         getList();
         sortList();
     }, [props.refresh]);
+
+    useEffect(() => {
+        const socket: any = store.getState().webSocket;
+        if(isBrowser && socket != null && socket.readyState === 1) {
+            socket.addEventListener("message", (res: any) => {
+                const msg = (eval("("+res.data+")"));
+                if (msg.type === 'send') {
+                    console.log(msg);
+                    setList((list: any) => list.map((item: any) => item.sessionId !== msg.sessionId ? item : {
+                        "sessionId": item.sessionId,
+                        "sessionName": item.sessionName,
+                        "sessionType": item.sessionType,
+                        "timestamp": msg.timestamp,
+                        "type": msg.messageType,
+                        "lastSender": msg.senderName,
+                        "message": msg.message,
+                        "isTop": item.isTop,
+                        "isMute": item.isMute
+                    }));
+                    sortList();
+                }
+            });
+        }
+    }, [load, store.getState().webSocket]);
 
     return load
         ?
