@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import Sidebar from "@/components/sidebar";
 import styles from "@/styles/layout.module.css"
-import ChatList from "@/components/chat/chat_list";
+import LeftColumn from "@/components/chat/left_column/left_column";
 import ChatBoard from "@/components/chat/chat_board";
 import UpperBar from "@/components/chat/upper_bar";
 
@@ -17,7 +17,7 @@ const Chat = () => {
             </div>
             <div className={styles.column}>
                 <UpperBar setRefresh={setRefresh}/>
-                <ChatList setSession={setSession} refresh={refresh}/>
+                <LeftColumn setSession={setSession} refresh={refresh}/>
             </div>
             { session === null ? <div></div> :
                 <div className={styles.content}>

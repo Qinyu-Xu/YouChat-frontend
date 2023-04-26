@@ -1,11 +1,11 @@
-import {useEffect, useRef, useState} from "react";
+import {useEffect, useState} from "react";
 import SingleMessage from "@/components/chat/single_message";
 import styles from "@/styles/chat.module.css"
 import { isBrowser } from "@/utils/store";
 import { store } from "@/utils/store";
 import Linkify from "react-linkify";
 import type { MenuProps } from 'antd';
-import {Dropdown} from 'antd';
+import {Avatar, Dropdown, Image, Skeleton} from 'antd';
 import {MenuShow} from "@/components/chat/right_column/right_column";
 import {request} from "@/utils/network";
 import RightColumn from "@/components/chat/right_column/right_column";
@@ -44,26 +44,54 @@ const right_items: MenuProps['items'] = [
     },
 ];
 
-const socket: any = store.getState().webSocket;
-
 const ChatBoard = (props: any) => {
 
     const [messages, setMessages] = useState([]);
-    const [members, setMembers] = useState([]);
+    const [members, setMembers] = useState<any>([]);
+    const [images, setImages] = useState<any>([]);
+    const [iload, setIload] = useState(false);
+    const [mload, setMload] = useState(false);
 
     useEffect(() => {
-            request(
-                "/api/session/chatroom?id="+props.session.sessionId,
-                "GET",
-                ""
-            ).then((res: any) => {
-                setMembers(res.members);
-            });
-        }, []
+        setMload(false);
+        setIload(false);
+        request(
+            "/api/session/chatroom?id="+props.session.sessionId,
+            "GET",
+            ""
+        ).then((res: any) => {
+            setMembers(res.members);
+        });
+        }, [props.session.sessionId]
     );
 
     useEffect(() => {
+        for (let i = 0; i < members.length; ++i) {
+            request("api/people/img/" + members[i].id, "GET", "").then((r: any) => {
+                if(images.every((image: any) => image.id !== members[i].id)) {
+                    setImages((images: any) => [...images, {id: members[i].id, image: r.img}]);
+                }
+            }).then(() => {});
+        }
+    }, [members]);
+
+    useEffect(() => {
+        if(members.length !== 0) {
+            let isTrue = true;
+            for (let i = 0; i < members.length; ++i) {
+                if (images.every((image: any) => image.id !== members[i].id)) {
+                    isTrue = false;
+                }
+            }
+            if (isTrue) {
+                setIload(true);
+            }
+        }
+    }, [images, props.session.sessionId]);
+
+    useEffect(() => {
         const getPull = () => {
+            const socket: any = store.getState().webSocket;
             socket.send(JSON.stringify({
                     type: "pull",
                     id: store.getState().userId,
@@ -83,8 +111,10 @@ const ChatBoard = (props: any) => {
             if ( res.type === 'pull' ) {
                 setMessages(res.messages);
                 setMessages((messages) => messages.reverse());
+                setMload(true);
             }
         };
+        const socket: any = store.getState().webSocket;
         if(isBrowser && socket != null && socket.readyState === 1) {
             socket.addEventListener("message", handleSend);
             socket.addEventListener("message", handlePull);
@@ -94,7 +124,7 @@ const ChatBoard = (props: any) => {
             socket.removeEventListener('message', handleSend);
             socket.removeEventListener('message', handlePull);
         };
-    }, [props.session.sessionId]);
+    }, [props.session.sessionId, store.getState().webSocket]);
 
     useEffect(() => {
         document
@@ -102,9 +132,9 @@ const ChatBoard = (props: any) => {
         ?.scrollIntoView()
     }, [messages]);
 
-
-
-    return (
+    return iload && mload
+        ?
+        (
         <div className={styles.container}>
             <div className={styles.title_bar}>
                 {props.session.sessionName}
@@ -118,32 +148,76 @@ const ChatBoard = (props: any) => {
                     message.senderId === store.getState().userId ? (
                         <div className={styles.message} key={index+1}>
                             <div className={styles.headshot_right}>
-                                <img src="/headshot/01.svg"/>
+                                <Avatar src={
+                                    images.filter( (image: any) => image.id === message.senderId)[0] === undefined
+                                        ?
+                                        "/headshot/01.svg"
+                                        :
+                                        images.filter( (image: any) => image.id === message.senderId)[0].image
+                                } />
                             </div>
                             <Dropdown menu={{ items: right_items }} placement="topLeft" trigger={['contextMenu']}>
-                                <div className={styles.message_right}>
-                                    <Linkify>{message.message}</Linkify>
-                                </div>
+                                {
+                                    message.messageType === "text"
+                                    ?
+                                    <div className={styles.message_right}>
+                                        <Linkify>{message.message}</Linkify>
+                                    </div>
+                                    :
+                                    message.messageType === "photo"
+                                    ?
+                                    <div className={styles.photo_right}>
+                                        <Image src={message.message} />
+                                    </div>
+                                    :
+                                    <div>
+
+                                    </div>
+                                }
                             </Dropdown>
                         </div>
                     ) : (
                         <div className={styles.message} key={index+1}>
                             <div className={styles.headshot_left}>
-                                <img src="/headshot/02.svg"/>
+                                <Avatar src={
+                                    images.filter( (image: any) => image.id === message.senderId)[0] === undefined
+                                        ?
+                                        "/headshot/01.svg"
+                                        :
+                                        images.filter( (image: any) => image.id === message.senderId)[0].image
+                                } />
                             </div>
                             <Dropdown menu={{ items: left_items }} placement="topLeft"  trigger={['contextMenu']}>
-                                <div className={styles.message_left}>
-                                    <Linkify>{message.message}</Linkify>
-                                </div>
+                                {
+                                    message.messageType === "text"
+                                        ?
+                                        <div className={styles.message_left}>
+                                            <Linkify>{message.message}</Linkify>
+                                        </div>
+                                        :
+                                        message.messageType === "photo"
+                                            ?
+                                            <div className={styles.photo_left}>
+                                                <Image src={message.message} />
+                                            </div>
+                                            :
+                                            <div>
+
+                                            </div>
+                                }
                             </Dropdown>
                         </div>
                 ))}
                 <div id="THEEND"/>
             </div>
             <SingleMessage sessionId={props.session.sessionId} setMessages={setMessages}/>
-            <RightColumn session={props.session} members={members}/>
+            <RightColumn session={props.session} members={members} images={images}/>
         </div>
-    )
+        )
+        :
+        (
+            <Skeleton />
+        )
 };
 
 export default ChatBoard;

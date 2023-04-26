@@ -101,6 +101,7 @@
     line-height: 3.5rem;
     text-align: center;
     background-color: rgba(255, 255, 255, 0.25);
+    display: flex;
 }
 .column_item:hover {
     background-color: rgba(255, 255, 255, 0.5);

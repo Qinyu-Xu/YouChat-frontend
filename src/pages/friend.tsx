@@ -26,7 +26,15 @@ function Friend() {
             <SideBar/>
             <Column setProfile={setProfile}/>
             <div className={styles.content}>
-                <Profile profile={profile}/>
+                {
+                    profile.id === 0
+                        ?
+                        <div>
+
+                        </div>
+                        :
+                        <Profile profile={profile}/>
+                }
             </div>
         </div>
     );

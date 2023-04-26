@@ -1,94 +1,34 @@
-import { Button } from "antd";
 import styles from "@/styles/chat.module.css"
-import {isBrowser} from "@/utils/store";
-import {store} from "@/utils/store"
-import CircularJson from 'circular-json';
 import {useState} from "react";
+import TextBoard from "@/components/chat/single_message/text";
+import {ImgIcon} from "@/components/chat/single_message/image";
+import AudioInput, {AudioIcon} from "@/components/chat/single_message/audio";
+import EmojiBoard, {EmojiIcon} from "@/components/chat/single_message/emoji";
+import {FileIcon} from "@/components/chat/single_message/file";
+import {VideoIcon} from "@/components/chat/single_message/video";
 
-const emoji_list = [
-    '😀', '😂', '🤣', '😅', '😆', '😉', '😊', '😋', '😎', '😍', '🥰', '😘',
-    '😚', '🙂', '🤗', '🤩', '🤔', '🤨', '😶', '🙄', '😏', '😣', '😥', '🤐',
-    '😯', '😪', '😫', '😴', '😌', '😛', '😜', '😝', '🤤', '😒', '😓', '😔',
-    '🙃', '😲', '🙁', '😖', '😟', '😤', '😢', '😭', '😧', '😨', '🤯', '😬',
-    '😰', '😱', '😳', '🤪', '😵', '😡', '😷', '🤒', '🤕', '🤢', '🤮', '🤧',
-    '😇', '🤡', '🤫', '🤭', '🧐', '🤓', '👻', '🤖', '💩', '🙌', '👏', '🤝', 
-    '👍', '👎', '👊', '🤟', '👌', '👈', '👉', '👆', '👇', '👋', '💪', '🙏'
-];
 
 const SingleMessage = (props: any) => {
-    const socket: any = store.getState().webSocket;
-    const [text, setText] = useState("");
+    const [audio, setAudio] = useState(false);
     const [emoji, setEmoji] = useState(false);
-
-    const handleClick = (e: any) => {
-        if(isBrowser && socket !== null && socket.readyState===1) {
-            const message = {
-                type: "send",
-                id: store.getState().userId,
-                sessionId: props.sessionId,
-                timestamp: Date.now(),
-                message: text,
-                messageType: "text"
-            };
-            const addM = {
-                "senderId": store.getState().userId,
-                "timestamp": Date.now(),
-                "messageId": Date.now(),
-                "message": text,
-                "messageType": "text"
-            }
-            socket.send(CircularJson.stringify(message));
-            props.setMessages((message: any) => [...message, addM]);
-        }
-        setText("");
-    };
-
-    const handleEmoji = (e: any) => {
-        setText(text + e.target.id);
-    };
-
-    const emojiList: any[] = [];
-    emoji_list.map(emoji => {
-        emojiList.push(
-            <button className={styles.emoji_item} id={emoji} onClick={handleEmoji}>
-                {emoji}
-            </button>
-        );
-    });
+    const [text, setText] = useState("");
 
     return (
         <div className={styles.input_box}>
-            { 
-                emoji ? 
-                <div className={styles.emoji_board}>
-                    { emojiList }
-                </div> : <div/> 
-            }
+            {emoji ? <EmojiBoard text={text} setText={setText}/> : <div></div>}
             <div className={styles.function_bar}>
-                <div className={styles.function_button} onClick={() => {
-                    setEmoji(!emoji);
-                }}>
-                    <img src="ui/emoji.svg"/>
-                </div>
-                <div className={styles.function_button}>
-                    <img src="ui/pic.svg"/>
-                </div>
-                <div className={styles.function_button}>
-                    <img src="ui/microphone.svg"/>
-                </div>
-                <div className={styles.function_button}>
-                    <img src="ui/file-addition.svg"/>
-                </div>
-                <div className={styles.function_button}>
-                    <img src="ui/phone-video-call.svg"/>
-                </div>
+                <EmojiIcon setEmoji={setEmoji} emoji={emoji}/>
+                <ImgIcon sessionId={props.sessionId} setMessages={props.setMessages}/>
+                <AudioIcon setAudio={setAudio} />
+                <FileIcon />
+                <VideoIcon />
             </div>
-            <textarea 
-                className={styles.writing}
-                onChange={(e: any) => setText(e.target.value)} 
-                value={text}
-            />
-            <Button onClick={handleClick} >发送</Button>
+            {
+                audio
+                    ? <AudioInput sessionId={props.sessionId} setAudio={setAudio}/>
+                    : <TextBoard text={text} setMessages={props.setMessages} setText={setText} sessionId={props.sessionId}/>
+            }
+
         </div>
     );
 }

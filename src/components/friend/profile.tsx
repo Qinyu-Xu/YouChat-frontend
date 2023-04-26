@@ -1,7 +1,8 @@
 import styles from '@/styles/profile.module.css'
-import { Button, Input } from "antd";
+import {Avatar, Button, Input, Spin} from "antd";
 import { request } from "@/utils/network";
-import { useState } from 'react';
+import {useEffect, useState} from 'react';
+import {store} from "@/utils/store";
 
 interface ProfileProps {
     profile: any,
@@ -28,6 +29,22 @@ const send = async (id: number, group: string) => {
 function Profile(props: ProfileProps) {
     const operation: any[] = [];
     const [group, setGroup] = useState("");
+    const [image, setImage] = useState<any>('/headshot/01.svg');
+    const [iload, setIload] = useState(false);
+
+    useEffect(() => {
+        setIload(false);
+        request("api/people/img/"+props.profile.id, "GET", "").then(res => {
+            console.log(res);
+            if(res.code === 0) {
+                if(res.img !== '')
+                    setImage(res.img);
+                else
+                    setImage('/headshot/01.svg');
+                setIload(true);
+            }
+        })
+    }, [props.profile.id]);
 
     if (props.profile.group == "Stranger") {
         operation.push(
@@ -72,8 +89,9 @@ function Profile(props: ProfileProps) {
         )
     }
 
-    return (
+    return iload ? (
         <div className={styles.profile}>
+            <Avatar size={300} src={image} />
             Nickname: {props.profile.nickname}
             <br/>
             Username: {props.profile.username}
@@ -85,7 +103,11 @@ function Profile(props: ProfileProps) {
             <br/>
             {operation}
         </div>
-    );
+    )
+        :
+        <div className={styles.profile}>
+            <Spin />
+        </div>;
 };
 
 export default Profile;

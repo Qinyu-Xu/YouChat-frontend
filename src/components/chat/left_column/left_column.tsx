@@ -1,12 +1,14 @@
 import {useEffect, useState} from "react";
 import { request } from "@/utils/network";
-import { message } from "antd";
+import {message, Skeleton, Spin} from "antd";
 import styles from "@/styles/layout.module.css";
 import {store} from "@/utils/store";
+import MessageItem from "./message_item";
 
-const ChatList = (props: any) => {
+const LeftColumn = (props: any) => {
 
-    const [list, setList] = useState([]);
+    const [list, setList] = useState<any>([]);
+    const [load, setLoad] = useState(false);
     const id = store.getState().userId;
 
     const sortList = () => {
@@ -41,10 +43,22 @@ const ChatList = (props: any) => {
                 }
             }
             sortList();
+            setLoad(true);
         } else {
             message.error("获取聊天列表发生错误！").then(_=>_);
         }});
     };
+
+    useEffect(() => {
+        let isTrue = true;
+        for(let i = 0; i < list.length; ++i) {
+            if(list[i].sessionType === 1 && list[i].sessionName === "friend") {
+                isTrue = false;
+            }
+        }
+        if(isTrue)
+            setLoad(true);
+    }, [list]);
 
     /*
     if(isBrowser && socket) {
@@ -71,17 +85,22 @@ const ChatList = (props: any) => {
         sortList();
     }, [props.refresh]);
 
-    return (
+    return load
+        ?
+        (
         <div>
             {
                 list.map((session: any) => (
-                    <div className={styles.column_item} key={session.sessionId} onClick={ _ => {props.setSession(session);}}>
-                        {session.sessionName}
+                    <div key={session.sessionId} onClick={ _ => {props.setSession(session);}}>
+                        <MessageItem session={session}/>
                     </div>
                 ))
             }
         </div>
-    );
+        )
+        :
+        <Spin />
+        ;
 };
 
-export default ChatList;
+export default LeftColumn;

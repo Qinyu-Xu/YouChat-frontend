@@ -18,7 +18,6 @@ export default function App({ Component, pageProps }: AppProps) {
             socket = store.getState().webSocket;
             if (socket !== null) {
                 socket.addEventListener("open", () => {
-                    console.log("Websocket Connected!");
                     if (store.getState().userId !== 0) {
                         socket.send(JSON.stringify({
                             type: 'user_auth',

@@ -3,6 +3,7 @@ import { request } from "@/utils/network";
 import styles from '@/styles/register.module.css';
 import { message, Form, Button, Input, Typography } from "antd";
 import { useRouter } from "next/router";
+import {readSvgAsBase64, getRandomNumber} from "@/utils/utilities";
 
 const { Title } = Typography;
 
@@ -44,7 +45,10 @@ function Register() {
             );
             if(response.code === 0) {
                 message.success('成功注册！');
-                router.push('/login');
+                await request("api/people/img/"+response.id, "PUT", {
+                    img: await readSvgAsBase64(`/headshot/${getRandomNumber(1, 99)}.svg`),
+                })
+                await router.push('/login');
             } else {
                 console.log(response);
                 message.error(response.info);
