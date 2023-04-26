@@ -50,9 +50,11 @@
     padding: 0.25rem 0.5rem;
     color: #000;
     float: left;
-    width: fit-content;
-    min-width: 0.5rem;
-    max-width: 70%;
+    width: auto;
+    height: auto;
+    min-width: 0;
+    max-width: 40%;
+    min-height: 1.5rem;
 }
 
 .headshot_left {
@@ -85,14 +87,12 @@
     margin: 0;
     padding: 0.25rem 0.5rem;
     color: #fff;
+    width: auto;
+    height: auto;
     float: right;
-    width: fit-content;
-    min-width: 0.5rem;
-    max-width: 70%;
+    min-width: 0;
+    max-width: 40%;
     min-height: 1.5rem;
-    line-height: 1.5rem;
-    word-wrap: break-word;
-    word-break: break-all;
 }
 
 .headshot_right {
