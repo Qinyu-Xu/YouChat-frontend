@@ -77,7 +77,11 @@
     float: right;
     width: fit-content;
     min-width: 0.5rem;
+    min-height: 1.5rem;
+    line-height: 1.5rem;
     max-width: 70%;
+    word-wrap: break-word;
+    word-break: break-all;
 }
 
 .photo_right {
@@ -235,16 +239,20 @@
 
 .message_item_title {
     height: 1.25rem;
-    width: 100%;
+    width: 14.5rem;
     line-height: 1.25rem;
     text-align: left;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 
 .message_item_content {
     height: 1.25rem;
-    width: 100%;
+    width: 14.5rem;
     line-height: 1.25rem;
     font-size: 0.75rem;
     text-align: left;
     color: #777;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }

@@ -40,7 +40,7 @@ const MessageItem = (props: any) => {
                     {
                         props.session.lastSender
                     }
-                    :
+                    ：
                     {
                         props.session.type == "audio" ?
                             "[语音]"
