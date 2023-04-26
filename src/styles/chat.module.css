@@ -249,7 +249,7 @@
     padding: 0;
 }
 
-.message_item_right {
+.message_item_mid {
     flex: 1;
     height: 2.5rem;
     margin: auto;
@@ -257,9 +257,31 @@
     flex-direction: column;
 }
 
+.message_item_right {
+    height: 2rem;
+    width: 2rem;
+    margin: 0.75rem;
+    border: 0;
+    padding: 0;
+}
+
+.message_item_time {
+    font-size: 0.6rem;
+    color: #aaa;
+    text-align: right;
+    overflow: hidden;
+    flex: 1;
+}
+
+.message_item_mute {
+    text-align: left;
+    overflow: hidden;
+    flex: 1;
+}
+
 .message_item_title {
     height: 1.25rem;
-    width: 14.5rem;
+    width: 11rem;
     line-height: 1.25rem;
     text-align: left;
     text-overflow: ellipsis;
@@ -268,7 +290,7 @@
 
 .message_item_content {
     height: 1.25rem;
-    width: 14.5rem;
+    width: 12.5rem;
     line-height: 1.25rem;
     font-size: 0.75rem;
     text-align: left;

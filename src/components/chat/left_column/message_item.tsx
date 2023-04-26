@@ -4,6 +4,7 @@ import { Avatar } from "antd";
 import {store} from "@/utils/store";
 import { useEffect, useState } from "react";
 import {getRandomNumber} from "@/utils/utilities";
+import moment from "moment";
 
 const MessageItem = (props: any) => {
     const [image, setImage] = useState("");
@@ -37,7 +38,7 @@ const MessageItem = (props: any) => {
                 styles.message_item}>
 
             <Avatar className={styles.message_item_left} src={image}/>
-            <div className={styles.message_item_right}>
+            <div className={styles.message_item_mid}>
                 <div className={styles.message_item_title}>
                     {props.session.sessionName}
                 </div>
@@ -56,6 +57,22 @@ const MessageItem = (props: any) => {
                         )
                     }
                 </div>
+            </div>
+            <div className={styles.message_item_right}>
+                <div className={styles.message_item_time}>
+                    {
+                        moment().year() != moment(props.session.timestamp).year() 
+                        ?
+                            moment(props.session.timestamp).format("YYYY/MM/DD")
+                        : (
+                            (moment().month() != moment(props.session.timestamp).month()) || (moment().date() != moment(props.session.timestamp).date()) 
+                            ?
+                                moment(props.session.timestamp).format("MM/DD")
+                            : 
+                                moment(props.session.timestamp).format("HH:mm")    
+                        )
+                    }
+                </div>        
             </div>
         </div>
     )
