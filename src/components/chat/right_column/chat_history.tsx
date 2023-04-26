@@ -1,4 +1,4 @@
-import {Divider, Modal, MenuProps, Menu, DatePicker, Select, SelectProps, List, Avatar} from "antd";
+import {Divider, Modal, MenuProps, Menu, DatePicker, Select, SelectProps, List, Avatar, Image} from "antd";
 import {useEffect, useState} from "react";
 import {request} from "@/utils/network";
 import {isBrowser, store} from "@/utils/store";
@@ -15,13 +15,13 @@ const AllPicker = (props: any) => {
                     <List.Item.Meta
                         avatar={<Avatar src={
                             props.images.filter( (image: any) => image.id === item.senderId)[0] === undefined
-                                ?
-                                "/headshot/01.svg"
-                                :
-                                props.images.filter( (image: any) => image.id === item.senderId)[0].image
+                                ? "/headshot/01.svg"
+                                : props.images.filter( (image: any) => image.id === item.senderId)[0].image
                         } />}
-                        title={}
-                        description="Ant Design, a design language for background applications, is refined by Ant UED Team"
+                        title={(props.members.filter((member: any) => member.id === item.senderId))[0] === undefined
+                                ? "Stranger" :
+                            (props.members.filter((member: any) => member.id === item.senderId))[0].nickname}
+                        description={ item.messageType === "text" ? item.message : <Image src={item.message} />}
                     />
                 </List.Item>
             )}
@@ -39,15 +39,35 @@ const TimestampPicker = (props: any) => {
 
     return <div>
         <RangePicker showTime onChange={handleChange}/>
+        <List
+            itemLayout="horizontal"
+            dataSource={props.messages}
+            renderItem={(item, index) => (
+                <List.Item>
+                    <List.Item.Meta
+                        avatar={<Avatar src={
+                            props.images.filter( (image: any) => image.id === item.senderId)[0] === undefined
+                                ? "/headshot/01.svg"
+                                : props.images.filter( (image: any) => image.id === item.senderId)[0].image
+                        } />}
+                        title={(props.members.filter((member: any) => member.id === item.senderId))[0] === undefined
+                            ? "Stranger" :
+                            (props.members.filter((member: any) => member.id === item.senderId))[0].nickname}
+                        description={ item.messageType === "text" ? item.message : <Image src={item.message} />}
+                    />
+                </List.Item>
+            )}
+        />
     </div>
 };
 
 const TypePicker = (props: any) => {
-    const handleChange = () => {};
+    const [type, setType] = useState('text');
+    const handleChange = (e: any) => {setType(e);};
     const options: any = [
-        { value: '文本', label: 'text' },
-        { value: '图片', label: 'image' },
-        { value: '语音', label: 'audio' },
+        { value: 'text', label: '文本' },
+        { value: 'photo', label: '图片' },
+        { value: 'audio', label: '语音' },
     ]
     return <div>
         <Select
@@ -56,28 +76,70 @@ const TypePicker = (props: any) => {
             onChange={handleChange}
             options={options}
         />
+        <List
+            itemLayout="horizontal"
+            dataSource={props.messages.filter((message: any) => message.messageType === type)}
+            renderItem={(item, index) => (
+                <List.Item>
+                    <List.Item.Meta
+                        avatar={<Avatar src={
+                            props.images.filter( (image: any) => image.id === item.senderId)[0] === undefined
+                                ? "/headshot/01.svg"
+                                : props.images.filter( (image: any) => image.id === item.senderId)[0].image
+                        } />}
+                        title={(props.members.filter((member: any) => member.id === item.senderId))[0] === undefined
+                            ? "Stranger" :
+                            (props.members.filter((member: any) => member.id === item.senderId))[0].nickname}
+                        description={ item.messageType === "text" ? item.message : <Image src={item.message} />}
+                    />
+                </List.Item>
+            )}
+        />
     </div>
 }
 
 const MemberPicker = (props: any) => {
-
+    const [selected, setSelected] = useState([]);
+    const [msg, setMsg] = useState([]);
     const options: any = props.members.map((member: any) => {
         return {
             label: member.nickname,
             value: member.id
         }
     });
-    const default_val = options[0];
-    const handleChange = (e: any) => {console.log(e);};
+
+    const handleChange = (e: any) => {setSelected(e)};
+
+    useEffect(() => {
+        setMsg(props.messages.filter((message: any) => selected.includes(message.senderId)));
+    }, [selected]);
 
     return <div>
         <Select
             mode="multiple"
             style={{ width: '50%' }}
             allowClear
-            defaultValue={default_val}
             onChange={handleChange}
             options={options}
+        />
+        <List
+            itemLayout="horizontal"
+            dataSource={msg}
+            renderItem={(item, index) => (
+                <List.Item>
+                    <List.Item.Meta
+                        avatar={<Avatar src={
+                            props.images.filter( (image: any) => image.id === item.senderId)[0] === undefined
+                                ? "/headshot/01.svg"
+                                : props.images.filter( (image: any) => image.id === item.senderId)[0].image
+                        } />}
+                        title={(props.members.filter((member: any) => member.id === item.senderId))[0] === undefined
+                            ? "Stranger" :
+                            (props.members.filter((member: any) => member.id === item.senderId))[0].nickname}
+                        description={ item.messageType === "text" ? item.message : <Image src={item.message} />}
+                    />
+                </List.Item>
+            )}
         />
     </div>
 
@@ -115,7 +177,7 @@ const ChatHistory = (props: any) => {
             socket.send(JSON.stringify({
                     type: "pull",
                     id: store.getState().userId,
-                    sessionId: props.session.sessionId,
+                    sessionId: props.sessionId,
                     messageScale: 100
                 })
             );
@@ -124,7 +186,6 @@ const ChatHistory = (props: any) => {
             res = eval("(" + res.data + ")")
             if ( res.type === 'pull' ) {
                 setMessages(res.messages);
-                setMessages((messages) => messages.reverse());
             }
         };
         const socket: any = store.getState().webSocket;
@@ -132,9 +193,7 @@ const ChatHistory = (props: any) => {
             socket.addEventListener("message", handlePull);
             getPull();
         }
-        return () => {
-            socket.removeEventListener('message', handlePull);
-        };
+        return () => {socket.removeEventListener('message', handlePull);};
     }, [props.sessionId, store.getState().webSocket]);
 
     return (
@@ -143,12 +202,12 @@ const ChatHistory = (props: any) => {
             <Menu onClick={onClick} selectedKeys={[current]} mode="horizontal" items={items} />
             <br />
             {current === 'all'
-                ? <AllPicker message={messages} images={props.images}/>
+                ? <AllPicker members={props.members} messages={messages} images={props.images}/>
                 : (current === 'type'
-                    ? <TypePicker message={messages} images={props.images}/>
+                    ? <TypePicker members={props.members} messages={messages} images={props.images}/>
                     : (current === 'time'
-                        ? <TimestampPicker message={messages} images={props.images}/>
-                        : <MemberPicker members={props.members} message={messages} images={props.images}/>
+                        ? <TimestampPicker members={props.members} messages={messages} images={props.images}/>
+                        : <MemberPicker members={props.members} messages={messages} images={props.images}/>
                         )
                     )
             }
