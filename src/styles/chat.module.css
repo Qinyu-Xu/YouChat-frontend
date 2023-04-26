@@ -135,7 +135,10 @@
     width: 1.5rem;
     border: 0;
     margin: 0.5rem 0.5rem 0rem 0.5rem;
-
+    opacity: 0.7;
+}
+.function_button:hover {
+    opacity: 1.0;
 }
 
 .writing_box {
@@ -148,6 +151,7 @@
     background-color: rgba(255, 255, 255, 0);
     overflow: auto;
     font-size: 1rem;
+    line-height: 1.5rem;
     margin: 0.5rem 0 0 0;
     border: 0;
     padding: 0 0.5rem 0 0.5rem;

@@ -65,20 +65,18 @@
     padding: 0.5rem;
     border: 0;
     font-size: 1rem;
-    font-family: inherit;
     color: #444;
     background-color: rgba(255, 255, 255, 0.25);
 }
 
 .chat_search_bar {
-    flex: 1;
+    width: 14rem;
     height: 1rem;
     border-radius: 0.5rem;
     margin: 1rem 0 1rem 1rem;
     padding: 0.5rem;
     border: 0;
     font-size: 1rem;
-    font-family: inherit;
     color: #444;
     background-color: rgba(255, 255, 255, 0.25);
 }
@@ -87,8 +85,12 @@
     margin: 1rem;
     border: 0;
     padding: 0;
-    width: 2rem;
     height: 2rem;
+    width: 2rem;
+    opacity: 0.6;
+}
+.add_button:hover {
+    opacity: 0.9;
 }
 
 .column_item {

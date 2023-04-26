@@ -14,7 +14,7 @@ const Chat = () => {
     return (
         <div className={styles.container}>
             <div className={styles.sidebar}>
-                <Sidebar />
+                <Sidebar type={"chat"}/>
             </div>
             <div className={styles.column}>
                 <UpperBar setRefresh={setRefresh}/>
