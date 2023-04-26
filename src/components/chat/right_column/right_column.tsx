@@ -92,7 +92,8 @@ const RightColumn = (props: any) => {
         <br />
         设置置顶<Switch defaultChecked onChange={handleTop} />
         <br />
-        <ChatHistory open={open} setOpen={setOpen} members={props.members}/>
+        <ChatHistory open={open} setOpen={setOpen} members={props.members}
+                     sessionId={props.session.sessionId} images={props.images}/>
     </div>
 }
 

@@ -49,6 +49,17 @@ const LeftColumn = (props: any) => {
         }});
     };
 
+    useEffect(() => {
+        let isTrue = true;
+        for(let i = 0; i < list.length; ++i) {
+            if(list[i].sessionType === 1 && list[i].sessionName === "friend") {
+                isTrue = false;
+            }
+        }
+        if(isTrue)
+            setLoad(true);
+    }, [list]);
+
     /*
     if(isBrowser && socket) {
         socket.addEventListener("message", (res: any) => {

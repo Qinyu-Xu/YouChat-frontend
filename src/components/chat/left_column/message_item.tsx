@@ -3,6 +3,7 @@ import { request } from "@/utils/network";
 import { Avatar } from "antd";
 import {store} from "@/utils/store";
 import { useEffect, useState } from "react";
+import {getRandomNumber} from "@/utils/utilities";
 
 const MessageItem = (props: any) => {
     const [image, setImage] = useState("");
@@ -21,6 +22,10 @@ const MessageItem = (props: any) => {
                     });
                 }
             )
+        } else {
+            if(image === "") {
+                setImage(`/headshot/${getRandomNumber(1, 99)}.svg`);
+            }
         }
     });
 

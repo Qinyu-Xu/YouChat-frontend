@@ -1,15 +1,35 @@
-import {Divider, Modal, MenuProps, Menu, DatePicker, Select, SelectProps} from "antd";
-import {useState} from "react";
+import {Divider, Modal, MenuProps, Menu, DatePicker, Select, SelectProps, List, Avatar} from "antd";
+import {useEffect, useState} from "react";
+import {request} from "@/utils/network";
+import {isBrowser, store} from "@/utils/store";
 
 const { RangePicker } = DatePicker;
 
-const AllPicker = () => {
+const AllPicker = (props: any) => {
     return <div>
-
+        <List
+            itemLayout="horizontal"
+            dataSource={props.messages}
+            renderItem={(item, index) => (
+                <List.Item>
+                    <List.Item.Meta
+                        avatar={<Avatar src={
+                            props.images.filter( (image: any) => image.id === item.senderId)[0] === undefined
+                                ?
+                                "/headshot/01.svg"
+                                :
+                                props.images.filter( (image: any) => image.id === item.senderId)[0].image
+                        } />}
+                        title={}
+                        description="Ant Design, a design language for background applications, is refined by Ant UED Team"
+                    />
+                </List.Item>
+            )}
+        />
     </div>
 };
 
-const TimestampPicker = () => {
+const TimestampPicker = (props: any) => {
     const [begin, setBegin] = useState(null);
     const [end, setEnd] = useState(null);
     const handleChange = (e: any) => {
@@ -22,7 +42,7 @@ const TimestampPicker = () => {
     </div>
 };
 
-const TypePicker = () => {
+const TypePicker = (props: any) => {
     const handleChange = () => {};
     const options: any = [
         { value: '文本', label: 'text' },
@@ -81,10 +101,41 @@ const ChatHistory = (props: any) => {
         },
     ];
 
+
     const [current, setCurrent] = useState('all');
+    const [messages, setMessages] = useState([]);
+
     const onClick: MenuProps['onClick'] = (e: any) => setCurrent(e.key);
     const handleOk = () => props.setOpen(false);
     const handleCancel = () => props.setOpen(false);
+
+    useEffect(() => {
+        const getPull = () => {
+            const socket: any = store.getState().webSocket;
+            socket.send(JSON.stringify({
+                    type: "pull",
+                    id: store.getState().userId,
+                    sessionId: props.session.sessionId,
+                    messageScale: 100
+                })
+            );
+        };
+        const handlePull = (res: any) => {
+            res = eval("(" + res.data + ")")
+            if ( res.type === 'pull' ) {
+                setMessages(res.messages);
+                setMessages((messages) => messages.reverse());
+            }
+        };
+        const socket: any = store.getState().webSocket;
+        if(isBrowser && socket != null && socket.readyState === 1) {
+            socket.addEventListener("message", handlePull);
+            getPull();
+        }
+        return () => {
+            socket.removeEventListener('message', handlePull);
+        };
+    }, [props.sessionId, store.getState().webSocket]);
 
     return (
         <Modal title={"筛选聊天记录"} open={props.open} onOk={handleOk} onCancel={handleCancel} width={800}>
@@ -92,12 +143,12 @@ const ChatHistory = (props: any) => {
             <Menu onClick={onClick} selectedKeys={[current]} mode="horizontal" items={items} />
             <br />
             {current === 'all'
-                ? <AllPicker />
+                ? <AllPicker message={messages} images={props.images}/>
                 : (current === 'type'
-                    ? <TypePicker />
+                    ? <TypePicker message={messages} images={props.images}/>
                     : (current === 'time'
-                        ? <TimestampPicker />
-                        : <MemberPicker members={props.members}/>
+                        ? <TimestampPicker message={messages} images={props.images}/>
+                        : <MemberPicker members={props.members} message={messages} images={props.images}/>
                         )
                     )
             }

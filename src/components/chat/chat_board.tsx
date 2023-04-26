@@ -48,8 +48,7 @@ const ChatBoard = (props: any) => {
 
     const [messages, setMessages] = useState([]);
     const [members, setMembers] = useState<any>([]);
-    const [count, setCount] = useState(0);
-    const [images, setImages] = useState<Map<number,string>>(new Map());
+    const [images, setImages] = useState<any>([]);
     const [iload, setIload] = useState(false);
     const [mload, setMload] = useState(false);
 
@@ -61,7 +60,6 @@ const ChatBoard = (props: any) => {
             "GET",
             ""
         ).then((res: any) => {
-            setCount(0);
             setMembers(res.members);
         });
         }, [props.session.sessionId]
@@ -70,19 +68,26 @@ const ChatBoard = (props: any) => {
     useEffect(() => {
         for (let i = 0; i < members.length; ++i) {
             request("api/people/img/" + members[i].id, "GET", "").then((r: any) => {
-                const newMap: any = new Map(images);
-                newMap.set(members[i].id, r.img);
-                setImages(newMap);
-            }).then(() => setCount(count => count + 1));
+                if(images.every((image: any) => image.id !== members[i].id)) {
+                    setImages(images => [...images, {id: members[i].id, image: r.img}]);
+                }
+            }).then(() => {});
         }
     }, [members]);
 
     useEffect(() => {
-        if(count === members.length && count !== 0) {
-            setMessages(messages => [...messages]);
-            setIload(true);
+        if(members.length !== 0) {
+            let isTrue = true;
+            for (let i = 0; i < members.length; ++i) {
+                if (images.every((image: any) => image.id !== members[i].id)) {
+                    isTrue = false;
+                }
+            }
+            if (isTrue) {
+                setIload(true);
+            }
         }
-    }, [count]);
+    }, [images, props.session.sessionId]);
 
     useEffect(() => {
         const getPull = () => {
@@ -143,7 +148,13 @@ const ChatBoard = (props: any) => {
                     message.senderId === store.getState().userId ? (
                         <div className={styles.message} key={index+1}>
                             <div className={styles.headshot_right}>
-                                <Avatar src={images.get(message.senderId)} />
+                                <Avatar src={
+                                    images.filter( (image: any) => image.id === message.senderId)[0] === undefined
+                                        ?
+                                        "/headshot/01.svg"
+                                        :
+                                        images.filter( (image: any) => image.id === message.senderId)[0].image
+                                } />
                             </div>
                             <Dropdown menu={{ items: right_items }} placement="topLeft" trigger={['contextMenu']}>
                                 {
@@ -168,7 +179,13 @@ const ChatBoard = (props: any) => {
                     ) : (
                         <div className={styles.message} key={index+1}>
                             <div className={styles.headshot_left}>
-                                <Avatar src={images.get(message.senderId)} />
+                                <Avatar src={
+                                    images.filter( (image: any) => image.id === message.senderId)[0] === undefined
+                                        ?
+                                        "/headshot/01.svg"
+                                        :
+                                        images.filter( (image: any) => image.id === message.senderId)[0].image
+                                } />
                             </div>
                             <Dropdown menu={{ items: left_items }} placement="topLeft"  trigger={['contextMenu']}>
                                 {
@@ -194,7 +211,7 @@ const ChatBoard = (props: any) => {
                 <div id="THEEND"/>
             </div>
             <SingleMessage sessionId={props.session.sessionId} setMessages={setMessages}/>
-            <RightColumn session={props.session} members={members}/>
+            <RightColumn session={props.session} members={members} images={images}/>
         </div>
         )
         :
