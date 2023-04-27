@@ -35,7 +35,7 @@ const LeftColumn = (props: any) => {
                 }
             });
         }
-    }, [load]);
+    }, [load, props.refresh]);
 
     useEffect(() => {
         // console.log(list);

@@ -23,7 +23,7 @@ const Chat = () => {
             </div>
             { session === null ? <div></div> :
                 <div className={styles.content}>
-                    <ChatBoard session={session}/>
+                    <ChatBoard session={session} setRefresh={setRefresh}/>
                 </div>
             }
         </div>
