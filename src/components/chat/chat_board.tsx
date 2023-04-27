@@ -5,10 +5,11 @@ import { isBrowser } from "@/utils/store";
 import { store } from "@/utils/store";
 import Linkify from "react-linkify";
 import type { MenuProps } from 'antd';
-import {Avatar, Dropdown, Image, Skeleton} from 'antd';
+import {Avatar, Dropdown, Image, Skeleton, Tooltip} from 'antd';
 import {MenuShow} from "@/components/chat/right_column/right_column";
 import {request} from "@/utils/network";
 import RightColumn from "@/components/chat/right_column/right_column";
+import moment from "moment";
 
 const left_items: MenuProps['items'] = [
     {
@@ -156,25 +157,28 @@ const ChatBoard = (props: any) => {
                                         images.filter( (image: any) => image.id === message.senderId)[0].image
                                 } />
                             </div>
-                            <Dropdown menu={{ items: right_items }} placement="topLeft" trigger={['contextMenu']}>
-                                {
-                                    message.messageType === "text"
-                                    ?
-                                    <div className={styles.message_right}>
-                                        <Linkify>{message.message}</Linkify>
-                                    </div>
-                                    :
-                                    message.messageType === "photo"
-                                    ?
-                                    <div className={styles.photo_right}>
-                                        <Image src={message.message} />
-                                    </div>
-                                    :
-                                    <div>
+                            <Tooltip title={moment(message.timestamp).format("HH:mm:ss")} trigger="click"
+                                arrow={false} placement="topLeft" color="rgba(100,100,100,0.5)">
+                                <Dropdown menu={{ items: right_items }} placement="bottomLeft" trigger={['contextMenu']}>
+                                    {
+                                        message.messageType === "text"
+                                        ?
+                                        <div className={styles.message_right}>
+                                            <Linkify>{message.message}</Linkify>
+                                        </div>
+                                        :
+                                        message.messageType === "photo"
+                                        ?
+                                        <div className={styles.photo_right}>
+                                            <Image src={message.message} />
+                                        </div>
+                                        :
+                                        <div>
 
-                                    </div>
-                                }
-                            </Dropdown>
+                                        </div>
+                                    }
+                                </Dropdown>
+                            </Tooltip>
                         </div>
                     ) : (
                         <div className={styles.message} key={index+1}>
@@ -187,25 +191,28 @@ const ChatBoard = (props: any) => {
                                         images.filter( (image: any) => image.id === message.senderId)[0].image
                                 } />
                             </div>
-                            <Dropdown menu={{ items: left_items }} placement="topLeft"  trigger={['contextMenu']}>
-                                {
-                                    message.messageType === "text"
-                                        ?
-                                        <div className={styles.message_left}>
-                                            <Linkify>{message.message}</Linkify>
-                                        </div>
-                                        :
-                                        message.messageType === "photo"
+                            <Tooltip title={moment(message.timestamp).format("HH:mm:ss")} trigger="click"
+                                arrow={false} placement="topRight" color="rgba(100,100,100,0.5)">
+                                <Dropdown menu={{ items: left_items }} placement="bottomLeft"  trigger={['contextMenu']}>
+                                    {
+                                        message.messageType === "text"
                                             ?
-                                            <div className={styles.photo_left}>
-                                                <Image src={message.message} />
+                                            <div className={styles.message_left}>
+                                                <Linkify>{message.message}</Linkify>
                                             </div>
                                             :
-                                            <div>
+                                            message.messageType === "photo"
+                                                ?
+                                                <div className={styles.photo_left}>
+                                                    <Image src={message.message} />
+                                                </div>
+                                                :
+                                                <div>
 
-                                            </div>
-                                }
-                            </Dropdown>
+                                                </div>
+                                    }
+                                </Dropdown>
+                            </Tooltip>
                         </div>
                 ))}
                 <div id="THEEND"/>
