@@ -23,10 +23,11 @@ export const MenuShow = (_: any) => {
 
 const RightColumn = (props: any) => {
     const [open, setOpen] = useState(false);
-    const curTop = true;
-    const curMute = false;
+    const [curTop, setCurTop] = useState<boolean>(props.session.isTop);
+    const [curMute, setCurMute] = useState<boolean>(props.session.isMute);
 
     const handleMute = (isMute: boolean) => {
+        setCurMute(isMute);
         request(
             "/api/session/setting",
             "PUT",
@@ -36,11 +37,12 @@ const RightColumn = (props: any) => {
                 isMute: isMute,
                 isTop: curTop
             })
-        ).catch((e: any) => {
+        ).then((res: any) => props.setRefresh((refresh: any)=>!refresh)).catch((e: any) => {
             message.error("设置静音失败！");
         })
     }
     const handleTop = (isTop: boolean) => {
+        setCurTop(isTop);
         request(
             "/api/session/setting",
             "PUT",
@@ -50,7 +52,7 @@ const RightColumn = (props: any) => {
                 isMute: curMute,
                 isTop: isTop
             })
-        ).catch((e: any) => {
+        ).then((res: any) => props.setRefresh((refresh: any)=>!refresh)).catch((e: any) => {
             message.error("设置置顶失败！");
         })
     }
@@ -91,9 +93,9 @@ const RightColumn = (props: any) => {
             <RightOutlined />
         </div>
         <Divider />
-        设置静音<Switch defaultChecked onChange={handleMute} />
+        设置静音<Switch onChange={handleMute} checked={curMute} />
         <br />
-        设置置顶<Switch defaultChecked onChange={handleTop} />
+        设置置顶<Switch onChange={handleTop} checked={curTop} />
         <br />
         <ChatHistory open={open} setOpen={setOpen} members={props.members}
                      sessionId={props.session.sessionId} images={props.images}/>

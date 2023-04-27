@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { request } from "@/utils/network";
 import styles from '@/styles/layout.module.css'
 import { useCookies } from 'react-cookie';
-import {Skeleton, Spin} from "antd";
+import {Avatar, Skeleton, Spin} from "antd";
 
 interface User {
 	id: number,
@@ -17,6 +17,21 @@ interface Group {
 interface FriendListProps {
 	groups?: Array<Group>,
 	setProfile?: any,
+}
+
+
+const Image = (props : any) => {
+    const [image, setImage] = useState("");
+    
+    useEffect(() => {
+        request("api/people/img/" + props.id, "GET", "").then((r: any) => {
+            setImage(r.img);
+        });
+    }, []);
+
+    return (
+		<Avatar className={styles.column_item_left} src={image}/>
+	);
 }
 
 const FriendList = (props: FriendListProps) => {
@@ -40,13 +55,17 @@ const FriendList = (props: FriendListProps) => {
 	};
 
 	props.groups?.map(g => {
+		List.push(
+			<div className={styles.group_name}>
+				{g.group}
+			</div>
+		)
 		g.list.map(item => {
 			List.push(
 				<div className={styles.column_item} key={item.id.toString()} 
 				id={item.id.toString()} onClick={handleSelect}>
+					<Image className={styles.column_item_left} id={item.id}/>
 					{item.nickname}
-					@
-					{g.group}
 				</div>
 			)
 		})

@@ -211,7 +211,7 @@ const ChatBoard = (props: any) => {
                 <div id="THEEND"/>
             </div>
             <SingleMessage sessionId={props.session.sessionId} setMessages={setMessages}/>
-            <RightColumn session={props.session} members={members} images={images}/>
+            <RightColumn session={props.session} members={members} images={images} setRefresh={props.setRefresh}/>
         </div>
         )
         :

@@ -8,4 +8,5 @@ html, body, #__next, main {
     width: 100%;
     min-width: 54rem;
     min-height: 30rem;
+    font-family: "lucida grande", "lucida sans unicode", lucida, helvetica, "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Micro Hei", "PingFang SC", "Heiti SC", sans-serif;
 }

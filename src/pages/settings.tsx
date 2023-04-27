@@ -6,7 +6,7 @@ import styles from '@/styles/layout.module.css'
 const Settings = () => {
     return (
         <div className={styles.container}>
-            <Sidebar />
+            <Sidebar type={"settings"}/>
             <div className={styles.content}>
                 <Profile />
             </div>
