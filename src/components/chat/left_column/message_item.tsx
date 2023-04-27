@@ -59,6 +59,15 @@ const MessageItem = (props: any) => {
                 </div>
             </div>
             <div className={styles.message_item_right}>
+                <div className={styles.message_item_mute}>
+                    {
+                        props.session.isMute
+                        ?
+                            <img src={"ui/close-remind.svg"}/>
+                        :
+                            <div/>
+                    } 
+                </div>
                 <div className={styles.message_item_time}>
                     {
                         moment().year() != moment(props.session.timestamp).year() 
