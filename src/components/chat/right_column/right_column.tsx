@@ -1,11 +1,14 @@
 import styles from "@/styles/right.module.css";
-import {Divider, message, Switch} from "antd";
+import {Divider, message, Switch, Modal} from "antd";
 import {useState} from "react";
 import {request} from "@/utils/network";
 import {store} from "@/utils/store";
-import {RightOutlined, UnorderedListOutlined} from "@ant-design/icons";
+import {RightOutlined, UnorderedListOutlined, ExclamationCircleFilled} from "@ant-design/icons";
 import ChatHistory from "@/components/chat/right_column/chat_history";
 import UserList from "@/components/chat/right_column/user_list";
+import { useRouter } from "next/router";
+
+const { confirm } = Modal;
 
 export const MenuShow = (_: any) => {
     const handleClick = (_: any) => {
@@ -25,6 +28,8 @@ const RightColumn = (props: any) => {
     const [open, setOpen] = useState(false);
     const [curTop, setCurTop] = useState<boolean>(props.session.isTop);
     const [curMute, setCurMute] = useState<boolean>(props.session.isMute);
+
+    const router = useRouter();
 
     const handleMute = (isMute: boolean) => {
         setCurMute(isMute);
@@ -62,6 +67,30 @@ const RightColumn = (props: any) => {
     const handleMana = () => {};
     const handleInvite = () => {};
 
+    const handleDropout = () => {
+        confirm({
+          title: '你确定要退出群聊吗？',
+          icon: <ExclamationCircleFilled />,
+          content: '该操作不可恢复。',
+          onOk() {
+            request(
+                "/api/session/chatroom",
+                "DELETE",
+                JSON.stringify({
+                    userId: store.getState().userId,
+                    sessionId: props.session.sessionId,
+                })
+            ).then((res: any) => {
+                props.setRefresh((refresh: any)=>!refresh);
+                props.setSession(null);
+            }).catch((e: any) => {
+                message.error("退出群聊失败!");
+            })
+          },
+          onCancel() {},
+        });
+      };
+
     return <div id="mySidenav" className={styles.sidenav}>
         {props.session.sessionType === 1 ? "" : (<div>群成员<br/></div>)}
         <UserList members={props.members}/>
@@ -96,6 +125,11 @@ const RightColumn = (props: any) => {
         设置静音<Switch onChange={handleMute} checked={curMute} />
         <br />
         设置置顶<Switch onChange={handleTop} checked={curTop} />
+        <br />
+        <Divider />
+        <div className={styles.drop} onClick={handleDropout}>
+            退出群聊
+        </div>
         <br />
         <ChatHistory open={open} setOpen={setOpen} members={props.members}
                      sessionId={props.session.sessionId} images={props.images}/>
