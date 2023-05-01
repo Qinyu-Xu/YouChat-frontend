@@ -5,7 +5,9 @@ import {request} from "@/utils/network";
 import {store} from "@/utils/store";
 import {RightOutlined, UnorderedListOutlined, ExclamationCircleFilled} from "@ant-design/icons";
 import ChatHistory from "@/components/chat/right_column/chat_history";
+import Notice from "@/components/chat/right_column/notice";
 import UserList from "@/components/chat/right_column/user_list";
+import AddMember from "@/components/chat/right_column/member";
 import { useRouter } from "next/router";
 
 const { confirm } = Modal;
@@ -25,7 +27,11 @@ export const MenuShow = (_: any) => {
 }
 
 const RightColumn = (props: any) => {
-    const [open, setOpen] = useState(false);
+    const [openHistory, setOpenHistory] = useState(false);
+    const [openNotice, setOpenNotice] = useState(false);
+    const [openAdd, setOpenAdd] = useState(false);
+    const [openInvite, setOpenInvite] = useState(false);
+    const [openMana, setOpenMana] = useState(false);
     const [curTop, setCurTop] = useState<boolean>(props.session.isTop);
     const [curMute, setCurMute] = useState<boolean>(props.session.isMute);
 
@@ -62,8 +68,8 @@ const RightColumn = (props: any) => {
         })
     }
 
-    const handleHistory = () => setOpen(true);
-    const handleBoard = () => {};
+    const handleHistory = () => setOpenHistory(true);
+    const handleBoard = () => setOpenNotice(true);
     const handleMana = () => {};
     const handleInvite = () => {};
 
@@ -92,8 +98,17 @@ const RightColumn = (props: any) => {
       };
 
     return <div id="mySidenav" className={styles.sidenav}>
-        {props.session.sessionType === 1 ? "" : (<div>群成员<br/></div>)}
-        <UserList members={props.members}/>
+        <div className={styles.top}>
+            {props.session.sessionType === 1 ? "" : (<div className={styles.title}>群成员</div>)}
+            <div className={styles.add_button}>
+                <img src="/ui/add.svg"
+                    onClick={(e)=>{
+                        setOpenAdd(true);
+                    }}
+                />
+            </div>
+        </div>
+        <UserList members={props.members} images={props.images}/>
         {props.session.sessionType === 1 ? <div></div> :
             <div>
             <Divider/>
@@ -104,16 +119,20 @@ const RightColumn = (props: any) => {
             <RightOutlined />
             </div>
             <br />
-            <div onClick={handleInvite}>
-            管理群成员
-            <RightOutlined />
-            </div>
-            <br/>
-            <div onClick={handleMana}>
-            设置管理员
-            <RightOutlined />
-            </div>
-            <br/>
+            {props.role > 1 ? <div></div> :
+                <div onClick={handleInvite}>
+                管理群成员
+                <RightOutlined />
+                </div>
+            }
+            {props.role > 1 ? <div></div> : <div><br/></div>}
+            {props.role > 0 ? <div></div> :
+                <div onClick={handleMana}>
+                设置管理员
+                <RightOutlined />
+                </div>
+            }
+            {props.role > 0 ? <div></div> : <div><br/></div>}
             </div>
         }
         <Divider />
@@ -131,8 +150,11 @@ const RightColumn = (props: any) => {
             退出群聊
         </div>
         <br />
-        <ChatHistory open={open} setOpen={setOpen} members={props.members}
+        <ChatHistory open={openHistory} setOpen={setOpenHistory} members={props.members}
                      sessionId={props.session.sessionId} images={props.images}/>
+        <Notice open={openNotice} setOpen={setOpenNotice} members={props.members}
+                     sessionId={props.session.sessionId} images={props.images} setMessages={props.setMessages} role={props.role}/>
+        <AddMember open={openAdd} setOpen={setOpenAdd} members={props.members}/>
     </div>
 }
 

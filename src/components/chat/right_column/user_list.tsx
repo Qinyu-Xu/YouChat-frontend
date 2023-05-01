@@ -1,7 +1,22 @@
-import {List} from "antd";
+import {List, Avatar, Card} from "antd";
+import styles from '@/styles/right.module.css'
 
 
 const UserList = (props: any) => {
+    // console.log(props.members)
+
+    const member_type = (role: number) => {
+        if (role === 0) {
+            return "群主";
+        }
+        if (role === 1) {
+            return "管理员";
+        }
+        if (role === 2) {
+            return "群成员";
+        }
+    }
+
     const data = props.members.map((member: any) => {
         return {
             name: member.nickname
@@ -9,13 +24,28 @@ const UserList = (props: any) => {
     })
     return (
         <div>
-        <List
-            itemLayout="horizontal"
-            dataSource={data}
-            bordered={true}
+        <List className={styles.user_list}
+            grid={{ column: 1 }}
+            itemLayout="vertical"
+            dataSource={props.members}
+            // bordered={true}
             renderItem={(item: any, index: any) => (
-                <List.Item>
-                    {item.name}
+                <List.Item onClick={() => {}}>
+                    <Card>
+                            <List.Item.Meta
+                                avatar={<Avatar src={
+                                    props.images.filter( (image: any) => image.id === item.id)[0] === undefined
+                                        ? "/headshot/01.svg"
+                                        : props.images.filter( (image: any) => image.id === item.id)[0].image
+                                } />}
+                                title={(props.members.filter((member: any) => member.id === item.id))[0] === undefined
+                                    ? "Stranger" :
+                                (props.members.filter((member: any) => member.id === item.id))[0].nickname}
+                                description={(props.members.filter((member: any) => member.id === item.id))[0] === undefined
+                                    ? "" :
+                                member_type((props.members.filter((member: any) => member.id === item.id))[0].role)}
+                            />
+                    </Card>
                 </List.Item>
             )}
         />

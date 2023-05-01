@@ -52,6 +52,7 @@ const ChatBoard = (props: any) => {
     const [images, setImages] = useState<any>([]);
     const [iload, setIload] = useState(false);
     const [mload, setMload] = useState(false);
+    const [role, setRole] = useState(2);
 
     useEffect(() => {
         setMload(false);
@@ -62,6 +63,7 @@ const ChatBoard = (props: any) => {
             ""
         ).then((res: any) => {
             setMembers(res.members);
+            setRole(res.members.filter((member: any) => member.id === store.getState().userId)[0].role);
         });
         }, [props.session.sessionId]
     );
@@ -167,6 +169,12 @@ const ChatBoard = (props: any) => {
                                             <Linkify>{message.message}</Linkify>
                                         </div>
                                         :
+                                        message.messageType === "notice"
+                                        ?
+                                        <div className={styles.message_right}>
+                                            <Linkify>{"群公告\n" + message.message}</Linkify>
+                                        </div>
+                                        :
                                         message.messageType === "photo"
                                         ?
                                         <div className={styles.photo_right}>
@@ -201,6 +209,12 @@ const ChatBoard = (props: any) => {
                                                 <Linkify>{message.message}</Linkify>
                                             </div>
                                             :
+                                            message.messageType === "notice"
+                                            ?
+                                            <div className={styles.message_left}>
+                                                <Linkify>{"群公告\n" + message.message}</Linkify>
+                                            </div>
+                                            :
                                             message.messageType === "photo"
                                                 ?
                                                 <div className={styles.photo_left}>
@@ -218,7 +232,7 @@ const ChatBoard = (props: any) => {
                 <div id="THEEND"/>
             </div>
             <SingleMessage sessionId={props.session.sessionId} setMessages={setMessages}/>
-            <RightColumn session={props.session} members={members} images={images} setRefresh={props.setRefresh} setSession={props.setSession}/>
+            <RightColumn session={props.session} members={members} images={images} setRefresh={props.setRefresh} setSession={props.setSession} setMessages={setMessages} role={role}/>
         </div>
         )
         :
