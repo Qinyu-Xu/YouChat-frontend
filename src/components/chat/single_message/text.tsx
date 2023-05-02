@@ -4,7 +4,6 @@ import styles from "@/styles/chat.module.css";
 import {Button} from "antd";
 
 
-
 const TextBoard = (props: any) => {
     const socket: any = store.getState().webSocket;
     // 发送文本信息

@@ -97,7 +97,7 @@ const RightColumn = (props: any) => {
         <br />
         设置置顶<Switch onChange={handleTop} checked={curTop} />
         <br />
-        <ChatHistory open={open} setOpen={setOpen} members={props.members}
+        <ChatHistory open={open} setOpen={setOpen} members={props.members} messages={props.messages}
                      sessionId={props.session.sessionId} images={props.images}/>
     </div>
 }

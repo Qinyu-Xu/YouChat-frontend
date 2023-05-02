@@ -1,14 +1,7 @@
 import {Divider, Modal, MenuProps, Menu, DatePicker, Select, SelectProps, List, Avatar, Image} from "antd";
 import {useEffect, useState} from "react";
-import {isBrowser, store} from "@/utils/store";
-import type { Dayjs } from 'dayjs';
 import dayjs from "dayjs";
 const { RangePicker } = DatePicker;
-
-type Generic = string;
-type GenericFn = (value: Dayjs) => string;
-
-export type FormatType = Generic | GenericFn | Array<Generic | GenericFn>;
 
 const AllPicker = (props: any) => {
     return <div>
@@ -175,12 +168,13 @@ const ChatHistory = (props: any) => {
 
 
     const [current, setCurrent] = useState('all');
-    const [messages, setMessages] = useState([]);
 
     const onClick: MenuProps['onClick'] = (e: any) => setCurrent(e.key);
     const handleOk = () => props.setOpen(false);
     const handleCancel = () => props.setOpen(false);
 
+    /*
+    const [messages, setMessages] = useState<any>([]);
     useEffect(() => {
         const getPull = () => {
             const socket: any = store.getState().webSocket;
@@ -201,23 +195,26 @@ const ChatHistory = (props: any) => {
         const socket: any = store.getState().webSocket;
         if(isBrowser && socket != null && socket.readyState === 1) {
             socket.addEventListener("message", handlePull);
-            getPull();
+            // getPull();
         }
         return () => {socket.removeEventListener('message', handlePull);};
     }, [props.sessionId, store.getState().webSocket]);
 
+     */
+
     return (
-        <Modal title={"筛选聊天记录"} open={props.open} onOk={handleOk} onCancel={handleCancel} width={800}>
+        <Modal title={"筛选聊天记录"} open={props.open} onOk={handleOk} onCancel={handleCancel} width={800}
+               submitter={{resetButtonProps: {style: {display: 'none'}}, submitButtonProps: {style: {display: 'none'}}}}>
             <Divider />
             <Menu onClick={onClick} selectedKeys={[current]} mode="horizontal" items={items} />
             <br />
             {current === 'all'
-                ? <AllPicker members={props.members} messages={messages} images={props.images}/>
+                ? <AllPicker members={props.members} messages={props.messages} images={props.images}/>
                 : (current === 'type'
-                    ? <TypePicker members={props.members} messages={messages} images={props.images}/>
+                    ? <TypePicker members={props.members} messages={props.messages} images={props.images}/>
                     : (current === 'time'
-                        ? <TimestampPicker members={props.members} messages={messages} images={props.images}/>
-                        : <MemberPicker members={props.members} messages={messages} images={props.images}/>
+                        ? <TimestampPicker members={props.members} messages={props.messages} images={props.images}/>
+                        : <MemberPicker members={props.members} messages={props.messages} images={props.images}/>
                         )
                     )
             }
