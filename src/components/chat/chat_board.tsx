@@ -104,7 +104,32 @@ const ChatBoard = (props: any) => {
         const handleSend = (res: any) => {
             res = eval("(" + res.data + ")");
             if (res.type === 'send' && res.sessionId === props.session.sessionId) {
-                getPull();
+                if(res.senderId === store.getState().userId) {
+                    setMessages((messages: any) => messages.map((message: any) => {
+                        return message.messageId === -1 && message.timestamp === res.timestamp
+                        ?
+                            {
+                                message: message.message,
+                                messageId: res.messageId,
+                                messageType: message.messageType,
+                                senderId: message.senderId,
+                                senderName: message.senderName,
+                                timestamp: message.timestamp
+                            }
+                        : message;
+                    }))
+                } else {
+                    setMessages((messages: any) => {
+                        return [...messages, {
+                            message: res.message,
+                            messageId: res.messageId,
+                            messageType: res.messageType,
+                            senderId: res.senderId,
+                            senderName: res.senderName,
+                            timestamp: res.timestamp
+                        }]
+                    })
+                }
             }
         };
         const handlePull = (res: any) => {

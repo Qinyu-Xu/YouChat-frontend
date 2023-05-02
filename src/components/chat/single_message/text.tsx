@@ -22,7 +22,7 @@ const TextBoard = (props: any) => {
                 const addM = {
                     "senderId": store.getState().userId,
                     "timestamp": Date.now(),
-                    "messageId": Date.now(),
+                    "messageId": -1,
                     "message": props.text,
                     "messageType": "text"
                 }
