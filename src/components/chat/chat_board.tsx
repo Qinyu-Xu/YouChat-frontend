@@ -5,11 +5,12 @@ import { isBrowser } from "@/utils/store";
 import { store } from "@/utils/store";
 import Linkify from "react-linkify";
 import type { MenuProps } from 'antd';
-import {Avatar, Dropdown, Image, Skeleton, Tooltip} from 'antd';
+import {Avatar, Dropdown, Image, Skeleton, Spin, Tooltip} from 'antd';
 import {MenuShow} from "@/components/chat/right_column/right_column";
 import {request} from "@/utils/network";
 import RightColumn from "@/components/chat/right_column/right_column";
 import moment from "moment";
+import {Simulate} from "react-dom/test-utils";
 
 const left_items: MenuProps['items'] = [
     {
@@ -50,8 +51,10 @@ const ChatBoard = (props: any) => {
     const [messages, setMessages] = useState([]);
     const [members, setMembers] = useState<any>([]);
     const [images, setImages] = useState<any>([]);
+    const [height, setHeight] = useState(0);
     const [iload, setIload] = useState(false);
     const [mload, setMload] = useState(false);
+    const [newinfo, setNewinfo] = useState(false);
 
     const getPull = (timestamp: any) => {
         const socket: any = store.getState().webSocket;
@@ -108,21 +111,28 @@ const ChatBoard = (props: any) => {
     const scroll = () => {
         const board = document.getElementById('board');
         if(board.scrollTop === 0) {
+            setHeight(board.scrollHeight);
             getPull(messages[messages.length-1].timestamp + 1);
+            setNewinfo(true);
         }
     }
 
     useEffect(() => {
-
-    }, []);
-
-    useEffect(() => {
-        if(messages.length !== 0) {
+        if(iload && mload && messages.length <= 30) {
             document
-                ?.getElementById("30")
+                ?.getElementById("THEEND")
                 ?.scrollIntoView();
         }
+    }, [messages, iload, mload]);
+
+    useEffect(() => {
+        if(newinfo) {
+            const board =document.getElementById('board');
+            board.scrollTo(0, board.scrollHeight - height);
+            setNewinfo(false);
+        }
     }, [messages]);
+
 
     useEffect(() => {
         for (let i = 0; i < members.length; ++i) {
