@@ -26,7 +26,7 @@ const LeftColumn = (props: any) => {
         ).then((response) => {
             if (response.code === 0) {
                 const new_list = response.data;
-                let old_list: [any] = list;
+                let old_list: any[] = list;
                 for (let i = 0; i < new_list.length; ++i) {
                     if (old_list.filter((msg: any) => msg.sessionId === new_list[i].sessionId).length !== 0) {
                         old_list = old_list.map((msg: any) => msg.sessionId !== new_list[i].sessionId

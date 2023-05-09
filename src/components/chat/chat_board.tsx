@@ -11,6 +11,7 @@ import {request} from "@/utils/network";
 import RightColumn from "@/components/chat/right_column/right_column";
 import moment from "moment";
 import {AudioPlayer} from "@/components/chat/single_message/audio";
+import {FileViewer} from "@/components/chat/single_message/file";
 
 const left_items: MenuProps['items'] = [
     {
@@ -48,7 +49,7 @@ const right_items: MenuProps['items'] = [
 
 const ChatBoard = (props: any) => {
 
-    const [messages, setMessages] = useState([]);
+    const [messages, setMessages] = useState<any>([]);
     const [members, setMembers] = useState<any>([]);
     const [images, setImages] = useState<any>([]);
     const [height, setHeight] = useState(0);
@@ -105,13 +106,13 @@ const ChatBoard = (props: any) => {
     const handlePull = (res: any) => {
         res = eval("(" + res.data + ")");
         if ( res.type === 'pull' ) {
-            setMessages((messages) => [...messages, ...res.messages.reverse()]);
+            setMessages((messages: any) => [...messages, ...res.messages.reverse()]);
             setMload(true);
         }
     };
 
     const scroll = () => {
-        const board = document.getElementById('board');
+        const board: any = document.getElementById('board');
         if(board.scrollTop === 0) {
             setHeight(board.scrollHeight);
             getPull(messages[messages.length-1].timestamp + 1);
@@ -130,7 +131,7 @@ const ChatBoard = (props: any) => {
 
     useEffect(() => {
         if(newinfo) {
-            const board =document.getElementById('board');
+            const board: any =document.getElementById('board');
             board.scrollTo(0, board.scrollHeight - height);
             setNewinfo(false);
         }
@@ -232,7 +233,7 @@ const ChatBoard = (props: any) => {
                                         message.messageType === "file"
                                         ?
                                         <div className={styles.photo_right}>
-                                            <div>文件</div>
+                                            <FileViewer base={message.message}/>
                                         </div>
                                         :
                                         <div>
@@ -279,7 +280,7 @@ const ChatBoard = (props: any) => {
                                         message.messageType === "file"
                                         ?
                                         <div className={styles.photo_left}>
-                                        <p>文件</p>
+                                        <FileViewer base={message.message}/>
                                         </div>
                                         :
                                         <div>

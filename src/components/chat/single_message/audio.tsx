@@ -6,7 +6,7 @@ import {fileToBase64} from "@/utils/utilities";
 import {store} from "@/utils/store";
 import CircularJson from "circular-json";
 
-export const AudioPlayer = ({ base64Audio }) => {
+export const AudioPlayer = ({ base64Audio }: any) => {
     const audioRef = useRef<any>(null);
     const [audioUrl, setAudioUrl] = useState<any>();
 
@@ -22,8 +22,8 @@ export const AudioPlayer = ({ base64Audio }) => {
     },[]);
 
     return (
-        <div>
-            <CaretRightOutlined onClick={handlePlay} /> 播放
+        <div onClick={handlePlay}>
+            <CaretRightOutlined /> 播放
             <audio ref={audioRef} src={audioUrl} style={{display: "none"}} />
         </div>
     );
