@@ -157,7 +157,7 @@ const RightColumn = (props: any) => {
                      sessionId={props.session.sessionId} images={props.images} setMessages={props.setMessages} role={props.role}/>
         <AddMember open={openAdd} setOpen={setOpenAdd} members={props.members} sessionId={props.session.sessionId}/>
         <Manager open={openInvite} setOpen={setOpenInvite} members={props.members}
-                     sessionId={props.session.sessionId} images={props.images} setMessages={props.setMessages} role={props.role}/>
+                     sessionId={props.session.sessionId} images={props.images} setMessages={props.setMessages} role={props.role} setSession={props.setSession}/>
     </div>
 }
 

@@ -5,8 +5,21 @@ import {isBrowser, store} from "@/utils/store";
 import CircularJson from "circular-json";
 const { RangePicker } = DatePicker;
 const { TextArea } = Input;
+import { request } from "@/utils/network";
 
 const RequestList = (props: any) => {
+
+    const handleOk = (applicant_id: number) => {
+        request("api/session/chatroom/Admin", "PUT", JSON.stringify({
+            userId: store.getState().userId,
+            sessionId: props.sessionId,
+            applicantId: applicant_id,
+        })).then(_=> {
+            props.setOpen(false);
+            props.setSession(props.sessionId);
+        });
+    }
+
     return <div>
         <List 
             grid={{ column: 1 }}
@@ -27,7 +40,7 @@ const RequestList = (props: any) => {
                                     ? "Stranger" :
                                 (props.members.filter((member: any) => member.id === item.id))[0].nickname}
                             />
-                            <Button type="primary">同意</Button>
+                            <Button type="primary" onClick={() => handleOk(item.id)}>同意</Button>
                             <Button>拒绝</Button>
                     </Card>
                 </List.Item>
@@ -53,30 +66,7 @@ const Manager = (props: any) => {
     const handleOk = () => props.setOpen(false);
     const handleCancel = () => props.setOpen(false);
 
-    useEffect(() => {
-        const getPull = () => {
-            const socket: any = store.getState().webSocket;
-            socket.send(JSON.stringify({
-                    type: "pull",
-                    id: store.getState().userId,
-                    sessionId: props.sessionId,
-                    messageScale: 100
-                })
-            );
-        };
-        const handlePull = (res: any) => {
-            res = eval("(" + res.data + ")")
-            if ( res.type === 'pull' ) {
-                setMessages(res.messages);
-            }
-        };
-        const socket: any = store.getState().webSocket;
-        if(isBrowser && socket != null && socket.readyState === 1) {
-            socket.addEventListener("message", handlePull);
-            getPull();
-        }
-        return () => {socket.removeEventListener('message', handlePull);};
-    }, [props.sessionId, store.getState().webSocket]);
+    
 
     return (
         <Modal title={"同意加群申请"} open={props.open} onOk={handleOk} onCancel={handleCancel} width={800}>
@@ -84,7 +74,7 @@ const Manager = (props: any) => {
                 <Menu onClick={onClick} selectedKeys={[current]} mode="horizontal" items={items} />
             
             <br />
-            <RequestList members={props.members} messages={messages} images={props.images}/>
+            <RequestList members={props.members} messages={messages} images={props.images} setOpen={props.setOpen} sessionId={props.sessionId} setSession={props.setSession}/>
         </Modal>
     )
 }

@@ -55,6 +55,7 @@ const ChatBoard = (props: any) => {
     const [mload, setMload] = useState(false);
     const [newinfo, setNewinfo] = useState(false);
     const [newmsg, setNewmsg] = useState(false);
+    const [role, setRole] = useState(2);
 
     const getPull = (timestamp: any) => {
         const socket: any = store.getState().webSocket;
@@ -126,7 +127,6 @@ const ChatBoard = (props: any) => {
             setNewmsg(false);
         }
     }, [messages, iload, mload, newmsg]);
-    const [role, setRole] = useState(2);
 
     useEffect(() => {
         if(newinfo) {
