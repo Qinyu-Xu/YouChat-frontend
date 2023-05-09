@@ -2,78 +2,86 @@ import {useEffect, useState} from "react";
 import {Avatar, message} from "antd";
 import styles from "@/styles/chat.module.css";
 import {AudioFilled, AudioOutlined} from "@ant-design/icons";
+import {fileToBase64} from "@/utils/utilities";
+import {store} from "@/utils/store";
+import CircularJson from "circular-json";
 
 const AudioInput = (props: any) => {
+
     const [recording, setRecording] = useState(false);
-
-    // 发送语音
-    /*
     const [mediaRecorder, setMediaRecorder] = useState<any>(null);
-    const [mediaStream, setMediaStream] = useState<any>(null);
-    let chuncks = [];
-     */
+    const [chunks, setChunks] = useState<any>([]);
+    const [refresh, setRefresh] = useState(false);
 
-    const handleSpeech = () => props.setAudio((audio: any) => !audio);
-    useEffect(() => {
-        // initMediaRecorder();
-        /*
-        return () => {
-            setRecording(false);
-            setMediaRecorder(null);
-            setMediaStream(null);
-        }
-
-         */
-    }, [props.sessionId]);
-
-    /*
     const initMediaRecorder = async () => {
         try {
             const stream: any = await navigator.mediaDevices.getUserMedia({ audio: true });
             const recorder: any = new MediaRecorder(stream);
             setMediaRecorder(recorder);
-            setMediaStream(stream);
+            recorder.start();
         } catch (error: any) {
             message.error('Error initializing MediaRecorder:', error);
         }
     };
 
-     */
-/*
     useEffect(() => {
-
-        if (mediaRecorder) {
-            mediaRecorder.ondataavailable = (e: any) => {
-                if (e.data.size > 0)
-                    chuncks.push(e.data);
-            };
-            mediaRecorder.onstop = async () => {
-                const audioBlob = new Blob(chuncks);
-                const base64Audio = await fileToBase64(audioBlob);
-                console.log('Base64 Audio:', base64Audio);
-                mediaStream.getAudioTracks().forEach((track) => {track.stop();})
+        if(recording) {
+            initMediaRecorder();
+        } else {
+            if (mediaRecorder) {
+                mediaRecorder.stop();
+                mediaRecorder.stream.getTracks().forEach((track: any) => track.stop());
+                setMediaRecorder(null);
             }
         }
+    }, [recording]);
 
-
+    useEffect(() => {
+        if (mediaRecorder) {
+            mediaRecorder.ondataavailable = (e: any) => {
+                if (e.data.size > 0) setChunks([e.data]);
+            };
+            mediaRecorder.onstop = async () => {
+                setRefresh(true);
+            }
+        }
     }, [mediaRecorder]);
 
- */
+    useEffect(() => {
+        if(refresh) {
+            const audioBlob = new Blob(chunks);
+            const base64Audio = fileToBase64(audioBlob).then((base: any) => {
+                const socket: any = store.getState().webSocket;
+                const message = {
+                    type: "send",
+                    id: store.getState().userId,
+                    sessionId: props.sessionId,
+                    timestamp: Date.now(),
+                    message: base,
+                    messageType: "audio"
+                }
+                const addM = {
+                    "senderId": store.getState().userId,
+                    "timestamp": Date.now(),
+                    "messageId": -1,
+                    "message": base,
+                    "messageType": "audio"
+                };
+                socket.send(CircularJson.stringify(message));
+                props.setMessages((message: any) => [...message, addM]);
+            });
+            setRefresh(false);
+            setChunks([]);
+        }
+    }, [chunks]);
 
     const startSpeechRecognition = () => {
-        /* if(!recording) {
-            if(mediaRecorder) {
-                if (mediaStream)
-                    mediaStream.getAudioTracks().forEach((track) => {track.enabled = true});
-                chuncks = [];
-                setRecording(true);
-                mediaRecorder.start();
-            }
+        if(!recording) {
+            setRecording(true);
         } else {
             setRecording(false);
             mediaRecorder.stop();
         }
-        */
     }
 
     return (
