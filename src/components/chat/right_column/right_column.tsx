@@ -8,6 +8,7 @@ import ChatHistory from "@/components/chat/right_column/chat_history";
 import Notice from "@/components/chat/right_column/notice";
 import UserList from "@/components/chat/right_column/user_list";
 import AddMember from "@/components/chat/right_column/member";
+import Manager from "@/components/chat/right_column/manager";
 import { useRouter } from "next/router";
 
 const { confirm } = Modal;
@@ -71,7 +72,7 @@ const RightColumn = (props: any) => {
     const handleHistory = () => setOpenHistory(true);
     const handleBoard = () => setOpenNotice(true);
     const handleMana = () => {};
-    const handleInvite = () => {};
+    const handleInvite = () => setOpenInvite(true);
 
     const handleDropout = () => {
         confirm({
@@ -155,6 +156,8 @@ const RightColumn = (props: any) => {
         <Notice open={openNotice} setOpen={setOpenNotice} members={props.members}
                      sessionId={props.session.sessionId} images={props.images} setMessages={props.setMessages} role={props.role}/>
         <AddMember open={openAdd} setOpen={setOpenAdd} members={props.members} sessionId={props.session.sessionId}/>
+        <Manager open={openInvite} setOpen={setOpenInvite} members={props.members}
+                     sessionId={props.session.sessionId} images={props.images} setMessages={props.setMessages} role={props.role}/>
     </div>
 }
 
