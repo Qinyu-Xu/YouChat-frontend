@@ -51,6 +51,7 @@ const ChatBoard = (props: any) => {
 
     const [messages, setMessages] = useState<any>([]);
     const [members, setMembers] = useState<any>([]);
+    const [membersRefresh, setMembersRefresh] = useState(0);
     const [images, setImages] = useState<any>([]);
     const [height, setHeight] = useState(0);
     const [iload, setIload] = useState(false);
@@ -153,6 +154,10 @@ const ChatBoard = (props: any) => {
         setIload(false);
         request("/api/session/chatroom?id="+props.session.sessionId, "GET", "").then((res: any) => {setMembers(res.members);setRole(res.members.filter((member: any) => member.id === store.getState().userId)[0].role);});
     }, [props.session.sessionId]);
+
+    useEffect(() => {
+        request("/api/session/chatroom?id="+props.session.sessionId, "GET", "").then((res: any) => {setMembers(res.members);setRole(res.members.filter((member: any) => member.id === store.getState().userId)[0].role);});
+    }, [membersRefresh]);
 
     useEffect(() => {
         if(members.length !== 0) {
@@ -307,7 +312,7 @@ const ChatBoard = (props: any) => {
                 <div id="THEEND"/>
             </div>
             <SingleMessage sessionId={props.session.sessionId} setMessages={setMessages}/>
-            <RightColumn session={props.session} members={members} images={images} setRefresh={props.setRefresh} setSession={props.setSession} setMessages={setMessages} role={role}/>
+            <RightColumn session={props.session} members={members} images={images} setRefresh={props.setRefresh} setSession={props.setSession} setMessages={setMessages} role={role} setMembersRefresh={setMembersRefresh}/>
         </div>
         )
         :

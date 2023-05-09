@@ -16,7 +16,13 @@ const RequestList = (props: any) => {
             applicantId: applicant_id,
         })).then(_=> {
             props.setOpen(false);
-            props.setSession(props.sessionId);
+            props.setMembersRefresh((s: any) => !s);
+            const item = document.getElementById("mySidenav");
+            if(item) {
+                if (item.style.right === "-20rem") item.style.right = "0px";
+                else if(item.style.right === "0px") item.style.right = "-20rem";
+                else item.style.right = "0px";
+            }
         });
     }
 
@@ -74,7 +80,7 @@ const Manager = (props: any) => {
                 <Menu onClick={onClick} selectedKeys={[current]} mode="horizontal" items={items} />
             
             <br />
-            <RequestList members={props.members} messages={messages} images={props.images} setOpen={props.setOpen} sessionId={props.sessionId} setSession={props.setSession}/>
+            <RequestList members={props.members} messages={messages} images={props.images} setOpen={props.setOpen} sessionId={props.sessionId} setSession={props.setSession} setMembersRefresh={props.setMembersRefresh}/>
         </Modal>
     )
 }
