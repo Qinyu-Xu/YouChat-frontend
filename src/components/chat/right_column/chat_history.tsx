@@ -203,8 +203,7 @@ const ChatHistory = (props: any) => {
      */
 
     return (
-        <Modal title={"筛选聊天记录"} open={props.open} onOk={handleOk} onCancel={handleCancel} width={800}
-               submitter={{resetButtonProps: {style: {display: 'none'}}, submitButtonProps: {style: {display: 'none'}}}}>
+        <Modal title={"筛选聊天记录"} open={props.open} onOk={handleOk} onCancel={handleCancel} width={800}>
             <Divider />
             <Menu onClick={onClick} selectedKeys={[current]} mode="horizontal" items={items} />
             <br />

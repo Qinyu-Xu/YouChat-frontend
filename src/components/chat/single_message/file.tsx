@@ -3,6 +3,31 @@ import {message} from "antd";
 import {fileToBase64} from "@/utils/utilities";
 import {store} from "@/utils/store";
 import CircularJson from "circular-json";
+import {FileOutlined} from "@ant-design/icons";
+import {useEffect, useState} from "react";
+
+export const FileViewer = ({base}: any) => {
+    const [fileName, setFileName] = useState(null);
+
+    useEffect( () => {
+            fetch(base).then(res => res.blob()).then(blob => {
+                setFileName(blob.name)
+            });
+        }
+    ,[]);
+    const handleClick = () => {
+        fetch(base).then(res => res.blob()).then(blob => {
+            const url = URL.createObjectURL(blob);
+            const win = window.open(url, "_blank");
+            win.focus();
+        });
+    }
+    return (
+    <div onClick={handleClick}>
+        <FileOutlined /> {fileName === null ? "文件" : fileName}
+    </div>
+    );
+}
 
 export const FileIcon = (props: any) => {
     // 发送图片
@@ -14,7 +39,7 @@ export const FileIcon = (props: any) => {
     const handleFileSelect = (e: any) => {
         const file = e.target.files[0];
         if(file) {
-            if (!file.type.startsWith("file/")) {
+            if (/*!file.type.startsWith("file/")*/false) {
                 console.log(file.type);
                 message.error("请上传文件！");
             } else {

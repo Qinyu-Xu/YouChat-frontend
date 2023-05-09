@@ -1,10 +1,33 @@
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {Avatar, message} from "antd";
 import styles from "@/styles/chat.module.css";
-import {AudioFilled, AudioOutlined} from "@ant-design/icons";
+import {AudioFilled, AudioOutlined, CaretRightOutlined} from "@ant-design/icons";
 import {fileToBase64} from "@/utils/utilities";
 import {store} from "@/utils/store";
 import CircularJson from "circular-json";
+
+export const AudioPlayer = ({ base64Audio }: any) => {
+    const audioRef = useRef<any>(null);
+    const [audioUrl, setAudioUrl] = useState<any>();
+
+    const handlePlay = async () => {
+        audioRef.current.play();
+    };
+
+    useEffect(() => {
+        fetch(base64Audio).then(res => res.blob()).then((blob) => {
+            const url = URL.createObjectURL(blob);
+            setAudioUrl(url);
+        });
+    },[]);
+
+    return (
+        <div onClick={handlePlay}>
+            <CaretRightOutlined /> 播放
+            <audio ref={audioRef} src={audioUrl} style={{display: "none"}} />
+        </div>
+    );
+};
 
 const AudioInput = (props: any) => {
 
