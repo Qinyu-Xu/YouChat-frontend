@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import SingleMessage from "@/components/chat/single_message";
 import styles from "@/styles/chat.module.css"
 import { isBrowser } from "@/utils/store";
@@ -10,6 +10,7 @@ import {MenuShow} from "@/components/chat/right_column/right_column";
 import {request} from "@/utils/network";
 import RightColumn from "@/components/chat/right_column/right_column";
 import moment from "moment";
+import {AudioPlayer} from "@/components/chat/single_message/audio";
 
 const left_items: MenuProps['items'] = [
     {
@@ -222,9 +223,22 @@ const ChatBoard = (props: any) => {
                                             <Image src={message.message} />
                                         </div>
                                         :
+                                        message.messageType === "audio"
+                                        ?
+                                        <div className={styles.photo_right}>
+                                            <AudioPlayer base64Audio={message.message} />
+                                        </div>
+                                        :
+                                        message.messageType === "file"
+                                        ?
+                                        <div className={styles.photo_right}>
+                                            <div>文件</div>
+                                        </div>
+                                        :
                                         <div>
 
                                         </div>
+
                                     }
                                 </Dropdown>
                             </Tooltip>
@@ -245,20 +259,32 @@ const ChatBoard = (props: any) => {
                                 <Dropdown menu={{ items: left_items }} placement="bottomLeft"  trigger={['contextMenu']}>
                                     {
                                         message.messageType === "text"
-                                            ?
-                                            <div className={styles.message_left}>
-                                                <Linkify>{message.message}</Linkify>
-                                            </div>
-                                            :
-                                            message.messageType === "photo"
-                                                ?
-                                                <div className={styles.photo_left}>
-                                                    <Image src={message.message} />
-                                                </div>
-                                                :
-                                                <div>
+                                        ?
+                                        <div className={styles.message_left}>
+                                        <Linkify>{message.message}</Linkify>
+                                        </div>
+                                        :
+                                        message.messageType === "photo"
+                                        ?
+                                        <div className={styles.photo_left}>
+                                        <Image src={message.message} />
+                                        </div>
+                                        :
+                                        message.messageType === "audio"
+                                        ?
+                                        <div className={styles.photo_left}>
+                                        <AudioPlayer base64Audio={message.message} />
+                                        </div>
+                                        :
+                                        message.messageType === "file"
+                                        ?
+                                        <div className={styles.photo_left}>
+                                        <p>文件</p>
+                                        </div>
+                                        :
+                                        <div>
 
-                                                </div>
+                                        </div>
                                     }
                                 </Dropdown>
                             </Tooltip>
