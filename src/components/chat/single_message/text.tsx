@@ -4,7 +4,6 @@ import styles from "@/styles/chat.module.css";
 import {Button} from "antd";
 
 
-
 const TextBoard = (props: any) => {
     const socket: any = store.getState().webSocket;
     // 发送文本信息
@@ -22,7 +21,7 @@ const TextBoard = (props: any) => {
                 const addM = {
                     "senderId": store.getState().userId,
                     "timestamp": Date.now(),
-                    "messageId": Date.now(),
+                    "messageId": -1,
                     "message": props.text,
                     "messageType": "text"
                 }

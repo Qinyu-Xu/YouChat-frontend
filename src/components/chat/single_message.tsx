@@ -19,8 +19,8 @@ const SingleMessage = (props: any) => {
             <div className={styles.function_bar}>
                 <EmojiIcon setEmoji={setEmoji} emoji={emoji}/>
                 <ImgIcon sessionId={props.sessionId} setMessages={props.setMessages}/>
-                <AudioIcon setAudio={setAudio} />
-                <FileIcon />
+                <AudioIcon setAudio={setAudio} setMessages={props.setMessages}/>
+                <FileIcon setMessages={props.setMessages}/>
                 <VideoIcon />
             </div>
             {

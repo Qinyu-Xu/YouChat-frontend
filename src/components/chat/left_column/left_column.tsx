@@ -1,8 +1,7 @@
 import {useEffect, useState} from "react";
 import { request } from "@/utils/network";
-import {message, Skeleton, Spin} from "antd";
+import {message, Spin} from "antd";
 import { isBrowser } from "@/utils/store";
-import styles from "@/styles/layout.module.css";
 import {store} from "@/utils/store";
 import MessageItem from "./message_item";
 
@@ -18,6 +17,44 @@ const LeftColumn = (props: any) => {
         if(a.isTop !== b.isTop) return - a.isTop + b.isTop;
         return - a.timestamp + b.timestamp;
     };
+
+    const refreshList = () => {
+        request(
+            `api/session/message/${id}`,
+            "GET",
+            ""
+        ).then((response) => {
+            if (response.code === 0) {
+                const new_list = response.data;
+                let old_list: [any] = list;
+                for (let i = 0; i < new_list.length; ++i) {
+                    if (old_list.filter((msg: any) => msg.sessionId === new_list[i].sessionId).length !== 0) {
+                        old_list = old_list.map((msg: any) => msg.sessionId !== new_list[i].sessionId
+                            ? msg
+                            :
+                            {
+                                "sessionId": msg.sessionId,
+                                "sessionName": msg.sessionName,
+                                "sessionType": msg.sessionType,
+                                "timestamp": new_list[i].timestamp,
+                                "type": new_list[i].messageType,
+                                "lastSender": new_list[i].senderName,
+                                "message": new_list[i].message,
+                                "isTop": new_list[i].isTop,
+                                "isMute": new_list[i].isMute,
+                                //"unread": new_list[i],
+                            });
+                    } else {
+                        old_list.push(new_list[i]);
+                    }
+                }
+                old_list = old_list.sort(cmp);
+                setList([...old_list]);
+            } else {
+                message.error("获取聊天列表发生错误！").then(_ => _);
+            }
+        });
+    }
 
     useEffect(() => {
         if (!load) {
@@ -35,7 +72,7 @@ const LeftColumn = (props: any) => {
                 }
             });
         }
-    }, [load, props.refresh]);
+    }, [load]);
 
     useEffect(() => {
         // console.log(list);
@@ -45,7 +82,7 @@ const LeftColumn = (props: any) => {
         if (!load) {
             if (list[0] != -1) {
                 setLoad(true);
-                var l : any[] = [];
+                let l : any[] = [];
                 for (let i = 0; i < list.length; ++ i) {
                     l.push(list[i]);
                 }
@@ -66,7 +103,7 @@ const LeftColumn = (props: any) => {
                         })
                     }
                 }
-            };
+            }
         }
         else if (!loadname) {
             let isTrue = true;
@@ -98,10 +135,7 @@ const LeftColumn = (props: any) => {
     }, [list, load, loadname]);
 
     useEffect(() => {
-        setList([-1]);
-        setLoad(false);
-        setLoadname(false);
-        setSorted(false);
+        if(load && loadname && sorted) refreshList();
     }, [props.refresh]);
 
     useEffect(() => {
@@ -110,7 +144,6 @@ const LeftColumn = (props: any) => {
             socket.addEventListener("message", (res: any) => {
                 const msg = (eval("("+res.data+")"));
                 if (msg.type === 'send') {
-                    console.log(msg);
                     setList((list: any) => list.map((item: any) => item.sessionId !== msg.sessionId ? item : {
                         "sessionId": item.sessionId,
                         "sessionName": item.sessionName,
@@ -120,7 +153,8 @@ const LeftColumn = (props: any) => {
                         "lastSender": msg.senderName,
                         "message": msg.message,
                         "isTop": item.isTop,
-                        "isMute": item.isMute
+                        "isMute": item.isMute,
+                        //"unread": item.unread + 1,
                     }));
                     setList((list : any) => list.sort(cmp));
                 }

@@ -151,7 +151,7 @@ const RightColumn = (props: any) => {
             退出群聊
         </div>
         <br />
-        <ChatHistory open={openHistory} setOpen={setOpenHistory} members={props.members}
+        <ChatHistory open={openHistory} setOpen={setOpenHistory} members={props.members} messages={props.messages}
                      sessionId={props.session.sessionId} images={props.images}/>
         <Notice open={openNotice} setOpen={setOpenNotice} members={props.members}
                      sessionId={props.session.sessionId} images={props.images} setMessages={props.setMessages} role={props.role}/>

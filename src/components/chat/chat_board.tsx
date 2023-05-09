@@ -5,7 +5,7 @@ import { isBrowser } from "@/utils/store";
 import { store } from "@/utils/store";
 import Linkify from "react-linkify";
 import type { MenuProps } from 'antd';
-import {Avatar, Dropdown, Image, Skeleton, Tooltip} from 'antd';
+import {Avatar, Dropdown, Image, Skeleton, Spin, Tooltip} from 'antd';
 import {MenuShow} from "@/components/chat/right_column/right_column";
 import {request} from "@/utils/network";
 import RightColumn from "@/components/chat/right_column/right_column";
@@ -50,78 +50,124 @@ const ChatBoard = (props: any) => {
     const [messages, setMessages] = useState([]);
     const [members, setMembers] = useState<any>([]);
     const [images, setImages] = useState<any>([]);
+    const [height, setHeight] = useState(0);
     const [iload, setIload] = useState(false);
     const [mload, setMload] = useState(false);
+    const [newinfo, setNewinfo] = useState(false);
+    const [newmsg, setNewmsg] = useState(false);
+
+    const getPull = (timestamp: any) => {
+        const socket: any = store.getState().webSocket;
+        socket.send(JSON.stringify({
+                type: "pull",
+                id: store.getState().userId,
+                sessionId: props.session.sessionId,
+                messageScale: 30,
+                timestamp: timestamp
+            })
+        );
+    };
+
+    const handleSend = (res: any) => {
+        res = eval("(" + res.data + ")");
+        if (res.type === 'send' && res.sessionId === props.session.sessionId) {
+            if(res.senderId === store.getState().userId) {
+                setNewmsg(true);
+                setMessages((messages: any) => messages.map((message: any) => {
+                    return message.messageId === -1 && message.timestamp === res.timestamp
+                        ?
+                        {
+                            message: message.message,
+                            messageId: res.messageId,
+                            messageType: message.messageType,
+                            senderId: message.senderId,
+                            senderName: message.senderName,
+                            timestamp: message.timestamp
+                        }
+                        : message;
+                }))
+            } else {
+                setMessages((messages: any) => {
+                    return [...messages, {
+                        message: res.message,
+                        messageId: res.messageId,
+                        messageType: res.messageType,
+                        senderId: res.senderId,
+                        senderName: res.senderName,
+                        timestamp: res.timestamp
+                    }]
+                })
+            }
+        }
+    };
+
+    const handlePull = (res: any) => {
+        res = eval("(" + res.data + ")");
+        if ( res.type === 'pull' ) {
+            setMessages((messages) => [...messages, ...res.messages.reverse()]);
+            setMload(true);
+        }
+    };
+
+    const scroll = () => {
+        const board = document.getElementById('board');
+        if(board.scrollTop === 0) {
+            setHeight(board.scrollHeight);
+            getPull(messages[messages.length-1].timestamp + 1);
+            setNewinfo(true);
+        }
+    }
+
+    useEffect(() => {
+        if(iload && mload && (messages.length <= 30 || newmsg)) {
+            document
+                ?.getElementById("THEEND")
+                ?.scrollIntoView();
+            setNewmsg(false);
+        }
+    }, [messages, iload, mload, newmsg]);
     const [role, setRole] = useState(2);
 
     useEffect(() => {
-        setMload(false);
-        setIload(false);
-        request(
-            "/api/session/chatroom?id="+props.session.sessionId,
-            "GET",
-            ""
-        ).then((res: any) => {
-            setMembers(res.members);
-            setRole(res.members.filter((member: any) => member.id === store.getState().userId)[0].role);
-        });
-        }, [props.session.sessionId]
-    );
+        if(newinfo) {
+            const board =document.getElementById('board');
+            board.scrollTo(0, board.scrollHeight - height);
+            setNewinfo(false);
+        }
+    }, [messages]);
+
 
     useEffect(() => {
         for (let i = 0; i < members.length; ++i) {
             request("api/people/img/" + members[i].id, "GET", "").then((r: any) => {
                 if(images.every((image: any) => image.id !== members[i].id)) {
                     setImages((images: any) => [...images, {id: members[i].id, image: r.img}]);
-                }
-            }).then(() => {});
+                }}).then(() => {});
         }
     }, [members]);
 
     useEffect(() => {
+        setMload(false);
+        setIload(false);
+        request("/api/session/chatroom?id="+props.session.sessionId, "GET", "").then((res: any) => {setMembers(res.members);setRole(res.members.filter((member: any) => member.id === store.getState().userId)[0].role);});
+    }, [props.session.sessionId]);
+
+    useEffect(() => {
         if(members.length !== 0) {
             let isTrue = true;
-            for (let i = 0; i < members.length; ++i) {
-                if (images.every((image: any) => image.id !== members[i].id)) {
-                    isTrue = false;
-                }
-            }
-            if (isTrue) {
-                setIload(true);
-            }
+            for (let i = 0; i < members.length; ++i)
+                if (images.every((image: any) => image.id !== members[i].id)) isTrue = false;
+            if (isTrue) setIload(true);
         }
     }, [images, props.session.sessionId]);
 
     useEffect(() => {
-        const getPull = () => {
-            const socket: any = store.getState().webSocket;
-            socket.send(JSON.stringify({
-                    type: "pull",
-                    id: store.getState().userId,
-                    sessionId: props.session.sessionId,
-                    messageScale: 30
-                })
-            );
-        };
-        const handleSend = (res: any) => {
-            res = eval("(" + res.data + ")");
-            if (res.type === 'send' && res.sessionId === props.session.sessionId) {
-                getPull();
-            }
-        };
-        const handlePull = (res: any) => {
-            res = eval("(" + res.data + ")")
-            if ( res.type === 'pull' ) {
-                setMessages(res.messages);
-                setMessages((messages) => messages.reverse());
-                setMload(true);
-            }
-        };
+        setMessages(( _ : any) => []);
         const socket: any = store.getState().webSocket;
         if(isBrowser && socket != null && socket.readyState === 1) {
             socket.addEventListener("message", handleSend);
             socket.addEventListener("message", handlePull);
-            getPull();
+            getPull(Date.now());
         }
         return () => {
             socket.removeEventListener('message', handleSend);
@@ -129,11 +175,13 @@ const ChatBoard = (props: any) => {
         };
     }, [props.session.sessionId, store.getState().webSocket]);
 
-    useEffect(() => {
-        document
-        ?.getElementById('THEEND')
-        ?.scrollIntoView()
-    }, [messages]);
+    useEffect( () => {
+        const board = document.getElementById('board');
+        if(mload && iload && board) board.addEventListener('scroll', scroll);
+        return () => {
+            if(board) board.removeEventListener('scroll', scroll);
+        }
+    }, [props.session.sessionId, mload, iload]);
 
     return iload && mload
         ?
@@ -146,10 +194,10 @@ const ChatBoard = (props: any) => {
                 <MenuShow />
             </div>
 
-            <div className={styles.display_board} >
+            <div id="board" className={styles.display_board} >
                 {messages.map((message: any, index: any) =>
                     message.senderId === store.getState().userId ? (
-                        <div className={styles.message} key={index+1}>
+                        <div className={styles.message} key={index+1} id={index+1}>
                             <div className={styles.headshot_right}>
                                 <Avatar src={
                                     images.filter( (image: any) => image.id === message.senderId)[0] === undefined
@@ -189,7 +237,7 @@ const ChatBoard = (props: any) => {
                             </Tooltip>
                         </div>
                     ) : (
-                        <div className={styles.message} key={index+1}>
+                        <div className={styles.message} key={index+1} id={index+1}>
                             <div className={styles.headshot_left}>
                                 <Avatar src={
                                     images.filter( (image: any) => image.id === message.senderId)[0] === undefined
