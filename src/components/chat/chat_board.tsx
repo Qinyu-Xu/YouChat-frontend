@@ -10,7 +10,6 @@ import {MenuShow} from "@/components/chat/right_column/right_column";
 import {request} from "@/utils/network";
 import RightColumn from "@/components/chat/right_column/right_column";
 import moment from "moment";
-import {Simulate} from "react-dom/test-utils";
 
 const left_items: MenuProps['items'] = [
     {
@@ -55,6 +54,7 @@ const ChatBoard = (props: any) => {
     const [iload, setIload] = useState(false);
     const [mload, setMload] = useState(false);
     const [newinfo, setNewinfo] = useState(false);
+    const [newmsg, setNewmsg] = useState(false);
 
     const getPull = (timestamp: any) => {
         const socket: any = store.getState().webSocket;
@@ -72,6 +72,7 @@ const ChatBoard = (props: any) => {
         res = eval("(" + res.data + ")");
         if (res.type === 'send' && res.sessionId === props.session.sessionId) {
             if(res.senderId === store.getState().userId) {
+                setNewmsg(true);
                 setMessages((messages: any) => messages.map((message: any) => {
                     return message.messageId === -1 && message.timestamp === res.timestamp
                         ?
@@ -118,12 +119,13 @@ const ChatBoard = (props: any) => {
     }
 
     useEffect(() => {
-        if(iload && mload && messages.length <= 30) {
+        if(iload && mload && (messages.length <= 30 || newmsg)) {
             document
                 ?.getElementById("THEEND")
                 ?.scrollIntoView();
+            setNewmsg(false);
         }
-    }, [messages, iload, mload]);
+    }, [messages, iload, mload, newmsg]);
 
     useEffect(() => {
         if(newinfo) {
