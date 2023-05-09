@@ -15,6 +15,9 @@ const UserList = (props: any) => {
         if (role === 2) {
             return "群成员";
         }
+        if (role === 3) {
+            return "待批准";
+        }
     }
 
     const data = props.members.map((member: any) => {

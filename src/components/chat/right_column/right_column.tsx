@@ -154,7 +154,7 @@ const RightColumn = (props: any) => {
                      sessionId={props.session.sessionId} images={props.images}/>
         <Notice open={openNotice} setOpen={setOpenNotice} members={props.members}
                      sessionId={props.session.sessionId} images={props.images} setMessages={props.setMessages} role={props.role}/>
-        <AddMember open={openAdd} setOpen={setOpenAdd} members={props.members}/>
+        <AddMember open={openAdd} setOpen={setOpenAdd} members={props.members} sessionId={props.session.sessionId}/>
     </div>
 }
 

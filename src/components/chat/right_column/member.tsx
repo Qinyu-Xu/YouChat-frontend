@@ -10,7 +10,6 @@ const AddMember = (props: any) => {
     const [load, setLoad] = useState(true);
     const [friends, setFriends] = useState([]);
     const [selected, setSelected] = useState([store.getState().userId]);
-    const [name, setName] = useState('');
 
     useEffect(() => {
         request("api/people/friends?"+formatParams({id: store.getState().userId}), "GET", "").then((res: any) => {
@@ -20,14 +19,14 @@ const AddMember = (props: any) => {
         })}, [open]);
 
     const handleOk = () => {
-        request("api/session/chatroom", "PUT", JSON.stringify({
-            userId: store.getState().userId,
-            sessionName: name,
-            initial: selected,
-        })).then(_=> {
-            props.setOpen(false);
-            props.setRefresh((s: any) => !s);
+        selected.map(selected_item => {
+            request("api/session/chatroom", "POST", JSON.stringify({
+                userId: selected_item,
+                sessionId: props.sessionId,
+            })).then(_=> {console.log(selected_item);
+            console.log(props.sessionId);});
         });
+            props.setOpen(false);
     }
     const handleCancel = () => {
         props.setOpen(false);
@@ -40,8 +39,7 @@ const AddMember = (props: any) => {
         };
     }
     return (
-
-        <Modal title={"选择好友创建一个群聊"} open={props.open} onOk={handleOk} onCancel={handleCancel}>
+        <Modal title={"选择好友添加至群聊中"} open={props.open} onOk={handleOk} onCancel={handleCancel}>
             {load
                 ?
                 (
@@ -51,7 +49,6 @@ const AddMember = (props: any) => {
                 :
                 (
                     <div>
-                        输入群聊名称:<Input onChange={(e: any) => setName(e.target.value)}></Input>
                         <List
                             itemLayout="vertical"
                             size="large"
@@ -59,8 +56,13 @@ const AddMember = (props: any) => {
                             dataSource={friends}
                             renderItem={(item: any) => (
                                 <List.Item key={item.id}>
+                                    {props.members.filter((x: any) => x.id === item.id).length === 0 
+                                    ?
                                     <Checkbox onChange={onChange(item)}>
                                     </Checkbox>
+                                    :
+                                    <Checkbox defaultChecked={true} disabled />
+                                    }
                                     {item.userName}
                                 </List.Item>
                             )}
@@ -68,7 +70,6 @@ const AddMember = (props: any) => {
                     </div>
                 )}
         </Modal>
-
     );
 };
 
