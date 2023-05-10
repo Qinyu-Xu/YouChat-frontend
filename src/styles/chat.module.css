@@ -27,7 +27,7 @@
 
 .message_left {
     background-color: rgba(255, 255, 255, 0.5);
-    box-shadow: 1px 1px 2px #888888;
+    /* box-shadow: 1px 1px 2px #888888; */
     border-radius: 0.5rem;
     margin: 0;
     padding: 0.25rem 0.5rem;
@@ -45,7 +45,7 @@
 
 .photo_left {
     background-color: rgba(255, 255, 255, 0.5);
-    box-shadow: 1px 1px 2px #888888;
+    /* box-shadow: 1px 1px 2px #888888; */
     border-radius: 0.5rem;
     margin: 0;
     padding: 0.25rem 0.5rem;
@@ -70,7 +70,7 @@
 
 .message_right {
     background-color: rgba(51, 125, 235, 0.75);
-    box-shadow: 1px 1px 2px #888888;
+    /* box-shadow: 1px 1px 2px #888888; */
     border-radius: 0.5rem;
     margin: 0;
     padding: 0.25rem 0.5rem;
@@ -88,7 +88,7 @@
 
 .photo_right {
     background-color: rgba(51, 125, 235, 0.75);
-    box-shadow: 1px 1px 2px #888888;
+    /* box-shadow: 1px 1px 2px #888888; */
     border-radius: 0.5rem;
     margin: 0;
     padding: 0.25rem 0.5rem;
@@ -211,7 +211,7 @@
 
 .message_item_istop {
     border-radius: 0.5rem;
-    box-shadow: 1px 1px 2px #dbd9d9;
+    /* box-shadow: 1px 1px 2px #dbd9d9; */
     margin: 0.5rem;
     border: 0;
     padding: 0;
@@ -228,7 +228,7 @@
 
 .message_item {
     border-radius: 0.5rem;
-    box-shadow: 1px 1px 2px #dbd9d9;
+    /* box-shadow: 1px 1px 2px #dbd9d9; */
     margin: 0.5rem;
     border: 0;
     padding: 0;
