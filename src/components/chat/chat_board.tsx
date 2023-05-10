@@ -57,6 +57,8 @@ const ChatBoard = (props: any) => {
     const [mload, setMload] = useState(false);
     const [newinfo, setNewinfo] = useState(false);
     const [newmsg, setNewmsg] = useState(false);
+    const [newpull, setNewpull] = useState(false);
+    const [count, setCount] = useState(0);
 
     const getPull = (timestamp: any) => {
         const socket: any = store.getState().webSocket;
@@ -106,7 +108,7 @@ const ChatBoard = (props: any) => {
     const handlePull = (res: any) => {
         res = eval("(" + res.data + ")");
         if ( res.type === 'pull' ) {
-            setMessages((messages: any) => [...messages, ...res.messages.reverse()]);
+            setMessages((messages: any) => [...res.messages.reverse(), ...messages]);
             setMload(true);
         }
     };
@@ -115,10 +117,18 @@ const ChatBoard = (props: any) => {
         const board: any = document.getElementById('board');
         if(board.scrollTop === 0) {
             setHeight(board.scrollHeight);
-            getPull(messages[messages.length-1].timestamp + 1);
+            if(!newpull) setCount(count=>count+1);
+            setNewpull(true);
             setNewinfo(true);
         }
     }
+
+    useEffect(()=>{
+        if(newpull && messages.length >= (count-1)*30) {
+            getPull(messages[0].timestamp-1);
+            setNewpull(false);
+        }
+    }, [messages, newpull]);
 
     useEffect(() => {
         if(iload && mload && (messages.length <= 30 || newmsg)) {
@@ -148,6 +158,9 @@ const ChatBoard = (props: any) => {
     }, [members]);
 
     useEffect(() => {
+        setCount(1);
+        setNewinfo(false);
+        setNewpull(false);
         setMload(false);
         setIload(false);
         request("/api/session/chatroom?id="+props.session.sessionId, "GET", "").then((res: any) => {setMembers(res.members);});

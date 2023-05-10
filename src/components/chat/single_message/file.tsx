@@ -10,7 +10,7 @@ export const FileViewer = ({base}: any) => {
     const [fileName, setFileName] = useState(null);
 
     useEffect( () => {
-            fetch(base).then(res => res.blob()).then(blob => {
+            fetch(base).then(res => res.blob()).then((blob: any) => {
                 setFileName(blob.name)
             });
         }
@@ -18,7 +18,7 @@ export const FileViewer = ({base}: any) => {
     const handleClick = () => {
         fetch(base).then(res => res.blob()).then(blob => {
             const url = URL.createObjectURL(blob);
-            const win = window.open(url, "_blank");
+            const win: any = window.open(url, "_blank");
             win.focus();
         });
     }
