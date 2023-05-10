@@ -169,10 +169,6 @@ const ChatBoard = (props: any) => {
     }, [props.session.sessionId]);
 
     useEffect(() => {
-        request("/api/session/chatroom?id="+props.session.sessionId, "GET", "").then((res: any) => {setMembers(res.members);setRole(res.members.filter((member: any) => member.id === store.getState().userId)[0].role);});
-    }, [membersRefresh]);
-
-    useEffect(() => {
         if(members.length !== 0) {
             let isTrue = true;
             for (let i = 0; i < members.length; ++i)
