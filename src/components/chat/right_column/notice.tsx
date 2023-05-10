@@ -104,7 +104,7 @@ const Notice = (props: any) => {
             socket.send(JSON.stringify({
                     type: "pull",
                     id: store.getState().userId,
-                    sessionId: props.session.sessionId,
+                    sessionId: props.sessionId,
                     messageScale: 30,
                     timestamp: timestamp
                 })
