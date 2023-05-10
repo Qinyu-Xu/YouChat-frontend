@@ -221,8 +221,11 @@ const ChatBoard = (props: any) => {
                                         images.filter( (image: any) => image.id === message.senderId)[0].image
                                 } />
                             </div>
-                            <Tooltip title={moment(message.timestamp).format("HH:mm:ss")} trigger="click"
-                                arrow={false} placement="topLeft" color="rgba(100,100,100,0.5)">
+                            <Tooltip title={
+                                message.senderName + " " + 
+                                moment(message.timestamp).format("MM/DD HH:mm:ss")
+                            } trigger="hover"
+                                arrow={false} placement="topRight" color="rgba(100,100,100,0.5)">
                                 <Dropdown menu={{ items: right_items }} placement="bottomLeft" trigger={['contextMenu']}>
                                     {
                                         message.messageType === "text"
@@ -268,8 +271,11 @@ const ChatBoard = (props: any) => {
                                         images.filter( (image: any) => image.id === message.senderId)[0].image
                                 } />
                             </div>
-                            <Tooltip title={moment(message.timestamp).format("HH:mm:ss")} trigger="click"
-                                arrow={false} placement="topRight" color="rgba(100,100,100,0.5)">
+                            <Tooltip title={
+                                message.senderName + " " + 
+                                moment(message.timestamp).format("MM/DD HH:mm:ss")
+                            } trigger="hover"
+                                arrow={false} placement="topLeft" color="rgba(100,100,100,0.5)">
                                 <Dropdown menu={{ items: left_items }} placement="bottomLeft"  trigger={['contextMenu']}>
                                     {
                                         message.messageType === "text"
