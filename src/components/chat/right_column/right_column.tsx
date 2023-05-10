@@ -63,8 +63,9 @@ const RightColumn = (props: any) => {
     const handleInvite = () => {};
 
     return <div id="mySidenav" className={styles.sidenav}>
-        {props.session.sessionType === 1 ? "" : (<div>群成员<br/></div>)}
-        <UserList members={props.members} images={props.images}/>
+        {props.session.sessionType === 1 ? "" : (<div>群成员<br/>
+            <UserList members={props.members} images={props.images}/>
+        </div>)}
         {props.session.sessionType === 1 ? <div></div> :
             <div>
             <Divider/>
