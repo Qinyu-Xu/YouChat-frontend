@@ -64,7 +64,7 @@ const RightColumn = (props: any) => {
 
     return <div id="mySidenav" className={styles.sidenav}>
         {props.session.sessionType === 1 ? "" : (<div>群成员<br/></div>)}
-        <UserList members={props.members}/>
+        <UserList members={props.members} images={props.images}/>
         {props.session.sessionType === 1 ? <div></div> :
             <div>
             <Divider/>

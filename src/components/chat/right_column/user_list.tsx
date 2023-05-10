@@ -1,26 +1,33 @@
-import {List} from "antd";
+import styles from "@/styles/right.module.css";
+import { Avatar } from "antd";
 
 
 const UserList = (props: any) => {
-    const data = props.members.map((member: any) => {
-        return {
-            name: member.nickname
-        }
-    })
+    console.log(props);
     return (
-        <div>
-        <List
-            itemLayout="horizontal"
-            dataSource={data}
-            bordered={true}
-            renderItem={(item: any, index: any) => (
-                <List.Item>
-                    {item.name}
-                </List.Item>
-            )}
-        />
-
-    </div>);
+        <div className={styles.member_list}>
+            {
+                props.members.map((member: any) => {
+                    return (
+                        <div className={styles.member}>
+                            <Avatar className={styles.member_photo} src={
+                                props.images.filter( (image: any) => 
+                                    image.id === member.id)[0] === undefined
+                                ?
+                                    "/headshot/01.svg"
+                                :
+                                    props.images.filter( (image: any) => 
+                                        image.id === member.id)[0].image
+                            }/>
+                            <div className={styles.member_name}>
+                                {member.nickname}
+                            </div>
+                        </div>
+                    )
+                })
+            }
+        </div>
+    )
 }
 
 export default UserList;
