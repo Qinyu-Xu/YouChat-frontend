@@ -51,7 +51,6 @@ const ChatBoard = (props: any) => {
 
     const [messages, setMessages] = useState<any>([]);
     const [members, setMembers] = useState<any>([]);
-    const [membersRefresh, setMembersRefresh] = useState(0);
     const [images, setImages] = useState<any>([]);
     const [height, setHeight] = useState(0);
     const [iload, setIload] = useState(false);
@@ -321,7 +320,7 @@ const ChatBoard = (props: any) => {
                 <div id="THEEND"/>
             </div>
             <SingleMessage sessionId={props.session.sessionId} setMessages={setMessages}/>
-            <RightColumn session={props.session} members={members} images={images} setRefresh={props.setRefresh} setSession={props.setSession} setMessages={setMessages} role={role} setMembersRefresh={setMembersRefresh}/>
+            <RightColumn session={props.session} members={members}  messages={messages} images={images} setRefresh={props.setRefresh} setSession={props.setSession} setMessages={setMessages} role={role}/>
         </div>
         )
         :

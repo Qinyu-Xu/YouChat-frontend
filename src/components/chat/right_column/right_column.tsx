@@ -153,11 +153,11 @@ const RightColumn = (props: any) => {
         <br />
         <ChatHistory open={openHistory} setOpen={setOpenHistory} members={props.members} messages={props.messages}
                      sessionId={props.session.sessionId} images={props.images}/>
-        <Notice open={openNotice} setOpen={setOpenNotice} members={props.members}
+        {/* <Notice open={openNotice} setOpen={setOpenNotice} members={props.members} messages={props.messages}
                      sessionId={props.session.sessionId} images={props.images} setMessages={props.setMessages} role={props.role}/>
-        <AddMember open={openAdd} setOpen={setOpenAdd} members={props.members} sessionId={props.session.sessionId}/>
-        <Manager open={openInvite} setOpen={setOpenInvite} members={props.members}
-                     sessionId={props.session.sessionId} images={props.images} setMessages={props.setMessages} role={props.role} setSession={props.setSession} setMembersRefresh={props.setMembersRefresh}/>
+        <AddMember open={openAdd} setOpen={setOpenAdd} members={props.members} sessionId={props.session.sessionId}/> */}
+        {/* <Manager open={openInvite} setOpen={setOpenInvite} members={props.members}
+                     sessionId={props.session.sessionId} images={props.images} setMessages={props.setMessages} role={props.role} setSession={props.setSession}/> */}
     </div>
 }
 

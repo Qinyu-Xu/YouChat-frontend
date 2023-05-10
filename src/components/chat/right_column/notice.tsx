@@ -99,13 +99,14 @@ const Notice = (props: any) => {
     const handleCancel = () => props.setOpen(false);
 
     useEffect(() => {
-        const getPull = () => {
+        const getPull = (timestamp: any) => {
             const socket: any = store.getState().webSocket;
             socket.send(JSON.stringify({
                     type: "pull",
                     id: store.getState().userId,
-                    sessionId: props.sessionId,
-                    messageScale: 100
+                    sessionId: props.session.sessionId,
+                    messageScale: 30,
+                    timestamp: timestamp
                 })
             );
         };
@@ -118,7 +119,7 @@ const Notice = (props: any) => {
         const socket: any = store.getState().webSocket;
         if(isBrowser && socket != null && socket.readyState === 1) {
             socket.addEventListener("message", handlePull);
-            getPull();
+            getPull(Date.now());
         }
         return () => {socket.removeEventListener('message', handlePull);};
     }, [props.sessionId, store.getState().webSocket]);
