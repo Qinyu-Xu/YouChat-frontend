@@ -1,11 +1,17 @@
 import styles from "@/styles/right.module.css";
-import {Divider, message, Switch} from "antd";
+import {Divider, message, Switch, Modal} from "antd";
 import {useState} from "react";
 import {request} from "@/utils/network";
 import {store} from "@/utils/store";
-import {RightOutlined, UnorderedListOutlined} from "@ant-design/icons";
+import {RightOutlined, UnorderedListOutlined, ExclamationCircleFilled} from "@ant-design/icons";
 import ChatHistory from "@/components/chat/right_column/chat_history";
+import Notice from "@/components/chat/right_column/notice";
 import UserList from "@/components/chat/right_column/user_list";
+import AddMember from "@/components/chat/right_column/member";
+import Manager from "@/components/chat/right_column/manager";
+import { useRouter } from "next/router";
+
+const { confirm } = Modal;
 
 export const MenuShow = (_: any) => {
     const handleClick = (_: any) => {
@@ -22,9 +28,15 @@ export const MenuShow = (_: any) => {
 }
 
 const RightColumn = (props: any) => {
-    const [open, setOpen] = useState(false);
+    const [openHistory, setOpenHistory] = useState(false);
+    const [openNotice, setOpenNotice] = useState(false);
+    const [openAdd, setOpenAdd] = useState(false);
+    const [openInvite, setOpenInvite] = useState(false);
+    const [openMana, setOpenMana] = useState(false);
     const [curTop, setCurTop] = useState<boolean>(props.session.isTop);
     const [curMute, setCurMute] = useState<boolean>(props.session.isMute);
+
+    const router = useRouter();
 
     const handleMute = (isMute: boolean) => {
         setCurMute(isMute);
@@ -57,10 +69,34 @@ const RightColumn = (props: any) => {
         })
     }
 
-    const handleHistory = () => setOpen(true);
-    const handleBoard = () => {};
+    const handleHistory = () => setOpenHistory(true);
+    const handleBoard = () => setOpenNotice(true);
     const handleMana = () => {};
-    const handleInvite = () => {};
+    const handleInvite = () => setOpenInvite(true);
+
+    const handleDropout = () => {
+        confirm({
+          title: '你确定要退出群聊吗？',
+          icon: <ExclamationCircleFilled />,
+          content: '该操作不可恢复。',
+          onOk() {
+            request(
+                "/api/session/chatroom",
+                "DELETE",
+                JSON.stringify({
+                    userId: store.getState().userId,
+                    sessionId: props.session.sessionId,
+                })
+            ).then((res: any) => {
+                props.setRefresh((refresh: any)=>!refresh);
+                props.setSession(null);
+            }).catch((e: any) => {
+                message.error("退出群聊失败!");
+            })
+          },
+          onCancel() {},
+        });
+      };
 
     return <div id="mySidenav" className={styles.sidenav}>
         {props.session.sessionType === 1 ? "" : (<div>群成员<br/>
@@ -76,16 +112,20 @@ const RightColumn = (props: any) => {
             <RightOutlined />
             </div>
             <br />
-            <div onClick={handleInvite}>
-            管理群成员
-            <RightOutlined />
-            </div>
-            <br/>
-            <div onClick={handleMana}>
-            设置管理员
-            <RightOutlined />
-            </div>
-            <br/>
+            {props.role > 1 ? <div></div> :
+                <div onClick={handleInvite}>
+                管理群成员
+                <RightOutlined />
+                </div>
+            }
+            {props.role > 1 ? <div></div> : <div><br/></div>}
+            {props.role > 0 ? <div></div> :
+                <div onClick={handleMana}>
+                设置管理员
+                <RightOutlined />
+                </div>
+            }
+            {props.role > 0 ? <div></div> : <div><br/></div>}
             </div>
         }
         <Divider />
@@ -98,8 +138,18 @@ const RightColumn = (props: any) => {
         <br />
         设置置顶<Switch onChange={handleTop} checked={curTop} />
         <br />
-        <ChatHistory open={open} setOpen={setOpen} members={props.members} messages={props.messages}
+        <Divider />
+        <div className={styles.drop} onClick={handleDropout}>
+            退出群聊
+        </div>
+        <br />
+        <ChatHistory open={openHistory} setOpen={setOpenHistory} members={props.members} messages={props.messages}
                      sessionId={props.session.sessionId} images={props.images}/>
+        <Notice open={openNotice} setOpen={setOpenNotice} members={props.members} messages={props.messages}
+                     sessionId={props.session.sessionId} images={props.images} setMessages={props.setMessages} role={props.role}/>
+        <AddMember open={openAdd} setOpen={setOpenAdd} members={props.members} sessionId={props.session.sessionId}/>
+        <Manager open={openInvite} setOpen={setOpenInvite} members={props.members}
+                     sessionId={props.session.sessionId} images={props.images} setMessages={props.setMessages} role={props.role} setSession={props.setSession}/>
     </div>
 }
 

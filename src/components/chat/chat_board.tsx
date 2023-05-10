@@ -59,6 +59,7 @@ const ChatBoard = (props: any) => {
     const [newmsg, setNewmsg] = useState(false);
     const [newpull, setNewpull] = useState(false);
     const [count, setCount] = useState(0);
+    const [role, setRole] = useState(2);
 
     const getPull = (timestamp: any) => {
         const socket: any = store.getState().webSocket;
@@ -163,7 +164,7 @@ const ChatBoard = (props: any) => {
         setNewpull(false);
         setMload(false);
         setIload(false);
-        request("/api/session/chatroom?id="+props.session.sessionId, "GET", "").then((res: any) => {setMembers(res.members);});
+        request("/api/session/chatroom?id="+props.session.sessionId, "GET", "").then((res: any) => {setMembers(res.members);setRole(res.members.filter((member: any) => member.id === store.getState().userId)[0].role);});
     }, [props.session.sessionId]);
 
     useEffect(() => {
@@ -234,6 +235,12 @@ const ChatBoard = (props: any) => {
                                             <Linkify>{message.message}</Linkify>
                                         </div>
                                         :
+                                        message.messageType === "notice"
+                                        ?
+                                        <div className={styles.message_right}>
+                                            <Linkify>{"群公告\n" + message.message}</Linkify>
+                                        </div>
+                                        :
                                         message.messageType === "photo"
                                         ?
                                         <div className={styles.photo_right}>
@@ -283,6 +290,12 @@ const ChatBoard = (props: any) => {
                                         <div className={styles.message_left}>
                                         <Linkify>{message.message}</Linkify>
                                         </div>
+                                            :
+                                            message.messageType === "notice"
+                                            ?
+                                            <div className={styles.message_left}>
+                                                <Linkify>{"群公告\n" + message.message}</Linkify>
+                                            </div>
                                         :
                                         message.messageType === "photo"
                                         ?
@@ -313,7 +326,7 @@ const ChatBoard = (props: any) => {
                 <div id="THEEND"/>
             </div>
             <SingleMessage sessionId={props.session.sessionId} setMessages={setMessages}/>
-            <RightColumn session={props.session} members={members} messages={messages} images={images} setRefresh={props.setRefresh}/>
+            <RightColumn session={props.session} members={members}  messages={messages} images={images} setRefresh={props.setRefresh} setSession={props.setSession} setMessages={setMessages} role={role}/>
         </div>
         )
         :
