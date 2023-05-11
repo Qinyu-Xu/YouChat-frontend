@@ -4,7 +4,7 @@ import styles from "@/styles/chat.module.css"
 import { isBrowser } from "@/utils/store";
 import { store } from "@/utils/store";
 import Linkify from "react-linkify";
-import type { MenuProps } from 'antd';
+import { MenuProps, Modal } from 'antd';
 import {Avatar, Dropdown, Image, message, Skeleton, Spin, Tooltip} from 'antd';
 import {MenuShow} from "@/components/chat/right_column/right_column";
 import {request} from "@/utils/network";
@@ -62,7 +62,13 @@ const ChatBoard = (props: any) => {
     const [role, setRole] = useState(2);
     const [bRefresh, setBRefresh] = useState(0);
 
-    const onDropDownClick: any = (messageId: any) => {
+    const [translated, setTranslated] = useState("");
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const showModal = () => { setIsModalOpen(true); };
+    const handleOk = () => { setIsModalOpen(false); };
+    const handleCancel = () => { setIsModalOpen(false); };
+
+    const onDropDownClick: any = (messageId: any, message: any) => {
         return ({key}: any) => {
             if(key === '0') {
                 if(messageId !== -1) {
@@ -77,6 +83,19 @@ const ChatBoard = (props: any) => {
                 } else {
                     message.error("服务器繁忙，请稍后撤回！");
                 }
+            }
+            if(key === '2') {
+                // console.log(message);
+                request("api/session/message/translate", "PUT",
+                    JSON.stringify({ 
+                        "language": "English",
+	                    "text": message
+                    })
+                ).then((res: any) => {
+                    // console.log(res);
+                    setTranslated(res.text);
+                    setIsModalOpen(true);
+                });
             }
         };
     };
@@ -269,7 +288,7 @@ const ChatBoard = (props: any) => {
                                 moment(message.timestamp).format("MM/DD HH:mm:ss")
                             } trigger="hover"
                                 arrow={false} placement="topRight" color="rgba(100,100,100,0.5)">
-                                <Dropdown menu={{ items: right_items, onClick: onDropDownClick(message.messageId) }} placement="bottomLeft" trigger={['contextMenu']}>
+                                <Dropdown menu={{ items: right_items, onClick: onDropDownClick(message.messageId, message.message) }} placement="bottomLeft" trigger={['contextMenu']}>
                                     {
                                         message.messageType === "text"
                                         ?
@@ -325,7 +344,7 @@ const ChatBoard = (props: any) => {
                                 moment(message.timestamp).format("MM/DD HH:mm:ss")
                             } trigger="hover"
                                 arrow={false} placement="topLeft" color="rgba(100,100,100,0.5)">
-                                <Dropdown menu={{ items: left_items, onClick: onDropDownClick(message.messageId) }} placement="bottomLeft"  trigger={['contextMenu']}>
+                                <Dropdown menu={{ items: left_items, onClick: onDropDownClick(message.messageId, message.message) }} placement="bottomLeft"  trigger={['contextMenu']}>
                                     {
                                         message.messageType === "text"
                                         ?
@@ -369,6 +388,9 @@ const ChatBoard = (props: any) => {
             </div>
             <SingleMessage sessionId={props.session.sessionId} setMessages={setMessages}/>
             <RightColumn session={props.session} members={members}  messages={messages} images={images} setRefresh={props.setRefresh} setSession={props.setSession} setMessages={setMessages} role={role} setBRefresh={setBRefresh}/>
+            <Modal title="翻译结果" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
+                <p>{translated}</p>
+            </Modal>
         </div>
         )
         :
