@@ -16,7 +16,6 @@ const RequestList = (props: any) => {
             applicantId: applicant_id,
         })).then(_=> {
             props.setOpen(false);
-            props.setMembersRefresh((s: any) => !s);
             const item = document.getElementById("mySidenav");
             if(item) {
                 if (item.style.right === "-20rem") item.style.right = "0px";
@@ -30,8 +29,8 @@ const RequestList = (props: any) => {
         <List 
             grid={{ column: 1 }}
             itemLayout="vertical"
-            dataSource={props.members}
-            // dataSource={props.members.filter((x: any) => x.role === 3)}
+            //dataSource={props.members}
+            dataSource={props.members.filter((x: any) => x.role === 3)}
             // bordered={true}
             renderItem={(item: any, index: any) => (
                 <List.Item onClick={() => {}}>
@@ -80,7 +79,7 @@ const Manager = (props: any) => {
                 <Menu onClick={onClick} selectedKeys={[current]} mode="horizontal" items={items} />
             
             <br />
-            <RequestList members={props.members} messages={messages} images={props.images} setOpen={props.setOpen} sessionId={props.sessionId} setSession={props.setSession} setMembersRefresh={props.setMembersRefresh}/>
+            <RequestList members={props.members} messages={messages} images={props.images} setOpen={props.setOpen} sessionId={props.sessionId} setSession={props.setSession}/>
         </Modal>
     )
 }
