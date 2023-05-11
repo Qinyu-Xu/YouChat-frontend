@@ -92,37 +92,10 @@ const Notice = (props: any) => {
     ];
 
     const [current, setCurrent] = useState('view');
-    const [messages, setMessages] = useState([]);
 
     const onClick: MenuProps['onClick'] = (e: any) => setCurrent(e.key);
     const handleOk = () => props.setOpen(false);
     const handleCancel = () => props.setOpen(false);
-
-    useEffect(() => {
-        const getPull = (timestamp: any) => {
-            const socket: any = store.getState().webSocket;
-            socket.send(JSON.stringify({
-                    type: "pull",
-                    id: store.getState().userId,
-                    sessionId: props.sessionId,
-                    messageScale: 30,
-                    timestamp: timestamp
-                })
-            );
-        };
-        const handlePull = (res: any) => {
-            res = eval("(" + res.data + ")")
-            if ( res.type === 'pull' ) {
-                setMessages(res.messages);
-            }
-        };
-        const socket: any = store.getState().webSocket;
-        if(isBrowser && socket != null && socket.readyState === 1) {
-            socket.addEventListener("message", handlePull);
-            getPull(Date.now());
-        }
-        return () => {socket.removeEventListener('message', handlePull);};
-    }, [props.sessionId, store.getState().webSocket]);
 
     return (
         <Modal title={"群公告管理"} open={props.open} onOk={handleOk} onCancel={handleCancel} width={800}>
@@ -135,7 +108,7 @@ const Notice = (props: any) => {
             
             <br />
             {current === 'view'
-                ? <NoticePicker members={props.members} messages={messages} images={props.images}/>
+                ? <NoticePicker members={props.members} messages={props.messages} images={props.images}/>
                 : <NoticeEditor setMessages={props.setMessages} sessionId={props.sessionId}/>
             }
         </Modal>
