@@ -19,7 +19,7 @@ const AllPicker = (props: any) => {
                         title={(props.members.filter((member: any) => member.id === item.senderId))[0] === undefined
                                 ? "Stranger" :
                             (props.members.filter((member: any) => member.id === item.senderId))[0].nickname}
-                        description={ item.messageType === "text" ? item.message : <Image src={item.message} />}
+                        description={ item.messageType === "text" || item.messageType === "notice" ? item.message : <Image src={item.message} />}
                     />
                 </List.Item>
             )}
@@ -56,7 +56,7 @@ const TimestampPicker = (props: any) => {
                         title={(props.members.filter((member: any) => member.id === item.senderId))[0] === undefined
                             ? "Stranger" :
                             (props.members.filter((member: any) => member.id === item.senderId))[0].nickname}
-                        description={ item.messageType === "text" ? item.message : <Image src={item.message} />}
+                        description={ item.messageType === "text" || item.messageType === "notice" ? item.message : <Image src={item.message} />}
                     />
                 </List.Item>
             )}
@@ -93,7 +93,7 @@ const TypePicker = (props: any) => {
                         title={(props.members.filter((member: any) => member.id === item.senderId))[0] === undefined
                             ? "Stranger" :
                             (props.members.filter((member: any) => member.id === item.senderId))[0].nickname}
-                        description={ item.messageType === "text" ? item.message : <Image src={item.message} />}
+                        description={ item.messageType === "text" || item.messageType === "notice" ? item.message : <Image src={item.message} />}
                     />
                 </List.Item>
             )}
@@ -139,7 +139,7 @@ const MemberPicker = (props: any) => {
                         title={(props.members.filter((member: any) => member.id === item.senderId))[0] === undefined
                             ? "Stranger" :
                             (props.members.filter((member: any) => member.id === item.senderId))[0].nickname}
-                        description={ item.messageType === "text" ? item.message : <Image src={item.message} />}
+                        description={ item.messageType === "text" || item.messageType === "notice" ? item.message : <Image src={item.message} />}
                     />
                 </List.Item>
             )}
