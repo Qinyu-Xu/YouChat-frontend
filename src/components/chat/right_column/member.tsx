@@ -27,6 +27,7 @@ const AddMember = (props: any) => {
             console.log(props.sessionId);});
         });
             props.setOpen(false);
+            props.setBRefresh((s: any) => !s);
     }
     const handleCancel = () => {
         props.setOpen(false);

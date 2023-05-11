@@ -60,6 +60,7 @@ const ChatBoard = (props: any) => {
     const [newpull, setNewpull] = useState(false);
     const [count, setCount] = useState(0);
     const [role, setRole] = useState(2);
+    const [bRefresh, setBRefresh] = useState(0);
 
     const getPull = (timestamp: any) => {
         const socket: any = store.getState().webSocket;
@@ -320,7 +321,7 @@ const ChatBoard = (props: any) => {
                 <div id="THEEND"/>
             </div>
             <SingleMessage sessionId={props.session.sessionId} setMessages={setMessages}/>
-            <RightColumn session={props.session} members={members}  messages={messages} images={images} setRefresh={props.setRefresh} setSession={props.setSession} setMessages={setMessages} role={role}/>
+            <RightColumn session={props.session} members={members}  messages={messages} images={images} setRefresh={props.setRefresh} setSession={props.setSession} setMessages={setMessages} role={role} setBRefresh={setBRefresh}/>
         </div>
         )
         :
