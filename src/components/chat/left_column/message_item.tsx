@@ -1,6 +1,6 @@
 import styles from "@/styles/chat.module.css";
 import { request } from "@/utils/network";
-import { Avatar } from "antd";
+import {Avatar, Badge} from "antd";
 import {store} from "@/utils/store";
 import { useEffect, useState } from "react";
 import {getRandomNumber} from "@/utils/utilities";
@@ -36,8 +36,9 @@ const MessageItem = (props: any) => {
                 styles.message_item_istop
             :
                 styles.message_item}>
-
+            <Badge count={props.session.unread} overflowCount={99}>
             <Avatar className={styles.message_item_left} src={image}/>
+            </Badge>
             <div className={styles.message_item_mid}>
                 <div className={styles.message_item_title}>
                     {props.session.sessionName}

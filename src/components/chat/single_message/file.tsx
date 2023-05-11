@@ -24,7 +24,8 @@ export const FileViewer = ({base}: any) => {
     }
     return (
     <div onClick={handleClick}>
-        <FileOutlined /> {fileName === null ? "文件" : fileName}
+        <FileOutlined />
+        {fileName === null ? "文件" : fileName}
     </div>
     );
 }

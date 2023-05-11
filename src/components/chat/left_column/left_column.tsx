@@ -18,6 +18,10 @@ const LeftColumn = (props: any) => {
         return - a.timestamp + b.timestamp;
     };
 
+    const clearList = (sessionId: number) => {
+        list.filter((msg: any) => msg.sessionId === sessionId)[0].unread = 0;
+    }
+
     const refreshList = () => {
         request(
             `api/session/message/${id}`,
@@ -42,7 +46,7 @@ const LeftColumn = (props: any) => {
                                 "message": new_list[i].message,
                                 "isTop": new_list[i].isTop,
                                 "isMute": new_list[i].isMute,
-                                //"unread": new_list[i],
+                                "unread": new_list[i].unread,
                             });
                     } else {
                         old_list.push(new_list[i]);
@@ -140,25 +144,31 @@ const LeftColumn = (props: any) => {
 
     useEffect(() => {
         const socket: any = store.getState().webSocket;
+
+        const handleNew =  (res: any) => {
+            const msg = (eval("("+res.data+")"));
+            if (msg.type === 'send') {
+                setList((list: any) => list.map((item: any) => item.sessionId !== msg.sessionId ? item : {
+                    "sessionId": item.sessionId,
+                    "sessionName": item.sessionName,
+                    "sessionType": item.sessionType,
+                    "timestamp": msg.timestamp,
+                    "type": msg.messageType,
+                    "lastSender": msg.senderName,
+                    "message": msg.message,
+                    "isTop": item.isTop,
+                    "isMute": item.isMute,
+                    "unread": msg.senderId !== store.getState().userId ? item.unread + 1 : item.unread,
+                }));
+                setList((list : any) => list.sort(cmp));
+            }
+        };
+
         if(isBrowser && socket != null && socket.readyState === 1) {
-            socket.addEventListener("message", (res: any) => {
-                const msg = (eval("("+res.data+")"));
-                if (msg.type === 'send') {
-                    setList((list: any) => list.map((item: any) => item.sessionId !== msg.sessionId ? item : {
-                        "sessionId": item.sessionId,
-                        "sessionName": item.sessionName,
-                        "sessionType": item.sessionType,
-                        "timestamp": msg.timestamp,
-                        "type": msg.messageType,
-                        "lastSender": msg.senderName,
-                        "message": msg.message,
-                        "isTop": item.isTop,
-                        "isMute": item.isMute,
-                        //"unread": item.unread + 1,
-                    }));
-                    setList((list : any) => list.sort(cmp));
-                }
-            });
+            socket.addEventListener("message", handleNew);
+            return () => {
+                socket.removeEventListener("message", handleNew);
+            }
         }
     }, [loadname, sorted, store.getState().webSocket]);
 
@@ -168,7 +178,7 @@ const LeftColumn = (props: any) => {
         <div>
             {
                 list.map((session: any) => (
-                    <div key={session.sessionId} onClick={ _ => {props.setSession(session);}}>
+                    <div key={session.sessionId} onClick={ _ => {props.setSession(session); clearList(session.sessionId)}}>
                         <MessageItem session={session}/>
                     </div>
                 ))

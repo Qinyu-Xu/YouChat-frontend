@@ -5,7 +5,7 @@ import { isBrowser } from "@/utils/store";
 import { store } from "@/utils/store";
 import Linkify from "react-linkify";
 import type { MenuProps } from 'antd';
-import {Avatar, Dropdown, Image, Skeleton, Spin, Tooltip} from 'antd';
+import {Avatar, Dropdown, Image, message, Skeleton, Spin, Tooltip} from 'antd';
 import {MenuShow} from "@/components/chat/right_column/right_column";
 import {request} from "@/utils/network";
 import RightColumn from "@/components/chat/right_column/right_column";
@@ -60,6 +60,45 @@ const ChatBoard = (props: any) => {
     const [newpull, setNewpull] = useState(false);
     const [count, setCount] = useState(0);
 
+    const onDropDownClick: any = (messageId: any) => {
+        return ({key}: any) => {
+            if(key === '0') {
+                if(messageId !== -1) {
+                    const socket: any = store.getState().webSocket;
+                    socket.send(JSON.stringify(
+                        {
+                            type: "delete",
+                            id: store.getState().userId,
+                            messageId: messageId
+                        })
+                    );
+                } else {
+                    message.error("服务器繁忙，请稍后撤回！");
+                }
+            }
+        };
+    };
+
+    const handleDelete = (res: any) => {
+        res = eval("(" + res.data + ")");
+        const is_exist = () => {
+            return messages.filter((message: any) => message.messageId !== res.messageId).length !== 0;
+        }
+        if (res.type === 'delete' && is_exist()) {
+            if(res.code === 0) {
+                setMessages((messages: any) => messages.filter((message: any) => message.messageId !== res.messageId));
+            } else if(res.code === 1) {
+                message.error("User Not Existed");
+            } else if(res.code === 2) {
+                message.error("Message Not Existed");
+            } else if(res.code === 3) {
+                message.error("不是对应用户！");
+            } else {
+                message.error("超出时间限制！");
+            }
+        }
+    }
+
     const getPull = (timestamp: any) => {
         const socket: any = store.getState().webSocket;
         socket.send(JSON.stringify({
@@ -108,8 +147,8 @@ const ChatBoard = (props: any) => {
     const handlePull = (res: any) => {
         res = eval("(" + res.data + ")");
         if ( res.type === 'pull' ) {
-            setMessages((messages: any) => [...res.messages.reverse(), ...messages]);
             setMload(true);
+            setMessages((messages: any) => [...res.messages.reverse(), ...messages]);
         }
     };
 
@@ -170,7 +209,8 @@ const ChatBoard = (props: any) => {
         if(members.length !== 0) {
             let isTrue = true;
             for (let i = 0; i < members.length; ++i)
-                if (images.every((image: any) => image.id !== members[i].id)) isTrue = false;
+                if (images.every((image: any) => image.id !== members[i].id))
+                    isTrue = false;
             if (isTrue) setIload(true);
         }
     }, [images, props.session.sessionId]);
@@ -181,11 +221,13 @@ const ChatBoard = (props: any) => {
         if(isBrowser && socket != null && socket.readyState === 1) {
             socket.addEventListener("message", handleSend);
             socket.addEventListener("message", handlePull);
+            socket.addEventListener("message", handleDelete);
             getPull(Date.now());
         }
         return () => {
             socket.removeEventListener('message', handleSend);
             socket.removeEventListener('message', handlePull);
+            socket.removeEventListener('message', handleDelete);
         };
     }, [props.session.sessionId, store.getState().webSocket]);
 
@@ -223,7 +265,7 @@ const ChatBoard = (props: any) => {
                             </div>
                             <Tooltip title={moment(message.timestamp).format("HH:mm:ss")} trigger="click"
                                 arrow={false} placement="topLeft" color="rgba(100,100,100,0.5)">
-                                <Dropdown menu={{ items: right_items }} placement="bottomLeft" trigger={['contextMenu']}>
+                                <Dropdown menu={{ items: right_items, onClick: onDropDownClick(message.messageId)  }} placement="bottomLeft" trigger={['contextMenu']}>
                                     {
                                         message.messageType === "text"
                                         ?
@@ -270,7 +312,7 @@ const ChatBoard = (props: any) => {
                             </div>
                             <Tooltip title={moment(message.timestamp).format("HH:mm:ss")} trigger="click"
                                 arrow={false} placement="topRight" color="rgba(100,100,100,0.5)">
-                                <Dropdown menu={{ items: left_items }} placement="bottomLeft"  trigger={['contextMenu']}>
+                                <Dropdown menu={{ items: left_items, onClick: onDropDownClick(message.messageId) }} placement="bottomLeft"  trigger={['contextMenu']}>
                                     {
                                         message.messageType === "text"
                                         ?
