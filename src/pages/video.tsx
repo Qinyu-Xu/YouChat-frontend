@@ -1,32 +1,33 @@
-import Sidebar from '@/components/sidebar';
-import styles from '@/styles/layout.module.css';
-import { useState } from 'react';
-import VideoChat from '@/components/videochat/videochat';
+import React, {useState} from "react";
+import Sidebar from "@/components/sidebar";
+import styles from "@/styles/layout.module.css"
+import LeftColumn from "@/components/chat/left_column/left_column";
+import ChatBoard from "@/components/chat/chat_board";
+import UpperBar from "@/components/chat/upper_bar";
 
-function Chat() {
-  const [profile, setProfile] = useState({
-    id: 0,
-    nickname: 'None',
-    username: 'None',
-    email: 'None',
-    group: 'None',
-  });
+const Chat = () => {
 
-  return (
-    <div className={styles.container}>
-      <Sidebar type={'chat'} />
-      <div className={styles.content}>
-        <VideoChat />
-      </div>
-      <div className={styles.profile}>
-        {profile.id === 0 ? (
-          <div>No profile selected</div>
-        ) : (
-          <Profile profile={profile} />
-        )}
-      </div>
-    </div>
-  );
+    const [list, setList] = useState<any>([]);
+    const [session, setSession] = useState(null);
+    const [refresh, setRefresh] = useState(0);
+
+    return (
+        <div className={styles.container}>
+            <div className={styles.sidebar}>
+                <Sidebar type={"chat"}/>
+            </div>
+            <div className={styles.column}>
+                <UpperBar setRefresh={setRefresh}/>
+                <LeftColumn setSession={setSession} refresh={refresh}
+                    list={list} setList={setList}/>
+            </div>
+            { session === null ? <div></div> :
+                <div className={styles.content}>
+                    <ChatBoard session={session} setRefresh={setRefresh}/>
+                </div>
+            }
+        </div>
+    );
 }
 
 export default Chat;

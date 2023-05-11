@@ -11,6 +11,7 @@ import {VideoIcon} from "@/components/chat/single_message/video";
 const SingleMessage = (props: any) => {
     const [audio, setAudio] = useState(false);
     const [emoji, setEmoji] = useState(false);
+    const [vedio, setVideo] = useState(false);
     const [text, setText] = useState("");
 
     return (
