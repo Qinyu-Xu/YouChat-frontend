@@ -1,6 +1,8 @@
 import {Divider, Modal, MenuProps, Menu, DatePicker, Select, SelectProps, List, Avatar, Image} from "antd";
 import {useEffect, useState} from "react";
 import dayjs from "dayjs";
+import {request} from "@/utils/network";
+import {formatParams} from "@/utils/utilities";
 const { RangePicker } = DatePicker;
 
 const AllPicker = (props: any) => {
@@ -166,9 +168,8 @@ const ChatHistory = (props: any) => {
         },
     ];
 
-
     const [current, setCurrent] = useState('all');
-
+    const [messages, setMessages] = useState([]);
     const onClick: MenuProps['onClick'] = (e: any) => setCurrent(e.key);
     const handleOk = () => props.setOpen(false);
     const handleCancel = () => props.setOpen(false);
@@ -201,6 +202,14 @@ const ChatHistory = (props: any) => {
     }, [props.sessionId, store.getState().webSocket]);
 
      */
+
+    useEffect(()=>{
+        request("api/session/history?"+formatParams({id: props.sessionId}),
+            "GET",
+            "").then((res: any) => {
+                setMessages(res.messages);
+        });
+    },[]);
 
     return (
         <Modal title={"筛选聊天记录"} open={props.open} onOk={handleOk} onCancel={handleCancel} width={800}>

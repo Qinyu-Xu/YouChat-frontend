@@ -30,6 +30,7 @@ const CreateSession = (props: any) => {
             props.setRefresh((s: any) => !s);
         });
     }
+
     const handleCancel = () => {
         props.setOpen(false);
     };
