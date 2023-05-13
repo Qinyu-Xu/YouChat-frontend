@@ -85,11 +85,12 @@ const ChatBoard = (props: any) => {
     const [isPickerOpen, setPickerOpen] = useState(false);
 
     const [isMultiChat, setMultiChat] = useState(false);
-    const [multiSource, setMultiSource] = useState([]);
+    const [multiSource, setMultiSource] = useState();
+
     const handleMulti = (item: any) => {
         return (e: any) => {
             setMultiChat(true);
-            setMultiSource(item);
+            setMultiSource(eval(item.message));
         }
     };
 
@@ -97,7 +98,7 @@ const ChatBoard = (props: any) => {
     const handleOk = () => { setIsModalOpen(false); };
     const handleCancel = () => { setIsModalOpen(false); };
 
-    const onDropDownClick: any = (messageId: any, message: any) => {
+    const onDropDownClick: any = (messageId: any, ms: any) => {
         return ({key}: any) => {
             if(key === '0') {
                 if(messageId !== -1) {
@@ -112,8 +113,7 @@ const ChatBoard = (props: any) => {
                 } else {
                     message.error("服务器繁忙，请稍后撤回！");
                 }
-            }
-            if(key === '2') {
+            } else if(key === '2') {
                 // console.log(message);
                 request("api/session/message/translate", "PUT",
                     JSON.stringify({ 
@@ -125,11 +125,16 @@ const ChatBoard = (props: any) => {
                     setTranslated(res.text);
                     setIsModalOpen(true);
                 });
-            }
-            if(key === '4') {
+            } else if(key === '3') {
 
 
+            } else if(key === '4') {
+                setPickerOpen(true);
+
+            } else if(key === '5') {
+
             }
+
         };
     };
 
@@ -168,6 +173,15 @@ const ChatBoard = (props: any) => {
     const handleSend = (res: any) => {
         res = eval("(" + res.data + ")");
         if (res.type === 'send' && res.sessionId === props.session.sessionId) {
+            const socket: any = store.getState().webSocket;
+            socket.send(JSON.stringify({
+                    type: "pull",
+                    id: store.getState().userId,
+                    sessionId: props.session.sessionId,
+                    messageScale: 0,
+                    timestamp: 0,
+                })
+            );
             if(res.senderId === store.getState().userId) {
                 setNewmsg(true);
                 setMessages((messages: any) => messages.map((message: any) => {
@@ -352,10 +366,10 @@ const ChatBoard = (props: any) => {
                                             <FileViewer base={message.message}/>
                                         </div>
                                         :
-                                        messages.messageType === "history"
+                                        message.messageType === "history"
                                         ?
-                                        <div onClick={handleMulti(message)}>
-                                            群聊
+                                        <div className={styles.message_right} onClick={handleMulti(message)}>
+                                            转发消息
                                         </div>
                                         :
                                         <div>
@@ -415,8 +429,8 @@ const ChatBoard = (props: any) => {
                                         :
                                         message.messageType === "history"
                                         ?
-                                        <div>
-                                            <MultiChat messages={message}/>
+                                        <div className={styles.message_left} onClick={handleMulti(message)}>
+                                            转发消息
                                         </div>
                                         :
                                         <div>
@@ -435,7 +449,7 @@ const ChatBoard = (props: any) => {
                 <p>{translated}</p>
             </Modal>
             <MultiPicker sessionId={props.session.sessionId} members={members} setMessages={setMessages}
-                         images={images} setOpen={setPickerOpen} open={isPickerOpen}/>
+                         images={images} setOpen={setPickerOpen} open={isPickerOpen} list={props.list}/>
             <MultiChat open={isMultiChat} setOpen={setMultiChat} messages={multiSource} />
         </div>
         )

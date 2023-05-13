@@ -7,7 +7,6 @@ import MessageItem from "./message_item";
 
 const LeftColumn = (props: any) => {
 
-    const [list, setList] = useState<any>([-1]);
     const [load, setLoad] = useState(false);
     const [loadname, setLoadname] = useState(false);
     const [sorted, setSorted] = useState(false);
@@ -19,7 +18,7 @@ const LeftColumn = (props: any) => {
     };
 
     const clearList = (sessionId: number) => {
-        list.filter((msg: any) => msg.sessionId === sessionId)[0].unread = 0;
+        props.list.filter((msg: any) => msg.sessionId === sessionId)[0].unread = 0;
     }
 
     const refreshList = () => {
@@ -30,7 +29,7 @@ const LeftColumn = (props: any) => {
         ).then((response) => {
             if (response.code === 0) {
                 const new_list = response.data;
-                let old_list: any[] = list;
+                let old_list: any[] = props.list;
                 for (let i = 0; i < new_list.length; ++i) {
                     if (old_list.filter((msg: any) => msg.sessionId === new_list[i].sessionId).length !== 0) {
                         old_list = old_list.map((msg: any) => msg.sessionId !== new_list[i].sessionId
@@ -53,7 +52,7 @@ const LeftColumn = (props: any) => {
                     }
                 }
                 old_list = old_list.sort(cmp);
-                setList([...old_list]);
+                props.setList([...old_list]);
             } else {
                 message.error("获取聊天列表发生错误！").then(_ => _);
             }
@@ -68,8 +67,8 @@ const LeftColumn = (props: any) => {
                 ""
             ).then((response) => {
                 if( response.code === 0 ) {
-                    setList(() => [-1]);
-                    setList(() => response.data);
+                    props.setList(() => [-1]);
+                    props.setList(() => response.data);
                 }
                 else {
                     message.error("获取聊天列表发生错误！").then(_=>_);
@@ -84,11 +83,11 @@ const LeftColumn = (props: any) => {
         // console.log(loadname);
         // console.log(sorted);
         if (!load) {
-            if (list[0] != -1) {
+            if (props.list[0] != -1) {
                 setLoad(true);
                 let l : any[] = [];
-                for (let i = 0; i < list.length; ++ i) {
-                    l.push(list[i]);
+                for (let i = 0; i < props.list.length; ++ i) {
+                    l.push(props.list[i]);
                 }
                 for(let i = 0; i < l.length; ++i) {
                     if(l[i].sessionType === 1 && l[i].sessionName === "friend") {
@@ -103,7 +102,7 @@ const LeftColumn = (props: any) => {
                                 )[0].nickname;
                             // console.log("@@@@@@@@@@@");
                             // console.log(l);
-                            setList(() => l.slice());
+                            props.setList(() => l.slice());
                         })
                     }
                 }
@@ -111,8 +110,8 @@ const LeftColumn = (props: any) => {
         }
         else if (!loadname) {
             let isTrue = true;
-            for(let i = 0; i < list.length; ++i) {
-                if(list[i].sessionType === 1 && list[i].sessionName === "friend") {
+            for(let i = 0; i < props.list.length; ++i) {
+                if(props.list[i].sessionType === 1 && props.list[i].sessionName === "friend") {
                     isTrue = false;
                     // console.log("# " + i + "  " + list[i].sessionName);
                 }
@@ -120,14 +119,14 @@ const LeftColumn = (props: any) => {
             // console.log("^^^^" + isTrue);
             if (isTrue) {
                 setLoadname(true);
-                setList((list : any) => list.sort(cmp));
+                props.setList((list : any) => list.sort(cmp));
             }
         }
         else {
             let isTrue = true;
-            for (let i = 0; i + 1 < list.length; ++ i) {
+            for (let i = 0; i + 1 < props.list.length; ++ i) {
                 // console.log(i + "  " + (cmp(list[i], list[i + 1])));
-                if (cmp(list[i], list[i + 1]) > 0) {
+                if (cmp(props.list[i], props.list[i + 1]) > 0) {
                     isTrue = false;
                 }
             }
@@ -136,7 +135,7 @@ const LeftColumn = (props: any) => {
                 setSorted(true);
             }
         }
-    }, [list, load, loadname]);
+    }, [props.list, load, loadname]);
 
     useEffect(() => {
         if(load && loadname && sorted) refreshList();
@@ -148,7 +147,7 @@ const LeftColumn = (props: any) => {
         const handleNew =  (res: any) => {
             const msg = (eval("("+res.data+")"));
             if (msg.type === 'send') {
-                setList((list: any) => list.map((item: any) => item.sessionId !== msg.sessionId ? item : {
+                props.setList((list: any) => list.map((item: any) => item.sessionId !== msg.sessionId ? item : {
                     "sessionId": item.sessionId,
                     "sessionName": item.sessionName,
                     "sessionType": item.sessionType,
@@ -160,7 +159,7 @@ const LeftColumn = (props: any) => {
                     "isMute": item.isMute,
                     "unread": msg.senderId !== store.getState().userId ? item.unread + 1 : item.unread,
                 }));
-                setList((list : any) => list.sort(cmp));
+                props.setList((list : any) => list.sort(cmp));
             }
         };
 
@@ -177,7 +176,7 @@ const LeftColumn = (props: any) => {
         (
         <div>
             {
-                list.map((session: any) => (
+                props.list.map((session: any) => (
                     <div key={session.sessionId} onClick={ _ => {props.setSession(session); clearList(session.sessionId)}}>
                         <MessageItem session={session}/>
                     </div>
