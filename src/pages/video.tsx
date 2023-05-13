@@ -7,7 +7,7 @@ import LeftColumn from "@/components/chat/left_column/left_column";
 import ChatBoard from "@/components/chat/chat_board";
 import UpperBar from "@/components/chat/upper_bar";
 
-const Chat = () => {
+const Video = () => {
   const [list, setList] = useState<any>([]);
   const [session, setSession] = useState(null);
   const [refresh, setRefresh] = useState(0);
@@ -43,7 +43,7 @@ const Chat = () => {
     }
   }, [remoteStream]);
 
-  return (
+  /*return (
     <div className={styles.container}>
       <div className={styles.sidebar}>
         <Sidebar type={"chat"} />
@@ -74,6 +74,13 @@ const Chat = () => {
       )}
     </div>
   );
+  */
+  return (
+    <div>
+      <h2>Local Video</h2>
+      <video ref={localVideoRef} autoPlay muted></video>
+    </div>
+  );
 };
 
-export default Chat;
+export default Video;
