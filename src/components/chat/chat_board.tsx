@@ -60,7 +60,6 @@ const ChatBoard = (props: any) => {
     const [newpull, setNewpull] = useState(false);
     const [count, setCount] = useState(0);
     const [role, setRole] = useState(2);
-    const [bRefresh, setBRefresh] = useState(0);
 
     const [translated, setTranslated] = useState("");
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -387,7 +386,7 @@ const ChatBoard = (props: any) => {
                 <div id="THEEND"/>
             </div>
             <SingleMessage sessionId={props.session.sessionId} setMessages={setMessages}/>
-            <RightColumn session={props.session} members={members}  messages={messages} images={images} setRefresh={props.setRefresh} setSession={props.setSession} setMessages={setMessages} role={role} setBRefresh={setBRefresh}/>
+            <RightColumn session={props.session} members={members}  messages={messages} images={images} setRefresh={props.setRefresh} setSession={props.setSession} setMessages={setMessages} role={role} setMembers={setMembers}/>
             <Modal title="翻译结果" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
                 <p>{translated}</p>
             </Modal>

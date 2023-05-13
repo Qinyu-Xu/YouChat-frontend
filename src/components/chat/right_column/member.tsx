@@ -11,6 +11,8 @@ const AddMember = (props: any) => {
     const [friends, setFriends] = useState([]);
     const [selected, setSelected] = useState<any[]>([]);
 
+    console.log(friends);
+
     useEffect(() => {
         request("api/people/friends?"+formatParams({id: store.getState().userId}), "GET", "").then((res: any) => {
             setFriends(res.friend);
@@ -24,10 +26,22 @@ const AddMember = (props: any) => {
                 userId: selected_item,
                 sessionId: props.sessionId,
             })).then(_=> {console.log(selected_item);
-            console.log(props.sessionId);});
+            console.log(props.sessionId);
+            request(`api/people/profile/${selected_item}`, "GET", '').then((res: any) => {
+                const addM = {
+                    "id": selected_item,
+                    "nickname": res.profile.nickname,
+                    "readTime": Date.now(),
+                    "role": 3
+                }
+                props.setMembers((members: any) => [...members, addM]);
+            })
+            
+        }
+            );
         });
             props.setOpen(false);
-            props.setBRefresh((s: any) => !s);
+            
     }
     const handleCancel = () => {
         props.setOpen(false);

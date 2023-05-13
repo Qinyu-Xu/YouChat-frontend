@@ -52,6 +52,12 @@ const LeftColumn = (props: any) => {
                         old_list.push(new_list[i]);
                     }
                 }
+                for (let i = 0; i < old_list.length; ++i) {
+                    if (new_list.filter((msg: any) => msg.sessionId === old_list[i].sessionId).length === 0) {
+                        old_list.splice(i, 1);
+                        break;
+                    }
+                }
                 old_list = old_list.sort(cmp);
                 setList([...old_list]);
             } else {
@@ -140,6 +146,7 @@ const LeftColumn = (props: any) => {
 
     useEffect(() => {
         if(load && loadname && sorted) refreshList();
+        // refreshList();
     }, [props.refresh]);
 
     useEffect(() => {

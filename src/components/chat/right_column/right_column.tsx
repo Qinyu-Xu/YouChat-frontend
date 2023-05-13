@@ -32,7 +32,6 @@ const RightColumn = (props: any) => {
     const [openNotice, setOpenNotice] = useState(false);
     const [openAdd, setOpenAdd] = useState(false);
     const [openInvite, setOpenInvite] = useState(false);
-    const [openMana, setOpenMana] = useState(false);
     const [curTop, setCurTop] = useState<boolean>(props.session.isTop);
     const [curMute, setCurMute] = useState<boolean>(props.session.isMute);
 
@@ -71,7 +70,6 @@ const RightColumn = (props: any) => {
 
     const handleHistory = () => setOpenHistory(true);
     const handleBoard = () => setOpenNotice(true);
-    const handleMana = () => {};
     const handleInvite = () => setOpenInvite(true);
 
     const handleDropout = () => {
@@ -88,7 +86,8 @@ const RightColumn = (props: any) => {
                     sessionId: props.session.sessionId,
                 })
             ).then((res: any) => {
-                props.setRefresh((refresh: any)=>!refresh);
+                props.setRefresh((s: any)=>!s);
+                
                 props.setSession(null);
             }).catch((e: any) => {
                 message.error("退出群聊失败!");
@@ -100,7 +99,7 @@ const RightColumn = (props: any) => {
 
     return <div id="mySidenav" className={styles.sidenav}>
         {props.session.sessionType === 1 ? "" : (<div>群成员<br/>
-            <UserList members={props.members} images={props.images}/>
+            <UserList members={props.members} images={props.images} role={props.role} sessionId={props.session.sessionId} setMembers={props.setMembers}/>
             <div className={styles.add_button}>
                 <img src="/ui/add.svg"
                     onClick={(e)=>{
@@ -126,13 +125,6 @@ const RightColumn = (props: any) => {
                 </div>
             }
             {props.role > 1 ? <div></div> : <div><br/></div>}
-            {props.role > 0 ? <div></div> :
-                <div onClick={handleMana}>
-                设置管理员
-                <RightOutlined />
-                </div>
-            }
-            {props.role > 0 ? <div></div> : <div><br/></div>}
             </div>
         }
         <Divider />
@@ -146,17 +138,17 @@ const RightColumn = (props: any) => {
         设置置顶<Switch onChange={handleTop} checked={curTop} />
         <br />
         <Divider />
-        <div className={styles.drop} onClick={handleDropout}>
+        {props.session.sessionType === 1 ? "" : (<div className={styles.drop} onClick={handleDropout}>
             退出群聊
-        </div>
+        </div>)}
         <br />
         <ChatHistory open={openHistory} setOpen={setOpenHistory} members={props.members} messages={props.messages}
                      sessionId={props.session.sessionId} images={props.images}/>
         <Notice open={openNotice} setOpen={setOpenNotice} members={props.members} messages={props.messages}
                      sessionId={props.session.sessionId} images={props.images} setMessages={props.setMessages} role={props.role}/>
-        <AddMember open={openAdd} setOpen={setOpenAdd} members={props.members} sessionId={props.session.sessionId} setBRefresh={props.setBRefresh}/>
+        <AddMember open={openAdd} setOpen={setOpenAdd} members={props.members} sessionId={props.session.sessionId} setMembers={props.setMembers}/>
         <Manager open={openInvite} setOpen={setOpenInvite} members={props.members}
-                     sessionId={props.session.sessionId} images={props.images} setMessages={props.setMessages} role={props.role} setSession={props.setSession}/>
+                     sessionId={props.session.sessionId} images={props.images} role={props.role} setMembers={props.setMembers}/>
     </div>
 }
 

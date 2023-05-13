@@ -14,14 +14,26 @@ const RequestList = (props: any) => {
             userId: store.getState().userId,
             sessionId: props.sessionId,
             applicantId: applicant_id,
+            role: 2
         })).then(_=> {
             props.setOpen(false);
-            const item = document.getElementById("mySidenav");
-            if(item) {
-                if (item.style.right === "-20rem") item.style.right = "0px";
-                else if(item.style.right === "0px") item.style.right = "-20rem";
-                else item.style.right = "0px";
-            }
+            // const item = document.getElementById("mySidenav");
+            // if(item) {
+            //     if (item.style.right === "-20rem") item.style.right = "0px";
+            //     else if(item.style.right === "0px") item.style.right = "-20rem";
+            //     else item.style.right = "0px";
+            // }
+            props.setMembers((members: any) => members.map((member: any) => {
+                return member.id === applicant_id
+                    ?
+                    {
+                        id: member.id,
+                        nickname: member.nickname,
+                        readTime: member.readTime,
+                        role: 2
+                    }
+                    : member;
+            }));
         });
     }
 
@@ -65,7 +77,6 @@ const Manager = (props: any) => {
     ];
 
     const [current, setCurrent] = useState('view');
-    const [messages, setMessages] = useState([]);
 
     const onClick: MenuProps['onClick'] = (e: any) => setCurrent(e.key);
     const handleOk = () => props.setOpen(false);
@@ -79,7 +90,7 @@ const Manager = (props: any) => {
                 <Menu onClick={onClick} selectedKeys={[current]} mode="horizontal" items={items} />
             
             <br />
-            <RequestList members={props.members} messages={messages} images={props.images} setOpen={props.setOpen} sessionId={props.sessionId} setSession={props.setSession}/>
+            <RequestList members={props.members} images={props.images} setOpen={props.setOpen} sessionId={props.sessionId} setMembers={props.setMembers}/>
         </Modal>
     )
 }
