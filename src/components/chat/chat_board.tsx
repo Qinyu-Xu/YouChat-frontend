@@ -12,39 +12,57 @@ import RightColumn from "@/components/chat/right_column/right_column";
 import moment from "moment";
 import {AudioPlayer} from "@/components/chat/single_message/audio";
 import {FileViewer} from "@/components/chat/single_message/file";
+import {MultiPicker} from"@/components/chat/single_message/history";
+import MultiChat from "@/components/chat/single_message/history";
 
 const left_items: MenuProps['items'] = [
     {
       key: '1',
-      label: (<text>回复</text>),
+      label: (<div>回复</div>),
     },
     {
       key: '2',
-      label: (<text>翻译</text>),
+      label: (<div>翻译</div>),
     },
     {
       key: '3',
-      label: (<text>语⾳转⽂字</text>),
+      label: (<div>语⾳转⽂字</div>),
     },
+    {
+      key: '4',
+      label: (<div>多选</div>)
+    },
+    {
+      key: '5',
+      label: (<div>已读情况</div>)
+    }
 ];
 
 const right_items: MenuProps['items'] = [
     {
       key: '0',
-      label: (<text>撤回</text>),
+      label: (<div>撤回</div>),
     },
     {
       key: '1',
-      label: (<text>回复</text>),
+      label: (<div>回复</div>),
     },
     {
       key: '2',
-      label: (<text>翻译</text>),
+      label: (<div>翻译</div>),
     },
     {
       key: '3',
-      label: (<text>语⾳转⽂字</text>),
+      label: (<div>语⾳转⽂字</div>),
     },
+    {
+        key: '4',
+        label: (<div>多选</div>)
+    },
+    {
+        key: '5',
+        label: (<div>已读情况</div>)
+    }
 ];
 
 const ChatBoard = (props: any) => {
@@ -63,11 +81,23 @@ const ChatBoard = (props: any) => {
 
     const [translated, setTranslated] = useState("");
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isPickerOpen, setPickerOpen] = useState(false);
+
+    const [isMultiChat, setMultiChat] = useState(false);
+    const [multiSource, setMultiSource] = useState();
+
+    const handleMulti = (item: any) => {
+        return (e: any) => {
+            setMultiChat(true);
+            setMultiSource(eval(item.message));
+        }
+    };
+
     const showModal = () => { setIsModalOpen(true); };
     const handleOk = () => { setIsModalOpen(false); };
     const handleCancel = () => { setIsModalOpen(false); };
 
-    const onDropDownClick: any = (messageId: any, message: any) => {
+    const onDropDownClick: any = (messageId: any, ms: any) => {
         return ({key}: any) => {
             if(key === '0') {
                 if(messageId !== -1) {
@@ -82,8 +112,7 @@ const ChatBoard = (props: any) => {
                 } else {
                     message.error("服务器繁忙，请稍后撤回！");
                 }
-            }
-            if(key === '2') {
+            } else if(key === '2') {
                 // console.log(message);
                 request("api/session/message/translate", "PUT",
                     JSON.stringify({ 
@@ -95,7 +124,16 @@ const ChatBoard = (props: any) => {
                     setTranslated(res.text);
                     setIsModalOpen(true);
                 });
+            } else if(key === '3') {
+
+
+            } else if(key === '4') {
+                setPickerOpen(true);
+
+            } else if(key === '5') {
+
             }
+
         };
     };
 
@@ -134,6 +172,15 @@ const ChatBoard = (props: any) => {
     const handleSend = (res: any) => {
         res = eval("(" + res.data + ")");
         if (res.type === 'send' && res.sessionId === props.session.sessionId) {
+            const socket: any = store.getState().webSocket;
+            socket.send(JSON.stringify({
+                    type: "pull",
+                    id: store.getState().userId,
+                    sessionId: props.session.sessionId,
+                    messageScale: 0,
+                    timestamp: 0,
+                })
+            );
             if(res.senderId === store.getState().userId) {
                 setNewmsg(true);
                 setMessages((messages: any) => messages.map((message: any) => {
@@ -205,7 +252,6 @@ const ChatBoard = (props: any) => {
             setNewinfo(false);
         }
     }, [messages]);
-
 
     useEffect(() => {
         for (let i = 0; i < members.length; ++i) {
@@ -319,10 +365,15 @@ const ChatBoard = (props: any) => {
                                             <FileViewer base={message.message}/>
                                         </div>
                                         :
+                                        message.messageType === "history"
+                                        ?
+                                        <div className={styles.message_right} onClick={handleMulti(message)}>
+                                            转发消息
+                                        </div>
+                                        :
                                         <div>
 
                                         </div>
-
                                     }
                                 </Dropdown>
                             </Tooltip>
@@ -360,19 +411,25 @@ const ChatBoard = (props: any) => {
                                         message.messageType === "photo"
                                         ?
                                         <div className={styles.photo_left}>
-                                        <Image src={message.message} />
+                                            <Image src={message.message} />
                                         </div>
                                         :
                                         message.messageType === "audio"
                                         ?
                                         <div className={styles.photo_left}>
-                                        <AudioPlayer base64Audio={message.message} />
+                                            <AudioPlayer base64Audio={message.message} />
                                         </div>
                                         :
                                         message.messageType === "file"
                                         ?
                                         <div className={styles.photo_left}>
-                                        <FileViewer base={message.message}/>
+                                            <FileViewer base={message.message}/>
+                                        </div>
+                                        :
+                                        message.messageType === "history"
+                                        ?
+                                        <div className={styles.message_left} onClick={handleMulti(message)}>
+                                            转发消息
                                         </div>
                                         :
                                         <div>
@@ -390,6 +447,9 @@ const ChatBoard = (props: any) => {
             <Modal title="翻译结果" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
                 <p>{translated}</p>
             </Modal>
+            <MultiPicker sessionId={props.session.sessionId} members={members} setMessages={setMessages}
+                         images={images} setOpen={setPickerOpen} open={isPickerOpen} list={props.list}/>
+            <MultiChat open={isMultiChat} setOpen={setMultiChat} messages={multiSource} />
         </div>
         )
         :

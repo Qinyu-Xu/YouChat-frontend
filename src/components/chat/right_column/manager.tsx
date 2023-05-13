@@ -81,8 +81,6 @@ const Manager = (props: any) => {
     const handleOk = () => props.setOpen(false);
     const handleCancel = () => props.setOpen(false);
 
-    
-
     return (
         <Modal title={"同意加群申请"} open={props.open} onOk={handleOk} onCancel={handleCancel} width={800}>
             <Divider />

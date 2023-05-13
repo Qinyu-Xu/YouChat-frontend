@@ -7,7 +7,7 @@ import UpperBar from "@/components/chat/upper_bar";
 
 const Chat = () => {
 
-    const [list, setList] = useState<any>([]);
+    const [list, setList] = useState<any>([-1]);
     const [session, setSession] = useState(null);
     const [refresh, setRefresh] = useState(0);
 
@@ -23,7 +23,7 @@ const Chat = () => {
             </div>
             { session === null ? <div></div> :
                 <div className={styles.content}>
-                    <ChatBoard session={session} setRefresh={setRefresh} setSession={setSession}/>
+                    <ChatBoard list={list} session={session} setRefresh={setRefresh} setSession={setSession}/>
                 </div>
             }
         </div>
