@@ -99,7 +99,7 @@ const RightColumn = (props: any) => {
 
     return <div id="mySidenav" className={styles.sidenav}>
         {props.session.sessionType === 1 ? "" : (<div>群成员<br/>
-            <UserList members={props.members} images={props.images} role={props.role} sessionId={props.session.sessionId} setMembers={props.setMembers}/>
+            <UserList members={props.members} images={props.images} role={props.role} sessionId={props.session.sessionId} setMembers={props.setMembers} setRole={props.setRole}/>
             <div className={styles.add_button}>
                 <img src="/ui/add.svg"
                     onClick={(e)=>{

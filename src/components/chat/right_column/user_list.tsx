@@ -102,15 +102,36 @@ const UserList = (props: any) => {
                     applicantId: applicant_id,
                     role: 0
                 })).then(_=> {
-                    
-                });
-                request("api/session/chatroom/Admin", "PUT", JSON.stringify({
-                    userId: store.getState().userId,
-                    sessionId: props.sessionId,
-                    applicantId: store.getState().userId,
-                    role: 1
-                })).then(_=> {
-                    
+                    props.setMembers((members: any) => members.map((member: any) => {
+                        return member.id === applicant_id
+                            ?
+                            {
+                                id: member.id,
+                                nickname: member.nickname,
+                                readTime: member.readTime,
+                                role: 0
+                            }
+                            : member;
+                    }));
+                    request("api/session/chatroom/Admin", "PUT", JSON.stringify({
+                        userId: store.getState().userId,
+                        sessionId: props.sessionId,
+                        applicantId: store.getState().userId,
+                        role: 1
+                    })).then(_=> {
+                        props.setMembers((members: any) => members.map((member: any) => {
+                            return member.id === store.getState().userId
+                                ?
+                                {
+                                    id: member.id,
+                                    nickname: member.nickname,
+                                    readTime: member.readTime,
+                                    role: 1
+                                }
+                                : member;
+                        }));
+                        props.setRole(1);
+                    });
                 });
             }
             if(key === '1') {
@@ -120,7 +141,17 @@ const UserList = (props: any) => {
                     applicantId: applicant_id,
                     role: 2
                 })).then(_=> {
-                    
+                    props.setMembers((members: any) => members.map((member: any) => {
+                        return member.id === applicant_id
+                            ?
+                            {
+                                id: member.id,
+                                nickname: member.nickname,
+                                readTime: member.readTime,
+                                role: 2
+                            }
+                            : member;
+                    }));
                 });
             }
             if(key === '2') {
@@ -149,15 +180,36 @@ const UserList = (props: any) => {
                     applicantId: applicant_id,
                     role: 0
                 })).then(_=> {
-                    
-                });
-                request("api/session/chatroom/Admin", "PUT", JSON.stringify({
-                    userId: store.getState().userId,
-                    sessionId: props.sessionId,
-                    applicantId: store.getState().userId,
-                    role: 1
-                })).then(_=> {
-                    
+                    props.setMembers((members: any) => members.map((member: any) => {
+                        return member.id === applicant_id
+                            ?
+                            {
+                                id: member.id,
+                                nickname: member.nickname,
+                                readTime: member.readTime,
+                                role: 0
+                            }
+                            : member;
+                    }));
+                    request("api/session/chatroom/Admin", "PUT", JSON.stringify({
+                        userId: store.getState().userId,
+                        sessionId: props.sessionId,
+                        applicantId: store.getState().userId,
+                        role: 1
+                    })).then(_=> {
+                        props.setMembers((members: any) => members.map((member: any) => {
+                            return member.id === store.getState().userId
+                                ?
+                                {
+                                    id: member.id,
+                                    nickname: member.nickname,
+                                    readTime: member.readTime,
+                                    role: 1
+                                }
+                                : member;
+                        }));
+                        props.setRole(1);
+                    });
                 });
             }
             if(key === '1') {
@@ -167,7 +219,17 @@ const UserList = (props: any) => {
                     applicantId: applicant_id,
                     role: 1
                 })).then(_=> {
-                    
+                    props.setMembers((members: any) => members.map((member: any) => {
+                        return member.id === applicant_id
+                            ?
+                            {
+                                id: member.id,
+                                nickname: member.nickname,
+                                readTime: member.readTime,
+                                role: 1
+                            }
+                            : member;
+                    }));
                 });
             }
             if(key === '2') {
@@ -198,7 +260,9 @@ const UserList = (props: any) => {
                         sessionId: props.sessionId,
                     })
                 ).then((res: any) => {
-
+                    let old_members: any[] = props.members;
+                    old_members = old_members.filter((member: any) => member.id !== applicant_id);
+                    props.setMembers([...old_members]);
                 });
             }
         };

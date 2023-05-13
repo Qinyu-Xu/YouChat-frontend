@@ -58,7 +58,6 @@ const RequestList = (props: any) => {
                                 (props.members.filter((member: any) => member.id === item.id))[0].nickname}
                             />
                             <Button type="primary" onClick={() => handleOk(item.id)}>同意</Button>
-                            <Button>拒绝</Button>
                     </Card>
                 </List.Item>
             )}
