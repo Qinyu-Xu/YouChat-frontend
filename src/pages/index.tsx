@@ -1,5 +1,4 @@
 import { useRouter } from "next/router";
-import { useCookies } from "react-cookie";
 import { useEffect } from "react";
 
 function Index() {
