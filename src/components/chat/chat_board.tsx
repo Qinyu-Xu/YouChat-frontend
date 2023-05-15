@@ -70,6 +70,7 @@ const ChatBoard = (props: any) => {
     const [newpull, setNewpull] = useState(false);
     const [count, setCount] = useState(0);
     const [role, setRole] = useState(2);
+    const id = store.getState().userId;
 
     const [translated, setTranslated] = useState("");
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -257,7 +258,11 @@ const ChatBoard = (props: any) => {
         setNewpull(false);
         setMload(false);
         setIload(false);
-        request("/api/session/chatroom?id="+props.session.sessionId, "GET", "").then((res: any) => {setMembers(res.members);setRole(res.members.filter((member: any) => member.id === store.getState().userId)[0].role);});
+        request("/api/session/chatroom?id="+props.session.sessionId, "GET", "")
+            .then((res: any) => {
+                setMembers(res.members);
+                setRole(res.members.filter((member: any) => member.id === store.getState().userId)[0].role);
+            });
     }, [props.session.sessionId]);
 
     useEffect(() => {
@@ -292,6 +297,24 @@ const ChatBoard = (props: any) => {
             if(board) board.removeEventListener('scroll', scroll);
         }
     }, [props.session.sessionId, mload, iload]);
+
+    useEffect(() => {
+        const timer = setInterval(() => {
+            request("/api/session/chatroom?id="+props.session.sessionId, "GET", "")
+                .then((res: any) => {
+                    setMembers(res.members);
+                    setRole(res.members.filter((member: any) => member.id === store.getState().userId)[0].role);
+                });
+            request(
+                `api/session/message/${id}`,
+                "POST",
+                JSON.stringify({
+                    sessionId: props.session.sessionId,
+                    readTime: Date.now()
+                })
+            );
+        }, 5000);
+    }, []);
 
     return iload && mload
         ?
