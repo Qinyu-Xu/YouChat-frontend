@@ -31,10 +31,6 @@ const left_items: MenuProps['items'] = [
     {
       key: '4',
       label: (<div>多选</div>)
-    },
-    {
-      key: '5',
-      label: (<div>已读情况</div>)
     }
 ];
 
@@ -58,10 +54,6 @@ const right_items: MenuProps['items'] = [
     {
         key: '4',
         label: (<div>多选</div>)
-    },
-    {
-        key: '5',
-        label: (<div>已读情况</div>)
     }
 ];
 
@@ -130,10 +122,7 @@ const ChatBoard = (props: any) => {
             } else if(key === '4') {
                 setPickerOpen(true);
 
-            } else if(key === '5') {
-
             }
-
         };
     };
 
@@ -377,16 +366,36 @@ const ChatBoard = (props: any) => {
                                     }
                                 </Dropdown>
                             </Tooltip>
-                            <div className={styles.read_right}>
-                                {
-                                    members.filter( (member: any) => member.readTime < message.timestamp).length 
-                                }
-                                /
-                                {
-                                    members.length
-                                }
-                                &thinsp;未读
-                            </div>
+                            <Tooltip title={
+                                members
+                                    .filter((member: any) => member.readTime < message.timestamp)
+                                    .map((member: any) => (
+                                        <div> 
+                                            <Avatar src={
+                                                images.filter( (image: any) => image.id === member.id)[0] === undefined
+                                                    ?
+                                                    "/headshot/01.svg"
+                                                    :
+                                                    images.filter( (image: any) => image.id === member.id)[0].image
+                                            } />
+                                            &nbsp;&nbsp;
+                                            {member.nickname}
+                                            <br/>
+                                        </div>
+                                    ))
+                                } trigger="hover" overlayInnerStyle={{color: "rgb(50,50,50)"}}
+                                    arrow={false} placement="bottomRight" color="rgba(255,255,255,0.5)">
+                                <div className={styles.read_right}>
+                                    {
+                                        members.filter( (member: any) => member.readTime < message.timestamp).length 
+                                    }
+                                    /
+                                    {
+                                        members.length
+                                    }
+                                    &thinsp;未读
+                                </div>
+                            </Tooltip>
                         </div>
                     ) : (
                         <div className={styles.message} key={index+1} id={index+1}>
@@ -448,16 +457,36 @@ const ChatBoard = (props: any) => {
                                     }
                                 </Dropdown>
                             </Tooltip>
-                            <div className={styles.read_left}>
-                                {
-                                    members.filter( (member: any) => member.readTime < message.timestamp).length 
-                                }
-                                /
-                                {
-                                    members.length
-                                }
-                                &thinsp;未读
-                            </div>
+                            <Tooltip title={
+                                members
+                                    .filter((member: any) => member.readTime < message.timestamp)
+                                    .map((member: any) => (
+                                        <div> 
+                                            <Avatar src={
+                                                images.filter( (image: any) => image.id === member.id)[0] === undefined
+                                                    ?
+                                                    "/headshot/01.svg"
+                                                    :
+                                                    images.filter( (image: any) => image.id === member.id)[0].image
+                                            } />
+                                            &nbsp;&nbsp;
+                                            {member.nickname}
+                                            <br/>
+                                        </div>
+                                    ))
+                            } trigger="hover" overlayInnerStyle={{color: "rgb(50,50,50)"}}
+                                arrow={false} placement="bottomLeft" color="rgba(255,255,255,0.5)">
+                                <div className={styles.read_left}>
+                                    {
+                                        members.filter((member: any) => member.readTime < message.timestamp).length 
+                                    }
+                                    /
+                                    {
+                                        members.length
+                                    }
+                                    &thinsp;未读
+                                </div>
+                            </Tooltip>
                         </div>
                 ))}
                 <div id="THEEND"/>
