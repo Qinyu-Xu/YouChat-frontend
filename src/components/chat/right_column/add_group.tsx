@@ -5,12 +5,14 @@ import {request} from "@/utils/network";
 import {formatParams} from "@/utils/utilities";
 import {store} from "@/utils/store"
 
-const AddMember = (props: any) => {
+const AddGroup = (props: any) => {
+
+    console.log(props.members);
 
     const [load, setLoad] = useState(true);
     const [friends, setFriends] = useState([]);
-    const [selected, setSelected] = useState<any[]>([]);
-
+    const [selected, setSelected] = useState<any[]>([store.getState().userId, props.members.filter((x: any) => x.id !== store.getState().userId)[0].id]);
+    const [name, setName] = useState('');
 
     useEffect(() => {
         request("api/people/friends?"+formatParams({id: store.getState().userId}), "GET", "").then((res: any) => {
@@ -20,40 +22,29 @@ const AddMember = (props: any) => {
         })}, [open]);
 
     const handleOk = () => {
-        selected.map(selected_item => {
-            request("api/session/chatroom", "POST", JSON.stringify({
-                userId: selected_item,
-                sessionId: props.sessionId,
-            })).then(_=> {console.log(selected_item);
-            console.log(props.sessionId);
-            request(`api/people/profile/${selected_item}`, "GET", '').then((res: any) => {
-                const addM = {
-                    "id": selected_item,
-                    "nickname": res.profile.nickname,
-                    "readTime": Date.now(),
-                    "role": 3
-                }
-                props.setMembers((members: any) => [...members, addM]);
-            })
-            
-        }
-            );
-        });
+        request("api/session/chatroom", "PUT", JSON.stringify({
+            userId: store.getState().userId,
+            sessionName: name,
+            initial: selected,
+        })).then(_=> {
             props.setOpen(false);
-            
+            props.setRefresh((s: any) => !s);
+        });
     }
+
     const handleCancel = () => {
         props.setOpen(false);
     };
 
     const onChange = (item: any) => {
         return (e: any) => {
+            console.log(selected);
             if (e.target.checked) setSelected((selected: any) => [...selected, item.id]);
             else setSelected((selected: any) => selected.filter((x: any) => x !== item.id));
         };
     }
     return (
-        <Modal title={"选择好友添加至群聊中"} open={props.open} onOk={handleOk} onCancel={handleCancel}>
+        <Modal title={"创建群聊"} open={props.open} onOk={handleOk} onCancel={handleCancel}>
             {load
                 ?
                 (
@@ -63,6 +54,7 @@ const AddMember = (props: any) => {
                 :
                 (
                     <div>
+                        输入群聊名称:<Input onChange={(e: any) => setName(e.target.value)}></Input>
                         <List
                             itemLayout="vertical"
                             size="large"
@@ -87,4 +79,4 @@ const AddMember = (props: any) => {
     );
 };
 
-export default AddMember;
+export default AddGroup;
