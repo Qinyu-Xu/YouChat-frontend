@@ -377,6 +377,16 @@ const ChatBoard = (props: any) => {
                                     }
                                 </Dropdown>
                             </Tooltip>
+                            <div className={styles.read_right}>
+                                {
+                                    members.filter( (member: any) => member.readTime < message.timestamp).length 
+                                }
+                                /
+                                {
+                                    members.length
+                                }
+                                &thinsp;未读
+                            </div>
                         </div>
                     ) : (
                         <div className={styles.message} key={index+1} id={index+1}>
@@ -438,6 +448,16 @@ const ChatBoard = (props: any) => {
                                     }
                                 </Dropdown>
                             </Tooltip>
+                            <div className={styles.read_left}>
+                                {
+                                    members.filter( (member: any) => member.readTime < message.timestamp).length 
+                                }
+                                /
+                                {
+                                    members.length
+                                }
+                                &thinsp;未读
+                            </div>
                         </div>
                 ))}
                 <div id="THEEND"/>
