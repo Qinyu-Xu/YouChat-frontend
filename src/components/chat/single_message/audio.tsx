@@ -63,7 +63,7 @@ const AudioInput = (props: any) => {
     }, [recording]);
 
     useEffect(() => {
-        if (mediaRecorder) {
+        if ( mediaRecorder ) {
             mediaRecorder.ondataavailable = (e: any) => {
                 if (e.data.size > 0) setChunks([e.data]);
             };

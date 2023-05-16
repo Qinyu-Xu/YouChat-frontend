@@ -106,14 +106,13 @@ const ChatBoard = (props: any) => {
                     message.error("服务器繁忙，请稍后撤回！");
                 }
             } else if(key === '2') {
-                // console.log(message);
                 request("api/session/message/translate", "PUT",
                     JSON.stringify({ 
                         "language": "English",
-	                    "text": message
+	                    "text": ms
                     })
                 ).then((res: any) => {
-                    // console.log(res);
+                    console.log(res);
                     setTranslated(res.text);
                     setIsModalOpen(true);
                 });

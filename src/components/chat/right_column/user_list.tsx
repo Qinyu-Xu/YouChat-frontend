@@ -7,7 +7,6 @@ import {formatParams} from "@/utils/utilities";
 
 
 const UserList = (props: any) => {
-    console.log(props.members);
 
     const [friends, setFriends] = useState([]);
 
@@ -235,8 +234,6 @@ const UserList = (props: any) => {
             }
         };
     };
-
-    console.log(friends);
 
     return (
         <div>
