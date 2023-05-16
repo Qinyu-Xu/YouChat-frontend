@@ -121,6 +121,7 @@ const ChatBoard = (props: any) => {
     const [count, setCount] = useState(0);
     const [role, setRole] = useState(2);
     const [reply, setReply] = useState(-1);
+    const [getReply, setGetReply] = useState(-1);
     const [text, setText] = useState("");
     const id = store.getState().userId;
 
@@ -142,27 +143,10 @@ const ChatBoard = (props: any) => {
     const handleOk = () => { setIsModalOpen(false); };
     const handleCancel = () => { setIsModalOpen(false); };
 
-    const onDropDownClick: any = (messageId: any, ms: any, reply: number, info: string) => {
+    const onDropDownClick: any = (messageId: any, ms: any, replyId: number, info: string) => {
         return ({key}: any) => {
             if  (key === '-1') {
-                if (reply !== -1) {
-                    const timer = setInterval(() => {
-                        console.log(reply);
-                        console.log(messages);
-                        if (messages.filter((message: any) => message.messageId === reply).length === 0) {
-                            const board: any = document.getElementById('board');
-                            board.scrollTo({
-                                top:0,
-                                behavior:"smooth"
-                            });
-                        }
-                        else {
-                            const message: any = document.getElementById(reply.toString());
-                            message.scrollIntoView({behavior: "smooth"});
-                            clearInterval(timer);
-                        }
-                    }, 500);
-                }
+                setGetReply(replyId);
             }
             else if(key === '0') {
                 if(messageId !== -1) {
@@ -399,6 +383,26 @@ const ChatBoard = (props: any) => {
             );
         }, 1000);
     }, []);
+
+    useEffect(() => {
+        if (getReply !== -1) {
+            console.log(getReply);
+            console.log(messages);
+            if (messages.filter((message: any) => message.messageId === getReply).length === 0) {
+                const board: any = document.getElementById('board');
+                board.scrollTo({
+                    top:0,
+                    behavior:"smooth"
+                });
+            }
+            else {
+                const message: any = document.getElementById(getReply.toString());
+                console.log(message);
+                message.scrollIntoView({behavior: "smooth"});
+                setGetReply(-1);
+            }
+        }
+    }, [getReply, messages]);
 
     return iload && mload
         ?

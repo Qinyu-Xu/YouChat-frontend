@@ -7,7 +7,7 @@ import {store} from "@/utils/store"
 
 const AddGroup = (props: any) => {
 
-    console.log(props.members);
+    // console.log(props.members);
 
     const [load, setLoad] = useState(true);
     const [friends, setFriends] = useState([]);
