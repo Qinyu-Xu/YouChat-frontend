@@ -40,6 +40,9 @@ const AudioInput = (props: any) => {
         try {
             const stream: any = await navigator.mediaDevices.getUserMedia({ audio: true });
             const recorder: any = new MediaRecorder(stream);
+            recorder.audioChannels = 1;
+            recorder.audioBitrate = 128000;
+            recorder.mimeType = 'audio/wav'
             setMediaRecorder(recorder);
             recorder.start();
         } catch (error: any) {
