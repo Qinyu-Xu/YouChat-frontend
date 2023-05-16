@@ -31,7 +31,11 @@ const left_items: MenuProps['items'] = [
     {
       key: '4',
       label: (<div>多选</div>)
-    }
+    },
+    {
+        key: '5',
+        label: (<div>删除</div>)
+    },
 ];
 
 const right_items: MenuProps['items'] = [
@@ -54,7 +58,11 @@ const right_items: MenuProps['items'] = [
     {
         key: '4',
         label: (<div>多选</div>)
-    }
+    },
+    {
+        key: '5',
+        label: (<div>删除</div>)
+    },
 ];
 
 const ChatBoard = (props: any) => {
@@ -123,6 +131,16 @@ const ChatBoard = (props: any) => {
             } else if(key === '4') {
                 setPickerOpen(true);
 
+            }
+            else if(key === '5') {
+                request("api/session/delete", "PUT",
+                    JSON.stringify({ 
+                        "userId": store.getState().userId,
+	                    "messageId": messageId
+                    })
+                ).then((res: any) => {
+                    setMessages((messages: any) => messages.filter((message: any) => message.messageId !== messageId));
+                });
             }
         };
     };
