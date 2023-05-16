@@ -2,15 +2,62 @@ import styles from "@/styles/chat.module.css";
 import { request } from "@/utils/network";
 import {Avatar, Badge} from "antd";
 import {store} from "@/utils/store";
-import { useEffect, useState } from "react";
-import {getRandomNumber} from "@/utils/utilities";
+import {useEffect, useRef, useState} from "react";
 import moment from "moment";
 
-const MessageItem = (props: any) => {
-    const [image, setImage] = useState("");
+const scaleImage = (image, width, height) => {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+
+    canvas.width = width;
+    canvas.height = height;
+
+    // 在画布上绘制图像并进行缩放
+    ctx.drawImage(image, 0, 0, width, height);
+
+    return canvas;
+};
+
+const CombinedImage = (props: any) => {
+    const images = props.image;
+    const canvasRef = useRef<any>();
+    const gridSize = 2;
+
+    const remToPx = (rem) => {
+        const fontSize = parseFloat(getComputedStyle(document.documentElement).fontSize);
+        return rem * fontSize;
+    };
+
+    const sz = remToPx(5);
+    console.log(sz);
 
     useEffect(() => {
-        if(props.session.sessionType === 1) {
+        const canvas = canvasRef.current;
+        const context = canvas.getContext('2d');
+
+        images.slice(0, 4).forEach((image, index) => {
+            const img = new Image();
+            img.src = image;
+            img.onload = () => {
+                const scaledImage = scaleImage(img,2 * sz, sz);
+                context.drawImage(scaledImage, 2*sz*(index%2!==1), sz * (index <= 1));
+            };
+        });
+    }, [images]);
+
+    return (
+        <div>
+            <canvas className={styles.message_item_left} ref={canvasRef}  />
+        </div>
+    );
+};
+
+const MessageItem = (props: any) => {
+    const [image, setImage] = useState<any>("");
+    const [canv, setCanv] = useState<any>([]);
+
+    useEffect(() => {
+        if( props.session.sessionType === 1 ) {
             request(
                 "api/session/chatroom?id=" + props.session.sessionId,
                 "GET",
@@ -24,11 +71,25 @@ const MessageItem = (props: any) => {
                 }
             )
         } else {
-            if(image === "") {
-                setImage(`/headshot/${getRandomNumber(1, 99)}.svg`);
+            setCanv([]);
+            request(
+                "api/session/chatroom?id=" + props.session.sessionId,
+                "GET",
+                "").then((res: any) => {
+                    let i = 0;
+                    for(; i < 4 && i < res.members.length; ++i) {
+                        request("api/people/img/" + res.members[i].id, "GET", "").then((r: any) => {
+                            setCanv(images => [...images, r.img]);
+                        });
+                    }
+                    while(i < 4) {
+                        i++;
+                        setCanv(images => [...images, ""]);
+                    }
+
+                })
             }
-        }
-    });
+    }, []);
 
     return (
         <div className={
@@ -37,7 +98,12 @@ const MessageItem = (props: any) => {
             :
                 styles.message_item}>
             <Badge count={props.session.unread} overflowCount={99}>
-            <Avatar className={styles.message_item_left} src={image}/>
+                { props.session.sessionType === 1 ?
+                    <Avatar className={styles.message_item_left} src={image}/>
+                    : canv === undefined
+                        ? <Avatar className={styles.message_item_left} src={"headshot/00.svg"} />
+                        : <CombinedImage image={canv} />
+                }
             </Badge>
             <div className={styles.message_item_mid}>
                 <div className={styles.message_item_title}>
