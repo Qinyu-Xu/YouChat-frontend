@@ -284,7 +284,68 @@ const ChatBoard = (props: any) => {
             setNewpull(true);
             setNewinfo(true);
         }
-    }
+    };
+
+    const randerMssage = (message: string, pos: string, timestamp: any) => {
+        let result: any = [];
+        for (let i = 0; i + 1 < message.length; ++i) {
+            let found = false;
+            if (message[i] === '@' && message[i+1] === '[') {
+                let j = i + 2;
+                while (j < message.length && message[j] !== ']') ++j;
+                if (j < message.length && message[j] === ']') {
+                    const name = message.substring(i+2, j);
+                    if (j + 1 < message.length && message[j + 1] === '(') {
+                        let k = j + 2;
+                        while (k < message.length && message[k] !== ')') ++k;
+                        if (k < message.length && message[k] === ')') {
+                            const id = message.substring(j+2+5, k);
+                            result.push(
+                                <div style={{display: "inline-block"}}>
+                                    <Tooltip title={
+                                            <div>
+                                                <Avatar src={
+                                                    images.filter( (image: any) => 
+                                                        image.id.toString() === id)[0] === undefined
+                                                        ?
+                                                        "/headshot/01.svg"
+                                                        :
+                                                        images.filter( (image: any) => image.id.toString() === id)[0].image
+                                                } />
+                                                &nbsp;&nbsp;
+                                                {name}
+                                            </div>
+                                        } 
+                                        trigger="hover" 
+                                        overlayInnerStyle={{color: "rgb(50,50,50)"}}
+                                        color="rgba(255,255,255,0.75)"
+                                    >
+                                        <div style={{display: "inline-block", 
+                                            color: (pos === "left" ? "rgb(225,75,125)" : "rgb(255, 200, 220")
+                                        }}>
+                                            {name}
+                                            {
+                                                members.filter((member: any) => member.id.toString() === id)[0].readTime < timestamp
+                                                ? " (未读)" : ""
+                                            }
+                                        </div>
+                                    </Tooltip>
+                                </div>
+                            );
+                            i = k;
+                            found = true;
+                        };
+                    }
+                }
+            }
+            if (!found) result.push(message[i]);
+        }
+        return (
+            <div>
+                {result}
+            </div>
+        )
+    };
 
     useEffect(()=>{
         if(newpull && messages.length >= (count-1)*30) {
@@ -404,6 +465,16 @@ const ChatBoard = (props: any) => {
         }
     }, [getReply, messages]);
 
+    useEffect(() => {
+        for (let i = 0; i < messages.length; ++ i) {
+            messages[i].renderedMessage = randerMssage(
+                messages[i].message,
+                messages[i].senderId === store.getState().userId ? "right" : "left",
+                messages[i].timestamp
+            );
+        }
+    }, [messages, members]);
+
     return iload && mload
         ?
         (
@@ -441,7 +512,7 @@ const ChatBoard = (props: any) => {
                                         message.messageType === "text"
                                         ?
                                         <div className={styles.message_right}>
-                                            <Linkify>{message.message}</Linkify>
+                                            <Linkify>{message.renderedMessage}</Linkify>
                                         </div>
                                         :
                                         message.messageType === "notice"
@@ -535,7 +606,7 @@ const ChatBoard = (props: any) => {
                                         message.messageType === "text"
                                         ?
                                         <div className={styles.message_left}>
-                                        <Linkify>{message.message}</Linkify>
+                                        <Linkify>{message.renderedMessage}</Linkify>
                                         </div>
                                             :
                                             message.messageType === "notice"

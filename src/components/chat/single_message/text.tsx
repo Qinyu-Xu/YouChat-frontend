@@ -83,19 +83,22 @@ const TextBoard = (props: any) => {
                         },
                     },
                 }}
+                allowSpaceInQuery={true}
                 onChange={(e: any) => props.setText(e.target.value)}
                 value={props.text}>
                 <Mention 
                     style={{
                         backgroundColor: "rgba(255,255,255,0.5)",
                         borderRadius: "0.25rem",
-
                     }}
                     trigger="@"
                     markup="@[__display__](user:__id__)"
-                    data={props.members.map((member: any) => ({id: member.id, display: member.nickname}))}
+                    data={props.members.map((member: any) => ({id: member.id, display: "@" + member.nickname}))}
+                    appendSpaceOnAdd={true}
                     renderSuggestion={(suggestion, search, highlightedDisplay) => (
-                        <div>{highlightedDisplay}</div>
+                        <div>
+                            {highlightedDisplay}
+                        </div>
                     )}
                 />
             </MentionsInput>
