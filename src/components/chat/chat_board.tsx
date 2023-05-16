@@ -85,7 +85,11 @@ const left_reply_items: MenuProps['items'] = [
     {
       key: '4',
       label: (<div>多选</div>)
-    }
+    },
+    {
+        key: '5',
+        label: (<div>删除</div>)
+    },
 ];
 
 const right_reply_items: MenuProps['items'] = [
@@ -112,7 +116,11 @@ const right_reply_items: MenuProps['items'] = [
     {
         key: '4',
         label: (<div>多选</div>)
-    }
+    },
+    {
+        key: '5',
+        label: (<div>删除</div>)
+    },
 ];
 
 const ChatBoard = (props: any) => {
@@ -163,7 +171,8 @@ const ChatBoard = (props: any) => {
                         {
                             type: "delete",
                             id: store.getState().userId,
-                            messageId: messageId
+                            messageId: messageId,
+                            role: role
                         })
                     );
                 } else {
@@ -185,7 +194,7 @@ const ChatBoard = (props: any) => {
                 request("api/session/message/translate", "PUT",
                     JSON.stringify({ 
                         "language": "English",
-	                    "text": message
+	                    "text": ms
                     })
                 ).then((res: any) => {
                     // console.log(res);
@@ -545,7 +554,7 @@ const ChatBoard = (props: any) => {
                                 moment(message.timestamp).format("MM/DD HH:mm:ss")
                             } trigger="hover"
                                 arrow={false} placement="topLeft" color="rgba(100,100,100,0.5)">
-                                <Dropdown menu={{ items: (message.reply === -1 ? left_items : left_reply_items),
+                                <Dropdown menu={{ items: (message.reply === -1 ? (role <= 1 ? right_items : left_items) : (role <= 1 ? right_reply_items : left_reply_items)),
                                     onClick: onDropDownClick(message.messageId, message.message, message.reply,
                                     message.senderName + " " + moment(message.timestamp).format("MM/DD HH:mm:ss")) }}
                                     placement="bottomLeft"  trigger={['contextMenu']}>
