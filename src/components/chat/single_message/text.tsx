@@ -16,14 +16,16 @@ const TextBoard = (props: any) => {
                     sessionId: props.sessionId,
                     timestamp: Date.now(),
                     message: props.text,
-                    messageType: "text"
+                    messageType: "text",
+                    reply: props.reply
                 };
                 const addM = {
                     "senderId": store.getState().userId,
                     "timestamp": Date.now(),
                     "messageId": -1,
                     "message": props.text,
-                    "messageType": "text"
+                    "messageType": "text",
+                    "reply": props.reply
                 }
                 socket.send(CircularJson.stringify(message));
                 props.setMessages((message: any) => [...message, addM]);
@@ -37,7 +39,7 @@ const TextBoard = (props: any) => {
             <textarea
                 className={styles.writing}
                 onChange={(e: any) => props.setText(e.target.value)}
-                value={props.text} />
+                value={props.text}/>
             <div className={styles.send}>
                 <Button onClick={handleClick} >发送</Button>
             </div>

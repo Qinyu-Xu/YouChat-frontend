@@ -65,6 +65,56 @@ const right_items: MenuProps['items'] = [
     },
 ];
 
+const left_reply_items: MenuProps['items'] = [
+    {
+      key: '-1',
+      label: (<div>出处</div>),
+    },
+    {
+      key: '1',
+      label: (<div>回复</div>),
+    },
+    {
+      key: '2',
+      label: (<div>翻译</div>),
+    },
+    {
+      key: '3',
+      label: (<div>语⾳转⽂字</div>),
+    },
+    {
+      key: '4',
+      label: (<div>多选</div>)
+    }
+];
+
+const right_reply_items: MenuProps['items'] = [
+    {
+      key: '-1',
+      label: (<div>出处</div>),
+    },
+    {
+      key: '0',
+      label: (<div>撤回</div>),
+    },
+    {
+      key: '1',
+      label: (<div>回复</div>),
+    },
+    {
+      key: '2',
+      label: (<div>翻译</div>),
+    },
+    {
+      key: '3',
+      label: (<div>语⾳转⽂字</div>),
+    },
+    {
+        key: '4',
+        label: (<div>多选</div>)
+    }
+];
+
 const ChatBoard = (props: any) => {
 
     const [messages, setMessages] = useState<any>([]);
@@ -78,6 +128,9 @@ const ChatBoard = (props: any) => {
     const [newpull, setNewpull] = useState(false);
     const [count, setCount] = useState(0);
     const [role, setRole] = useState(2);
+    const [reply, setReply] = useState(-1);
+    const [getReply, setGetReply] = useState(-1);
+    const [text, setText] = useState("");
     const id = store.getState().userId;
 
     const [translated, setTranslated] = useState("");
@@ -98,9 +151,12 @@ const ChatBoard = (props: any) => {
     const handleOk = () => { setIsModalOpen(false); };
     const handleCancel = () => { setIsModalOpen(false); };
 
-    const onDropDownClick: any = (messageId: any, ms: any) => {
+    const onDropDownClick: any = (messageId: any, ms: any, replyId: number, info: string) => {
         return ({key}: any) => {
-            if(key === '0') {
+            if  (key === '-1') {
+                setGetReply(replyId);
+            }
+            else if(key === '0') {
                 if(messageId !== -1) {
                     const socket: any = store.getState().webSocket;
                     socket.send(JSON.stringify(
@@ -113,7 +169,18 @@ const ChatBoard = (props: any) => {
                 } else {
                     message.error("服务器繁忙，请稍后撤回！");
                 }
-            } else if(key === '2') {
+            } 
+            else if (key == '1') {
+                setReply(messageId);
+                setText(
+                    "回复 " + 
+                    info + 
+                    "\n" +
+                    ms.trim().split("\n").map((line: any) => "    " + line).join("\n") +
+                    "\n"
+                )
+            }
+            else if(key === '2') {
                 // console.log(message);
                 request("api/session/message/translate", "PUT",
                     JSON.stringify({ 
@@ -320,6 +387,7 @@ const ChatBoard = (props: any) => {
         const timer = setInterval(() => {
             request("/api/session/chatroom?id="+props.session.sessionId, "GET", "")
                 .then((res: any) => {
+                    // console.log(res.members);
                     setMembers(res.members);
                     setRole(res.members.filter((member: any) => member.id === store.getState().userId)[0].role);
                 });
@@ -331,8 +399,28 @@ const ChatBoard = (props: any) => {
                     readTime: Date.now()
                 })
             );
-        }, 5000);
+        }, 1000);
     }, []);
+
+    useEffect(() => {
+        if (getReply !== -1) {
+            console.log(getReply);
+            console.log(messages);
+            if (messages.filter((message: any) => message.messageId === getReply).length === 0) {
+                const board: any = document.getElementById('board');
+                board.scrollTo({
+                    top:0,
+                    behavior:"smooth"
+                });
+            }
+            else {
+                const message: any = document.getElementById(getReply.toString());
+                console.log(message);
+                message.scrollIntoView({behavior: "smooth"});
+                setGetReply(-1);
+            }
+        }
+    }, [getReply, messages]);
 
     return iload && mload
         ?
@@ -348,7 +436,7 @@ const ChatBoard = (props: any) => {
             <div id="board" className={styles.display_board} >
                 {messages.map((message: any, index: any) =>
                     message.senderId === store.getState().userId ? (
-                        <div className={styles.message} key={index+1} id={index+1}>
+                        <div className={styles.message} key={index+1} id={message.messageId}>
                             <div className={styles.headshot_right}>
                                 <Avatar src={
                                     images.filter( (image: any) => image.id === message.senderId)[0] === undefined
@@ -363,7 +451,10 @@ const ChatBoard = (props: any) => {
                                 moment(message.timestamp).format("MM/DD HH:mm:ss")
                             } trigger="hover"
                                 arrow={false} placement="topRight" color="rgba(100,100,100,0.5)">
-                                <Dropdown menu={{ items: right_items, onClick: onDropDownClick(message.messageId, message.message) }} placement="bottomLeft" trigger={['contextMenu']}>
+                                <Dropdown menu={{ items: (message.reply === -1 ? right_items : right_reply_items) ,
+                                    onClick: onDropDownClick(message.messageId, message.message, message.reply,
+                                    message.senderName + " " + moment(message.timestamp).format("MM/DD HH:mm:ss")) }}
+                                    placement="bottomLeft" trigger={['contextMenu']}>
                                     {
                                         message.messageType === "text"
                                         ?
@@ -439,7 +530,7 @@ const ChatBoard = (props: any) => {
                             </Tooltip>
                         </div>
                     ) : (
-                        <div className={styles.message} key={index+1} id={index+1}>
+                        <div className={styles.message} key={index+1} id={message.messageId}>
                             <div className={styles.headshot_left}>
                                 <Avatar src={
                                     images.filter( (image: any) => image.id === message.senderId)[0] === undefined
@@ -454,7 +545,10 @@ const ChatBoard = (props: any) => {
                                 moment(message.timestamp).format("MM/DD HH:mm:ss")
                             } trigger="hover"
                                 arrow={false} placement="topLeft" color="rgba(100,100,100,0.5)">
-                                <Dropdown menu={{ items: left_items, onClick: onDropDownClick(message.messageId, message.message) }} placement="bottomLeft"  trigger={['contextMenu']}>
+                                <Dropdown menu={{ items: (message.reply === -1 ? left_items : left_reply_items),
+                                    onClick: onDropDownClick(message.messageId, message.message, message.reply,
+                                    message.senderName + " " + moment(message.timestamp).format("MM/DD HH:mm:ss")) }}
+                                    placement="bottomLeft"  trigger={['contextMenu']}>
                                     {
                                         message.messageType === "text"
                                         ?
@@ -532,8 +626,9 @@ const ChatBoard = (props: any) => {
                 ))}
                 <div id="THEEND"/>
             </div>
-            <SingleMessage sessionId={props.session.sessionId} setMessages={setMessages}/>
-            <RightColumn session={props.session} members={members}  messages={messages} images={images} setRefresh={props.setRefresh} setSession={props.setSession} setMessages={setMessages} role={role} setMembers={setMembers} setRole={setRole}/>
+            <SingleMessage sessionId={props.session.sessionId} setMessages={setMessages} reply={reply} text={text} setText={setText}/>
+            <RightColumn session={props.session} members={members}  messages={messages} images={images} setRefresh={props.setRefresh} 
+                setSession={props.setSession} setMessages={setMessages} role={role} setMembers={setMembers} setRole={setRole}/>
             <Modal title="翻译结果" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
                 <p>{translated}</p>
             </Modal>
