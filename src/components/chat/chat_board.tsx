@@ -57,6 +57,56 @@ const right_items: MenuProps['items'] = [
     }
 ];
 
+const left_reply_items: MenuProps['items'] = [
+    {
+      key: '-1',
+      label: (<div>出处</div>),
+    },
+    {
+      key: '1',
+      label: (<div>回复</div>),
+    },
+    {
+      key: '2',
+      label: (<div>翻译</div>),
+    },
+    {
+      key: '3',
+      label: (<div>语⾳转⽂字</div>),
+    },
+    {
+      key: '4',
+      label: (<div>多选</div>)
+    }
+];
+
+const right_reply_items: MenuProps['items'] = [
+    {
+      key: '-1',
+      label: (<div>出处</div>),
+    },
+    {
+      key: '0',
+      label: (<div>撤回</div>),
+    },
+    {
+      key: '1',
+      label: (<div>回复</div>),
+    },
+    {
+      key: '2',
+      label: (<div>翻译</div>),
+    },
+    {
+      key: '3',
+      label: (<div>语⾳转⽂字</div>),
+    },
+    {
+        key: '4',
+        label: (<div>多选</div>)
+    }
+];
+
 const ChatBoard = (props: any) => {
 
     const [messages, setMessages] = useState<any>([]);
@@ -359,7 +409,8 @@ const ChatBoard = (props: any) => {
                                 moment(message.timestamp).format("MM/DD HH:mm:ss")
                             } trigger="hover"
                                 arrow={false} placement="topRight" color="rgba(100,100,100,0.5)">
-                                <Dropdown menu={{ items: right_items, onClick: onDropDownClick(message.messageId, message.message, 
+                                <Dropdown menu={{ items: (message.reply === -1 ? right_items : right_reply_items) ,
+                                    onClick: onDropDownClick(message.messageId, message.message, 
                                     message.senderName + " " + moment(message.timestamp).format("MM/DD HH:mm:ss")) }}
                                     placement="bottomLeft" trigger={['contextMenu']}>
                                     {
@@ -452,7 +503,8 @@ const ChatBoard = (props: any) => {
                                 moment(message.timestamp).format("MM/DD HH:mm:ss")
                             } trigger="hover"
                                 arrow={false} placement="topLeft" color="rgba(100,100,100,0.5)">
-                                <Dropdown menu={{ items: left_items, onClick: onDropDownClick(message.messageId, message.message,
+                                <Dropdown menu={{ items: (message.reply === -1 ? left_items : left_reply_items),
+                                    onClick: onDropDownClick(message.messageId, message.message,
                                     message.senderName + " " + moment(message.timestamp).format("MM/DD HH:mm:ss")) }}
                                     placement="bottomLeft"  trigger={['contextMenu']}>
                                     {
