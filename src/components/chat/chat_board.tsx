@@ -302,6 +302,7 @@ const ChatBoard = (props: any) => {
         const timer = setInterval(() => {
             request("/api/session/chatroom?id="+props.session.sessionId, "GET", "")
                 .then((res: any) => {
+                    // console.log(res.members);
                     setMembers(res.members);
                     setRole(res.members.filter((member: any) => member.id === store.getState().userId)[0].role);
                 });
@@ -313,7 +314,7 @@ const ChatBoard = (props: any) => {
                     readTime: Date.now()
                 })
             );
-        }, 5000);
+        }, 1000);
     }, []);
 
     return iload && mload
