@@ -142,7 +142,9 @@ const ChatBoard = (props: any) => {
     const id = store.getState().userId;
 
     const [translated, setTranslated] = useState("");
+    const [audio, setAudio] = useState("");
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isAudioModalOpen, setIsAudioModalOpen] = useState(false);
     const [isPickerOpen, setPickerOpen] = useState(false);
 
     const [isMultiChat, setMultiChat] = useState(false);
@@ -158,6 +160,8 @@ const ChatBoard = (props: any) => {
     const showModal = () => { setIsModalOpen(true); };
     const handleOk = () => { setIsModalOpen(false); };
     const handleCancel = () => { setIsModalOpen(false); };
+    const handleAudioOk = () => { setIsAudioModalOpen(false); };
+    const handleAudioCancel = () => { setIsAudioModalOpen(false); };
 
     const onDropDownClick: any = (messageId: any, ms: any, replyId: number, info: string) => {
         return ({key}: any) => {
@@ -202,7 +206,15 @@ const ChatBoard = (props: any) => {
                     setIsModalOpen(true);
                 });
             } else if(key === '3') {
-
+                request("api/session/message/audio", "PUT",
+                    JSON.stringify({ 
+	                    "audio": ms
+                    })
+                ).then((res: any) => {
+                    // console.log(res);
+                    setAudio(res.text);
+                    setIsAudioModalOpen(true);
+                });
 
             } else if(key === '4') {
                 setPickerOpen(true);
@@ -640,6 +652,9 @@ const ChatBoard = (props: any) => {
                 setSession={props.setSession} setMessages={setMessages} role={role} setMembers={setMembers} setRole={setRole}/>
             <Modal title="翻译结果" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
                 <p>{translated}</p>
+            </Modal>
+            <Modal title="转文字结果" open={isAudioModalOpen} onOk={handleAudioOk} onCancel={handleAudioCancel}>
+                <p>{audio}</p>
             </Modal>
             <MultiPicker sessionId={props.session.sessionId} members={members} setMessages={setMessages}
                          images={images} setOpen={setPickerOpen} open={isPickerOpen} list={props.list}/>
