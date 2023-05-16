@@ -37,7 +37,7 @@ const TextBoard = (props: any) => {
             <textarea
                 className={styles.writing}
                 onChange={(e: any) => props.setText(e.target.value)}
-                value={props.text} />
+                value={props.text}/>
             <div className={styles.send}>
                 <Button onClick={handleClick} >发送</Button>
             </div>

@@ -70,6 +70,8 @@ const ChatBoard = (props: any) => {
     const [newpull, setNewpull] = useState(false);
     const [count, setCount] = useState(0);
     const [role, setRole] = useState(2);
+    const [reply, setReply] = useState(-1);
+    const [text, setText] = useState("");
     const id = store.getState().userId;
 
     const [translated, setTranslated] = useState("");
@@ -90,7 +92,7 @@ const ChatBoard = (props: any) => {
     const handleOk = () => { setIsModalOpen(false); };
     const handleCancel = () => { setIsModalOpen(false); };
 
-    const onDropDownClick: any = (messageId: any, ms: any) => {
+    const onDropDownClick: any = (messageId: any, ms: any, info: string) => {
         return ({key}: any) => {
             if(key === '0') {
                 if(messageId !== -1) {
@@ -105,7 +107,18 @@ const ChatBoard = (props: any) => {
                 } else {
                     message.error("服务器繁忙，请稍后撤回！");
                 }
-            } else if(key === '2') {
+            } 
+            else if (key == '1') {
+                setReply(messageId);
+                setText(
+                    "回复 " + 
+                    info + 
+                    "\n" +
+                    ms.trim().split("\n").map((line: any) => "    " + line).join("\n") +
+                    "\n"
+                )
+            }
+            else if(key === '2') {
                 // console.log(message);
                 request("api/session/message/translate", "PUT",
                     JSON.stringify({ 
@@ -346,7 +359,9 @@ const ChatBoard = (props: any) => {
                                 moment(message.timestamp).format("MM/DD HH:mm:ss")
                             } trigger="hover"
                                 arrow={false} placement="topRight" color="rgba(100,100,100,0.5)">
-                                <Dropdown menu={{ items: right_items, onClick: onDropDownClick(message.messageId, message.message) }} placement="bottomLeft" trigger={['contextMenu']}>
+                                <Dropdown menu={{ items: right_items, onClick: onDropDownClick(message.messageId, message.message, 
+                                    message.senderName + " " + moment(message.timestamp).format("MM/DD HH:mm:ss")) }}
+                                    placement="bottomLeft" trigger={['contextMenu']}>
                                     {
                                         message.messageType === "text"
                                         ?
@@ -437,7 +452,9 @@ const ChatBoard = (props: any) => {
                                 moment(message.timestamp).format("MM/DD HH:mm:ss")
                             } trigger="hover"
                                 arrow={false} placement="topLeft" color="rgba(100,100,100,0.5)">
-                                <Dropdown menu={{ items: left_items, onClick: onDropDownClick(message.messageId, message.message) }} placement="bottomLeft"  trigger={['contextMenu']}>
+                                <Dropdown menu={{ items: left_items, onClick: onDropDownClick(message.messageId, message.message,
+                                    message.senderName + " " + moment(message.timestamp).format("MM/DD HH:mm:ss")) }}
+                                    placement="bottomLeft"  trigger={['contextMenu']}>
                                     {
                                         message.messageType === "text"
                                         ?
@@ -515,8 +532,9 @@ const ChatBoard = (props: any) => {
                 ))}
                 <div id="THEEND"/>
             </div>
-            <SingleMessage sessionId={props.session.sessionId} setMessages={setMessages}/>
-            <RightColumn session={props.session} members={members}  messages={messages} images={images} setRefresh={props.setRefresh} setSession={props.setSession} setMessages={setMessages} role={role} setMembers={setMembers} setRole={setRole}/>
+            <SingleMessage sessionId={props.session.sessionId} setMessages={setMessages} reply={reply} text={text} setText={setText}/>
+            <RightColumn session={props.session} members={members}  messages={messages} images={images} setRefresh={props.setRefresh} 
+                setSession={props.setSession} setMessages={setMessages} role={role} setMembers={setMembers} setRole={setRole}/>
             <Modal title="翻译结果" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
                 <p>{translated}</p>
             </Modal>

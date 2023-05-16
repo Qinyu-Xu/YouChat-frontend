@@ -11,11 +11,10 @@ import {VideoIcon} from "@/components/chat/single_message/video";
 const SingleMessage = (props: any) => {
     const [audio, setAudio] = useState(false);
     const [emoji, setEmoji] = useState(false);
-    const [text, setText] = useState("");
 
     return (
         <div className={styles.input_box}>
-            {emoji ? <EmojiBoard text={text} setText={setText}/> : <div></div>}
+            {emoji ? <EmojiBoard text={props.text} setText={props.setText}/> : <div></div>}
             <div className={styles.function_bar}>
                 <EmojiIcon setEmoji={setEmoji} emoji={emoji}/>
                 <ImgIcon sessionId={props.sessionId} setMessages={props.setMessages}/>
@@ -26,7 +25,8 @@ const SingleMessage = (props: any) => {
             {
                 audio
                     ? <AudioInput sessionId={props.sessionId} setAudio={setAudio} setMessages={props.setMessages}/>
-                    : <TextBoard text={text} setMessages={props.setMessages} setText={setText} sessionId={props.sessionId}/>
+                    : <TextBoard text={props.text} setMessages={props.setMessages} setText={props.setText}
+                        sessionId={props.sessionId} reply={props.reply}/>
             }
 
         </div>
