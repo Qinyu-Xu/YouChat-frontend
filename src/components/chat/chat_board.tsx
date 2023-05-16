@@ -31,10 +31,6 @@ const left_items: MenuProps['items'] = [
     {
       key: '4',
       label: (<div>多选</div>)
-    },
-    {
-      key: '5',
-      label: (<div>已读情况</div>)
     }
 ];
 
@@ -58,10 +54,6 @@ const right_items: MenuProps['items'] = [
     {
         key: '4',
         label: (<div>多选</div>)
-    },
-    {
-        key: '5',
-        label: (<div>已读情况</div>)
     }
 ];
 
@@ -78,7 +70,7 @@ const ChatBoard = (props: any) => {
     const [newpull, setNewpull] = useState(false);
     const [count, setCount] = useState(0);
     const [role, setRole] = useState(2);
-    const [bRefresh, setBRefresh] = useState(0);
+    const id = store.getState().userId;
 
     const [translated, setTranslated] = useState("");
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -131,10 +123,7 @@ const ChatBoard = (props: any) => {
             } else if(key === '4') {
                 setPickerOpen(true);
 
-            } else if(key === '5') {
-
             }
-
         };
     };
 
@@ -269,7 +258,11 @@ const ChatBoard = (props: any) => {
         setNewpull(false);
         setMload(false);
         setIload(false);
-        request("/api/session/chatroom?id="+props.session.sessionId, "GET", "").then((res: any) => {setMembers(res.members);setRole(res.members.filter((member: any) => member.id === store.getState().userId)[0].role);});
+        request("/api/session/chatroom?id="+props.session.sessionId, "GET", "")
+            .then((res: any) => {
+                setMembers(res.members);
+                setRole(res.members.filter((member: any) => member.id === store.getState().userId)[0].role);
+            });
     }, [props.session.sessionId]);
 
     useEffect(() => {
@@ -304,6 +297,24 @@ const ChatBoard = (props: any) => {
             if(board) board.removeEventListener('scroll', scroll);
         }
     }, [props.session.sessionId, mload, iload]);
+
+    useEffect(() => {
+        const timer = setInterval(() => {
+            request("/api/session/chatroom?id="+props.session.sessionId, "GET", "")
+                .then((res: any) => {
+                    setMembers(res.members);
+                    setRole(res.members.filter((member: any) => member.id === store.getState().userId)[0].role);
+                });
+            request(
+                `api/session/message/${id}`,
+                "POST",
+                JSON.stringify({
+                    sessionId: props.session.sessionId,
+                    readTime: Date.now()
+                })
+            );
+        }, 5000);
+    }, []);
 
     return iload && mload
         ?
@@ -378,6 +389,36 @@ const ChatBoard = (props: any) => {
                                     }
                                 </Dropdown>
                             </Tooltip>
+                            <Tooltip title={
+                                members
+                                    .filter((member: any) => member.readTime < message.timestamp)
+                                    .map((member: any, index: any) => (
+                                        <div key={index}>
+                                            <Avatar src={
+                                                images.filter( (image: any) => image.id === member.id)[0] === undefined
+                                                    ?
+                                                    "/headshot/01.svg"
+                                                    :
+                                                    images.filter( (image: any) => image.id === member.id)[0].image
+                                            } />
+                                            &nbsp;&nbsp;
+                                            {member.nickname}
+                                            <br/>
+                                        </div>
+                                    ))
+                                } trigger="hover" overlayInnerStyle={{color: "rgb(50,50,50)"}}
+                                    arrow={false} placement="bottomRight" color="rgba(255,255,255,0.5)">
+                                <div className={styles.read_right}>
+                                    {
+                                        members.filter( (member: any) => member.readTime < message.timestamp).length 
+                                    }
+                                    /
+                                    {
+                                        members.length
+                                    }
+                                    &thinsp;未读
+                                </div>
+                            </Tooltip>
                         </div>
                     ) : (
                         <div className={styles.message} key={index+1} id={index+1}>
@@ -439,12 +480,42 @@ const ChatBoard = (props: any) => {
                                     }
                                 </Dropdown>
                             </Tooltip>
+                            <Tooltip title={
+                                members
+                                    .filter((member: any) => member.readTime < message.timestamp)
+                                    .map((member: any, index: any) => (
+                                        <div key={index}>
+                                            <Avatar src={
+                                                images.filter( (image: any) => image.id === member.id)[0] === undefined
+                                                    ?
+                                                    "/headshot/01.svg"
+                                                    :
+                                                    images.filter( (image: any) => image.id === member.id)[0].image
+                                            } />
+                                            &nbsp;&nbsp;
+                                            {member.nickname}
+                                            <br/>
+                                        </div>
+                                    ))
+                            } trigger="hover" overlayInnerStyle={{color: "rgb(50,50,50)"}}
+                                arrow={false} placement="bottomLeft" color="rgba(255,255,255,0.5)">
+                                <div className={styles.read_left}>
+                                    {
+                                        members.filter((member: any) => member.readTime < message.timestamp).length 
+                                    }
+                                    /
+                                    {
+                                        members.length
+                                    }
+                                    &thinsp;未读
+                                </div>
+                            </Tooltip>
                         </div>
                 ))}
                 <div id="THEEND"/>
             </div>
             <SingleMessage sessionId={props.session.sessionId} setMessages={setMessages}/>
-            <RightColumn session={props.session} members={members}  messages={messages} images={images} setRefresh={props.setRefresh} setSession={props.setSession} setMessages={setMessages} role={role} setBRefresh={setBRefresh}/>
+            <RightColumn session={props.session} members={members}  messages={messages} images={images} setRefresh={props.setRefresh} setSession={props.setSession} setMessages={setMessages} role={role} setMembers={setMembers} setRole={setRole}/>
             <Modal title="翻译结果" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
                 <p>{translated}</p>
             </Modal>
