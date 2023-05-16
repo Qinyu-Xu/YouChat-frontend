@@ -392,8 +392,8 @@ const ChatBoard = (props: any) => {
                             <Tooltip title={
                                 members
                                     .filter((member: any) => member.readTime < message.timestamp)
-                                    .map((member: any) => (
-                                        <div> 
+                                    .map((member: any, index: any) => (
+                                        <div key={index}>
                                             <Avatar src={
                                                 images.filter( (image: any) => image.id === member.id)[0] === undefined
                                                     ?
@@ -483,8 +483,8 @@ const ChatBoard = (props: any) => {
                             <Tooltip title={
                                 members
                                     .filter((member: any) => member.readTime < message.timestamp)
-                                    .map((member: any) => (
-                                        <div> 
+                                    .map((member: any, index: any) => (
+                                        <div key={index}>
                                             <Avatar src={
                                                 images.filter( (image: any) => image.id === member.id)[0] === undefined
                                                     ?
