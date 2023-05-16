@@ -608,7 +608,8 @@ const ChatBoard = (props: any) => {
                 ))}
                 <div id="THEEND"/>
             </div>
-            <SingleMessage sessionId={props.session.sessionId} setMessages={setMessages} reply={reply} text={text} setText={setText}/>
+            <SingleMessage sessionId={props.session.sessionId} setMessages={setMessages}
+                members={members} reply={reply} text={text} setText={setText}/>
             <RightColumn session={props.session} members={members}  messages={messages} images={images} setRefresh={props.setRefresh} 
                 setSession={props.setSession} setMessages={setMessages} role={role} setMembers={setMembers} setRole={setRole}/>
             <Modal title="翻译结果" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>

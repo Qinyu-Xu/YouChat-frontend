@@ -26,7 +26,7 @@ const SingleMessage = (props: any) => {
                 audio
                     ? <AudioInput sessionId={props.sessionId} setAudio={setAudio} setMessages={props.setMessages}/>
                     : <TextBoard text={props.text} setMessages={props.setMessages} setText={props.setText}
-                        sessionId={props.sessionId} reply={props.reply}/>
+                        sessionId={props.sessionId} members={props.members} reply={props.reply}/>
             }
 
         </div>
