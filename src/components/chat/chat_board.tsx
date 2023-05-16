@@ -142,9 +142,29 @@ const ChatBoard = (props: any) => {
     const handleOk = () => { setIsModalOpen(false); };
     const handleCancel = () => { setIsModalOpen(false); };
 
-    const onDropDownClick: any = (messageId: any, ms: any, info: string) => {
+    const onDropDownClick: any = (messageId: any, ms: any, reply: number, info: string) => {
         return ({key}: any) => {
-            if(key === '0') {
+            if  (key === '-1') {
+                if (reply !== -1) {
+                    const timer = setInterval(() => {
+                        console.log(reply);
+                        console.log(messages);
+                        if (messages.filter((message: any) => message.messageId === reply).length === 0) {
+                            const board: any = document.getElementById('board');
+                            board.scrollTo({
+                                top:0,
+                                behavior:"smooth"
+                            });
+                        }
+                        else {
+                            const message: any = document.getElementById(reply.toString());
+                            message.scrollIntoView({behavior: "smooth"});
+                            clearInterval(timer);
+                        }
+                    }, 500);
+                }
+            }
+            else if(key === '0') {
                 if(messageId !== -1) {
                     const socket: any = store.getState().webSocket;
                     socket.send(JSON.stringify(
@@ -394,7 +414,7 @@ const ChatBoard = (props: any) => {
             <div id="board" className={styles.display_board} >
                 {messages.map((message: any, index: any) =>
                     message.senderId === store.getState().userId ? (
-                        <div className={styles.message} key={index+1} id={index+1}>
+                        <div className={styles.message} key={index+1} id={message.messageId}>
                             <div className={styles.headshot_right}>
                                 <Avatar src={
                                     images.filter( (image: any) => image.id === message.senderId)[0] === undefined
@@ -410,7 +430,7 @@ const ChatBoard = (props: any) => {
                             } trigger="hover"
                                 arrow={false} placement="topRight" color="rgba(100,100,100,0.5)">
                                 <Dropdown menu={{ items: (message.reply === -1 ? right_items : right_reply_items) ,
-                                    onClick: onDropDownClick(message.messageId, message.message, 
+                                    onClick: onDropDownClick(message.messageId, message.message, message.reply,
                                     message.senderName + " " + moment(message.timestamp).format("MM/DD HH:mm:ss")) }}
                                     placement="bottomLeft" trigger={['contextMenu']}>
                                     {
@@ -488,7 +508,7 @@ const ChatBoard = (props: any) => {
                             </Tooltip>
                         </div>
                     ) : (
-                        <div className={styles.message} key={index+1} id={index+1}>
+                        <div className={styles.message} key={index+1} id={message.messageId}>
                             <div className={styles.headshot_left}>
                                 <Avatar src={
                                     images.filter( (image: any) => image.id === message.senderId)[0] === undefined
@@ -504,7 +524,7 @@ const ChatBoard = (props: any) => {
                             } trigger="hover"
                                 arrow={false} placement="topLeft" color="rgba(100,100,100,0.5)">
                                 <Dropdown menu={{ items: (message.reply === -1 ? left_items : left_reply_items),
-                                    onClick: onDropDownClick(message.messageId, message.message,
+                                    onClick: onDropDownClick(message.messageId, message.message, message.reply,
                                     message.senderName + " " + moment(message.timestamp).format("MM/DD HH:mm:ss")) }}
                                     placement="bottomLeft"  trigger={['contextMenu']}>
                                     {
