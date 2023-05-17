@@ -146,7 +146,7 @@ const RightColumn = (props: any) => {
         设置置顶<Switch onChange={handleTop} checked={curTop} />
         <br />
         <Divider />
-        {props.session.sessionType === 1 ? "" : (<div className={styles.drop} onClick={handleDropout}>
+        {props.session.sessionType === 1 && props.role !== 0 ? "" : (<div className={styles.drop} onClick={handleDropout}>
             退出群聊
         </div>)}
         <br />
