@@ -1,60 +1,126 @@
-import {useEffect, useRef, useState} from "react";
+import { useEffect, useRef, useState } from "react";
 import SingleMessage from "@/components/chat/single_message";
 import styles from "@/styles/chat.module.css"
 import { isBrowser } from "@/utils/store";
 import { store } from "@/utils/store";
 import Linkify from "react-linkify";
 import { MenuProps, Modal } from 'antd';
-import {Avatar, Dropdown, Image, message, Skeleton, Spin, Tooltip} from 'antd';
-import {MenuShow} from "@/components/chat/right_column/right_column";
-import {request} from "@/utils/network";
+import { Avatar, Dropdown, Image, message, Skeleton, Spin, Tooltip } from 'antd';
+import { MenuShow } from "@/components/chat/right_column/right_column";
+import { request } from "@/utils/network";
 import RightColumn from "@/components/chat/right_column/right_column";
 import moment from "moment";
-import {AudioPlayer} from "@/components/chat/single_message/audio";
-import {FileViewer} from "@/components/chat/single_message/file";
-import {MultiPicker} from"@/components/chat/single_message/history";
+import { AudioPlayer } from "@/components/chat/single_message/audio";
+import { FileViewer } from "@/components/chat/single_message/file";
+import { MultiPicker } from "@/components/chat/single_message/history";
 import MultiChat from "@/components/chat/single_message/history";
 
 const left_items: MenuProps['items'] = [
     {
-      key: '1',
-      label: (<div>回复</div>),
+        key: '1',
+        label: (<div>回复</div>),
     },
     {
-      key: '2',
-      label: (<div>翻译</div>),
+        key: '2',
+        label: (<div>翻译</div>),
     },
     {
-      key: '3',
-      label: (<div>语⾳转⽂字</div>),
-    },
-    {
-      key: '4',
-      label: (<div>多选</div>)
-    }
-];
-
-const right_items: MenuProps['items'] = [
-    {
-      key: '0',
-      label: (<div>撤回</div>),
-    },
-    {
-      key: '1',
-      label: (<div>回复</div>),
-    },
-    {
-      key: '2',
-      label: (<div>翻译</div>),
-    },
-    {
-      key: '3',
-      label: (<div>语⾳转⽂字</div>),
+        key: '3',
+        label: (<div>语⾳转⽂字</div>),
     },
     {
         key: '4',
         label: (<div>多选</div>)
-    }
+    },
+    {
+        key: '5',
+        label: (<div>删除</div>)
+    },
+];
+
+const right_items: MenuProps['items'] = [
+    {
+        key: '0',
+        label: (<div>撤回</div>),
+    },
+    {
+        key: '1',
+        label: (<div>回复</div>),
+    },
+    {
+        key: '2',
+        label: (<div>翻译</div>),
+    },
+    {
+        key: '3',
+        label: (<div>语⾳转⽂字</div>),
+    },
+    {
+        key: '4',
+        label: (<div>多选</div>)
+    },
+    {
+        key: '5',
+        label: (<div>删除</div>)
+    },
+];
+
+const left_reply_items: MenuProps['items'] = [
+    {
+        key: '-1',
+        label: (<div>出处</div>),
+    },
+    {
+        key: '1',
+        label: (<div>回复</div>),
+    },
+    {
+        key: '2',
+        label: (<div>翻译</div>),
+    },
+    {
+        key: '3',
+        label: (<div>语⾳转⽂字</div>),
+    },
+    {
+        key: '4',
+        label: (<div>多选</div>)
+    },
+    {
+        key: '5',
+        label: (<div>删除</div>)
+    },
+];
+
+const right_reply_items: MenuProps['items'] = [
+    {
+        key: '-1',
+        label: (<div>出处</div>),
+    },
+    {
+        key: '0',
+        label: (<div>撤回</div>),
+    },
+    {
+        key: '1',
+        label: (<div>回复</div>),
+    },
+    {
+        key: '2',
+        label: (<div>翻译</div>),
+    },
+    {
+        key: '3',
+        label: (<div>语⾳转⽂字</div>),
+    },
+    {
+        key: '4',
+        label: (<div>多选</div>)
+    },
+    {
+        key: '5',
+        label: (<div>删除</div>)
+    },
 ];
 
 const ChatBoard = (props: any) => {
@@ -70,10 +136,15 @@ const ChatBoard = (props: any) => {
     const [newpull, setNewpull] = useState(false);
     const [count, setCount] = useState(0);
     const [role, setRole] = useState(2);
+    const [reply, setReply] = useState(-1);
+    const [getReply, setGetReply] = useState(-1);
+    const [text, setText] = useState("");
     const id = store.getState().userId;
 
     const [translated, setTranslated] = useState("");
+    const [audio, setAudio] = useState("");
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isAudioModalOpen, setIsAudioModalOpen] = useState(false);
     const [isPickerOpen, setPickerOpen] = useState(false);
 
     const [isMultiChat, setMultiChat] = useState(false);
@@ -89,39 +160,75 @@ const ChatBoard = (props: any) => {
     const showModal = () => { setIsModalOpen(true); };
     const handleOk = () => { setIsModalOpen(false); };
     const handleCancel = () => { setIsModalOpen(false); };
+    const handleAudioOk = () => { setIsAudioModalOpen(false); };
+    const handleAudioCancel = () => { setIsAudioModalOpen(false); };
 
-    const onDropDownClick: any = (messageId: any, ms: any) => {
-        return ({key}: any) => {
-            if(key === '0') {
-                if(messageId !== -1) {
+    const onDropDownClick: any = (messageId: any, ms: any, replyId: number, info: string) => {
+        return ({ key }: any) => {
+            if (key === '-1') {
+                setGetReply(replyId);
+            }
+            else if (key === '0') {
+                if (messageId !== -1) {
                     const socket: any = store.getState().webSocket;
                     socket.send(JSON.stringify(
                         {
                             type: "delete",
                             id: store.getState().userId,
-                            messageId: messageId
+                            messageId: messageId,
+                            role: role
                         })
                     );
                 } else {
                     message.error("服务器繁忙，请稍后撤回！");
                 }
-            } else if(key === '2') {
+            }
+            else if (key == '1') {
+                setReply(messageId);
+                setText(
+                    "回复 " +
+                    info +
+                    "\n" +
+                    ms.trim().split("\n").map((line: any) => "    " + line).join("\n") +
+                    "\n"
+                )
+            }
+            else if (key === '2') {
+                // console.log(message);
                 request("api/session/message/translate", "PUT",
-                    JSON.stringify({ 
+                    JSON.stringify({
                         "language": "English",
-	                    "text": ms
+                        "text": ms
                     })
                 ).then((res: any) => {
-                    console.log(res);
+                    // console.log(res);
                     setTranslated(res.text);
                     setIsModalOpen(true);
                 });
-            } else if(key === '3') {
+            } else if (key === '3') {
+                request("api/session/message/audio", "PUT",
+                    JSON.stringify({
+                        "audio": ms
+                    })
+                ).then((res: any) => {
+                    // console.log(res);
+                    setAudio(res.text);
+                    setIsAudioModalOpen(true);
+                });
 
-
-            } else if(key === '4') {
+            } else if (key === '4') {
                 setPickerOpen(true);
 
+            }
+            else if (key === '5') {
+                request("api/session/delete", "PUT",
+                    JSON.stringify({
+                        "userId": store.getState().userId,
+                        "messageId": messageId
+                    })
+                ).then((res: any) => {
+                    setMessages((messages: any) => messages.filter((message: any) => message.messageId !== messageId));
+                });
             }
         };
     };
@@ -132,13 +239,13 @@ const ChatBoard = (props: any) => {
             return messages.filter((message: any) => message.messageId !== res.messageId).length !== 0;
         }
         if (res.type === 'delete' && is_exist()) {
-            if(res.code === 0) {
+            if (res.code === 0) {
                 setMessages((messages: any) => messages.filter((message: any) => message.messageId !== res.messageId));
-            } else if(res.code === 1) {
+            } else if (res.code === 1) {
                 message.error("User Not Existed");
-            } else if(res.code === 2) {
+            } else if (res.code === 2) {
                 message.error("Message Not Existed");
-            } else if(res.code === 3) {
+            } else if (res.code === 3) {
                 message.error("不是对应用户！");
             } else {
                 message.error("超出时间限制！");
@@ -149,12 +256,12 @@ const ChatBoard = (props: any) => {
     const getPull = (timestamp: any) => {
         const socket: any = store.getState().webSocket;
         socket.send(JSON.stringify({
-                type: "pull",
-                id: store.getState().userId,
-                sessionId: props.session.sessionId,
-                messageScale: 30,
-                timestamp: timestamp
-            })
+            type: "pull",
+            id: store.getState().userId,
+            sessionId: props.session.sessionId,
+            messageScale: 30,
+            timestamp: timestamp
+        })
         );
     };
 
@@ -163,14 +270,14 @@ const ChatBoard = (props: any) => {
         if (res.type === 'send' && res.sessionId === props.session.sessionId) {
             const socket: any = store.getState().webSocket;
             socket.send(JSON.stringify({
-                    type: "pull",
-                    id: store.getState().userId,
-                    sessionId: props.session.sessionId,
-                    messageScale: 0,
-                    timestamp: 0,
-                })
+                type: "pull",
+                id: store.getState().userId,
+                sessionId: props.session.sessionId,
+                messageScale: 0,
+                timestamp: 0,
+            })
             );
-            if(res.senderId === store.getState().userId) {
+            if (res.senderId === store.getState().userId) {
                 setNewmsg(true);
                 setMessages((messages: any) => messages.map((message: any) => {
                     return message.messageId === -1 && message.timestamp === res.timestamp
@@ -202,7 +309,7 @@ const ChatBoard = (props: any) => {
 
     const handlePull = (res: any) => {
         res = eval("(" + res.data + ")");
-        if ( res.type === 'pull' ) {
+        if (res.type === 'pull') {
             setMload(true);
             setMessages((messages: any) => [...res.messages.reverse(), ...messages]);
         }
@@ -210,23 +317,85 @@ const ChatBoard = (props: any) => {
 
     const scroll = () => {
         const board: any = document.getElementById('board');
-        if(board.scrollTop === 0) {
+        if (board.scrollTop === 0) {
             setHeight(board.scrollHeight);
-            if(!newpull) setCount(count=>count+1);
+            if (!newpull) setCount(count => count + 1);
             setNewpull(true);
             setNewinfo(true);
         }
-    }
+    };
 
-    useEffect(()=>{
-        if(newpull && messages.length >= (count-1)*30) {
-            getPull(messages[0].timestamp-1);
+    const randerMssage = (message: string, pos: string, timestamp: any) => {
+        let result: any = [];
+        for (let i = 0; i + 1 < message.length; ++i) {
+            let found = false;
+            if (message[i] === '@' && message[i + 1] === '[') {
+                let j = i + 2;
+                while (j < message.length && message[j] !== ']') ++j;
+                if (j < message.length && message[j] === ']') {
+                    const name = message.substring(i + 2, j);
+                    if (j + 1 < message.length && message[j + 1] === '(') {
+                        let k = j + 2;
+                        while (k < message.length && message[k] !== ')') ++k;
+                        if (k < message.length && message[k] === ')') {
+                            const id = message.substring(j + 2 + 5, k);
+                            result.push(
+                                <div style={{ display: "inline-block" }}>
+                                    <Tooltip title={
+                                        <div>
+                                            <Avatar src={
+                                                images.filter((image: any) =>
+                                                    image.id.toString() === id)[0] === undefined
+                                                    ?
+                                                    "/headshot/01.svg"
+                                                    :
+                                                    images.filter((image: any) => image.id.toString() === id)[0].image
+                                            } />
+                                            &nbsp;&nbsp;
+                                            {name}
+                                        </div>
+                                    }
+                                        trigger="hover"
+                                        overlayInnerStyle={{ color: "rgb(50,50,50)" }}
+                                        color="rgba(255,255,255,0.75)"
+                                    >
+                                        <div style={{
+                                            display: "inline-block",
+                                            color: (pos === "left" ? "rgb(225,75,125)" : "rgb(255, 200, 220")
+                                        }}>
+                                            {name}
+                                            {
+                                                members.filter((member: any) => member.id.toString() === id)[0].readTime < timestamp
+                                                    ? " (未读)" : ""
+                                            }
+                                        </div>
+                                    </Tooltip>
+                                </div>
+                            );
+                            i = k;
+                            found = true;
+                        };
+                    }
+                }
+            }
+            if (!found) result.push(message[i]);
+        }
+        return (
+            <div>
+                {result}
+            </div>
+        )
+    };
+
+    useEffect(() => {
+        if (newpull && messages.length >= (count - 1) * 30) {
+            getPull(messages[0].timestamp - 1);
             setNewpull(false);
         }
     }, [messages, newpull]);
 
     useEffect(() => {
-        if(iload && mload && (messages.length <= 30 || newmsg)) {
+        if (iload && mload && (messages.length <= 30 || newmsg)) {
             document
                 ?.getElementById("THEEND")
                 ?.scrollIntoView();
@@ -235,8 +404,8 @@ const ChatBoard = (props: any) => {
     }, [messages, iload, mload, newmsg]);
 
     useEffect(() => {
-        if(newinfo) {
-            const board: any =document.getElementById('board');
+        if (newinfo) {
+            const board: any = document.getElementById('board');
             board.scrollTo(0, board.scrollHeight - height);
             setNewinfo(false);
         }
@@ -245,9 +414,10 @@ const ChatBoard = (props: any) => {
     useEffect(() => {
         for (let i = 0; i < members.length; ++i) {
             request("api/people/img/" + members[i].id, "GET", "").then((r: any) => {
-                if(images.every((image: any) => image.id !== members[i].id)) {
-                    setImages((images: any) => [...images, {id: members[i].id, image: r.img}]);
-                }}).then(() => {});
+                if (images.every((image: any) => image.id !== members[i].id)) {
+                    setImages((images: any) => [...images, { id: members[i].id, image: r.img }]);
+                }
+            }).then(() => { });
         }
     }, [members]);
 
@@ -257,7 +427,7 @@ const ChatBoard = (props: any) => {
         setNewpull(false);
         setMload(false);
         setIload(false);
-        request("/api/session/chatroom?id="+props.session.sessionId, "GET", "")
+        request("/api/session/chatroom?id=" + props.session.sessionId, "GET", "")
             .then((res: any) => {
                 setMembers(res.members);
                 setRole(res.members.filter((member: any) => member.id === store.getState().userId)[0].role);
@@ -265,7 +435,7 @@ const ChatBoard = (props: any) => {
     }, [props.session.sessionId]);
 
     useEffect(() => {
-        if(members.length !== 0) {
+        if (members.length !== 0) {
             let isTrue = true;
             for (let i = 0; i < members.length; ++i)
                 if (images.every((image: any) => image.id !== members[i].id)) isTrue = false;
@@ -274,9 +444,9 @@ const ChatBoard = (props: any) => {
     }, [images, props.session.sessionId]);
 
     useEffect(() => {
-        setMessages(( _ : any) => []);
+        setMessages((_: any) => []);
         const socket: any = store.getState().webSocket;
-        if(isBrowser && socket != null && socket.readyState === 1) {
+        if (isBrowser && socket != null && socket.readyState === 1) {
             socket.addEventListener("message", handleSend);
             socket.addEventListener("message", handlePull);
             socket.addEventListener("message", handleDelete);
@@ -289,18 +459,19 @@ const ChatBoard = (props: any) => {
         };
     }, [props.session.sessionId, store.getState().webSocket]);
 
-    useEffect( () => {
+    useEffect(() => {
         const board = document.getElementById('board');
-        if(mload && iload && board) board.addEventListener('scroll', scroll);
+        if (mload && iload && board) board.addEventListener('scroll', scroll);
         return () => {
-            if(board) board.removeEventListener('scroll', scroll);
+            if (board) board.removeEventListener('scroll', scroll);
         }
     }, [props.session.sessionId, mload, iload]);
 
     useEffect(() => {
         const timer = setInterval(() => {
-            request("/api/session/chatroom?id="+props.session.sessionId, "GET", "")
+            request("/api/session/chatroom?id=" + props.session.sessionId, "GET", "")
                 .then((res: any) => {
+                    // console.log(res.members);
                     setMembers(res.members);
                     setRole(res.members.filter((member: any) => member.id === store.getState().userId)[0].role);
                 });
@@ -312,216 +483,261 @@ const ChatBoard = (props: any) => {
                     readTime: Date.now()
                 })
             );
-        }, 5000);
+        }, 1000);
     }, []);
+
+    useEffect(() => {
+        if (getReply !== -1) {
+            console.log(getReply);
+            console.log(messages);
+            if (messages.filter((message: any) => message.messageId === getReply).length === 0) {
+                const board: any = document.getElementById('board');
+                board.scrollTo({
+                    top: 0,
+                    behavior: "smooth"
+                });
+            }
+            else {
+                const message: any = document.getElementById(getReply.toString());
+                console.log(message);
+                message.scrollIntoView({ behavior: "smooth" });
+                setGetReply(-1);
+            }
+        }
+    }, [getReply, messages]);
+
+    useEffect(() => {
+        for (let i = 0; i < messages.length; ++i) {
+            messages[i].renderedMessage = randerMssage(
+                messages[i].message,
+                messages[i].senderId === store.getState().userId ? "right" : "left",
+                messages[i].timestamp
+            );
+        }
+    }, [messages, members]);
 
     return iload && mload
         ?
         (
-        <div className={styles.container}>
-            <div className={styles.title_bar}>
-                {props.session.sessionName}
-            </div>
-            <div className={styles.menu_show}>
-                <MenuShow />
-            </div>
+            <div className={styles.container}>
+                <div className={styles.title_bar}>
+                    {props.session.sessionName}
+                </div>
+                <div className={styles.menu_show}>
+                    <MenuShow />
+                </div>
 
-            <div id="board" className={styles.display_board} >
-                {messages.map((message: any, index: any) =>
-                    message.senderId === store.getState().userId ? (
-                        <div className={styles.message} key={index+1} id={index+1}>
-                            <div className={styles.headshot_right}>
-                                <Avatar src={
-                                    images.filter( (image: any) => image.id === message.senderId)[0] === undefined
-                                        ?
-                                        "/headshot/01.svg"
-                                        :
-                                        images.filter( (image: any) => image.id === message.senderId)[0].image
-                                } />
-                            </div>
-                            <Tooltip title={
-                                message.senderName + " " +
-                                moment(message.timestamp).format("MM/DD HH:mm:ss")
-                            } trigger="hover"
-                                arrow={false} placement="topRight" color="rgba(100,100,100,0.5)">
-                                <Dropdown menu={{ items: right_items, onClick: onDropDownClick(message.messageId, message.message) }} placement="bottomLeft" trigger={['contextMenu']}>
-                                    {
-                                        message.messageType === "text"
-                                        ?
-                                        <div className={styles.message_right}>
-                                            <Linkify>{message.message}</Linkify>
-                                        </div>
-                                        :
-                                        message.messageType === "notice"
-                                        ?
-                                        <div className={styles.message_right}>
-                                            <Linkify>{"群公告\n" + message.message}</Linkify>
-                                        </div>
-                                        :
-                                        message.messageType === "photo"
-                                        ?
-                                        <div className={styles.photo_right}>
-                                            <Image src={message.message} />
-                                        </div>
-                                        :
-                                        message.messageType === "audio"
-                                        ?
-                                        <div className={styles.photo_right}>
-                                            <AudioPlayer base64Audio={message.message} />
-                                        </div>
-                                        :
-                                        message.messageType === "file"
-                                        ?
-                                        <div className={styles.photo_right}>
-                                            <FileViewer base={message.message}/>
-                                        </div>
-                                        :
-                                        message.messageType === "history"
-                                        ?
-                                        <div className={styles.message_right} onClick={handleMulti(message)}>
-                                            转发消息
-                                        </div>
-                                        :
-                                        <div>
-
-                                        </div>
-                                    }
-                                </Dropdown>
-                            </Tooltip>
-                            <Tooltip title={
-                                members
-                                    .filter((member: any) => member.readTime < message.timestamp)
-                                    .map((member: any, index: any) => (
-                                        <div key={index}>
-                                            <Avatar src={
-                                                images.filter( (image: any) => image.id === member.id)[0] === undefined
-                                                    ?
-                                                    "/headshot/01.svg"
-                                                    :
-                                                    images.filter( (image: any) => image.id === member.id)[0].image
-                                            } />
-                                            &nbsp;&nbsp;
-                                            {member.nickname}
-                                            <br/>
-                                        </div>
-                                    ))
-                                } trigger="hover" overlayInnerStyle={{color: "rgb(50,50,50)"}}
-                                    arrow={false} placement="bottomRight" color="rgba(255,255,255,0.5)">
-                                <div className={styles.read_right}>
-                                    {
-                                        members.filter( (member: any) => member.readTime < message.timestamp).length 
-                                    }
-                                    /
-                                    {
-                                        members.length
-                                    }
-                                    &thinsp;未读
-                                </div>
-                            </Tooltip>
-                        </div>
-                    ) : (
-                        <div className={styles.message} key={index+1} id={index+1}>
-                            <div className={styles.headshot_left}>
-                                <Avatar src={
-                                    images.filter( (image: any) => image.id === message.senderId)[0] === undefined
-                                        ?
-                                        "/headshot/01.svg"
-                                        :
-                                        images.filter( (image: any) => image.id === message.senderId)[0].image
-                                } />
-                            </div>
-                            <Tooltip title={
-                                message.senderName + " " +
-                                moment(message.timestamp).format("MM/DD HH:mm:ss")
-                            } trigger="hover"
-                                arrow={false} placement="topLeft" color="rgba(100,100,100,0.5)">
-                                <Dropdown menu={{ items: left_items, onClick: onDropDownClick(message.messageId, message.message) }} placement="bottomLeft"  trigger={['contextMenu']}>
-                                    {
-                                        message.messageType === "text"
-                                        ?
-                                        <div className={styles.message_left}>
-                                        <Linkify>{message.message}</Linkify>
-                                        </div>
-                                            :
-                                            message.messageType === "notice"
+                <div id="board" className={styles.display_board} >
+                    {messages.map((message: any, index: any) =>
+                        message.senderId === store.getState().userId ? (
+                            <div className={styles.message} key={index + 1} id={message.messageId}>
+                                <div className={styles.headshot_right}>
+                                    <Avatar src={
+                                        images.filter((image: any) => image.id === message.senderId)[0] === undefined
                                             ?
-                                            <div className={styles.message_left}>
-                                                <Linkify>{"群公告\n" + message.message}</Linkify>
-                                            </div>
-                                        :
-                                        message.messageType === "photo"
-                                        ?
-                                        <div className={styles.photo_left}>
-                                            <Image src={message.message} />
-                                        </div>
-                                        :
-                                        message.messageType === "audio"
-                                        ?
-                                        <div className={styles.photo_left}>
-                                            <AudioPlayer base64Audio={message.message} />
-                                        </div>
-                                        :
-                                        message.messageType === "file"
-                                        ?
-                                        <div className={styles.photo_left}>
-                                            <FileViewer base={message.message}/>
-                                        </div>
-                                        :
-                                        message.messageType === "history"
-                                        ?
-                                        <div className={styles.message_left} onClick={handleMulti(message)}>
-                                            转发消息
-                                        </div>
-                                        :
-                                        <div>
-
-                                        </div>
-                                    }
-                                </Dropdown>
-                            </Tooltip>
-                            <Tooltip title={
-                                members
-                                    .filter((member: any) => member.readTime < message.timestamp)
-                                    .map((member: any, index: any) => (
-                                        <div key={index}>
-                                            <Avatar src={
-                                                images.filter( (image: any) => image.id === member.id)[0] === undefined
-                                                    ?
-                                                    "/headshot/01.svg"
-                                                    :
-                                                    images.filter( (image: any) => image.id === member.id)[0].image
-                                            } />
-                                            &nbsp;&nbsp;
-                                            {member.nickname}
-                                            <br/>
-                                        </div>
-                                    ))
-                            } trigger="hover" overlayInnerStyle={{color: "rgb(50,50,50)"}}
-                                arrow={false} placement="bottomLeft" color="rgba(255,255,255,0.5)">
-                                <div className={styles.read_left}>
-                                    {
-                                        members.filter((member: any) => member.readTime < message.timestamp).length 
-                                    }
-                                    /
-                                    {
-                                        members.length
-                                    }
-                                    &thinsp;未读
+                                            "/headshot/01.svg"
+                                            :
+                                            images.filter((image: any) => image.id === message.senderId)[0].image
+                                    } />
                                 </div>
-                            </Tooltip>
-                        </div>
-                ))}
-                <div id="THEEND"/>
+                                <Tooltip title={
+                                    message.senderName + " " +
+                                    moment(message.timestamp).format("MM/DD HH:mm:ss")
+                                } trigger="hover"
+                                    arrow={false} placement="topRight" color="rgba(100,100,100,0.5)">
+                                    <Dropdown menu={{
+                                        items: (message.reply === -1 ? right_items : right_reply_items),
+                                        onClick: onDropDownClick(message.messageId, message.message, message.reply,
+                                            message.senderName + " " + moment(message.timestamp).format("MM/DD HH:mm:ss"))
+                                    }}
+                                        placement="bottomLeft" trigger={['contextMenu']}>
+                                        {
+                                            message.messageType === "text"
+                                                ?
+                                                <div className={styles.message_right}>
+                                                    <Linkify>{message.renderedMessage}</Linkify>
+                                                </div>
+                                                :
+                                                message.messageType === "notice"
+                                                    ?
+                                                    <div className={styles.message_right}>
+                                                        <Linkify>{"群公告\n" + message.message}</Linkify>
+                                                    </div>
+                                                    :
+                                                    message.messageType === "photo"
+                                                        ?
+                                                        <div className={styles.photo_right}>
+                                                            <Image src={message.message} />
+                                                        </div>
+                                                        :
+                                                        message.messageType === "audio"
+                                                            ?
+                                                            <div className={styles.photo_right}>
+                                                                <AudioPlayer base64Audio={message.message} />
+                                                            </div>
+                                                            :
+                                                            message.messageType === "file"
+                                                                ?
+                                                                <div className={styles.photo_right}>
+                                                                    <FileViewer base={message.message} />
+                                                                </div>
+                                                                :
+                                                                message.messageType === "history"
+                                                                    ?
+                                                                    <div className={styles.message_right} onClick={handleMulti(message)}>
+                                                                        转发消息
+                                                                    </div>
+                                                                    :
+                                                                    <div>
+
+                                                                    </div>
+                                        }
+                                    </Dropdown>
+                                </Tooltip>
+                                <Tooltip title={
+                                    members
+                                        .filter((member: any) => member.readTime < message.timestamp)
+                                        .map((member: any, index: any) => (
+                                            <div key={index}>
+                                                <Avatar src={
+                                                    images.filter((image: any) => image.id === member.id)[0] === undefined
+                                                        ?
+                                                        "/headshot/01.svg"
+                                                        :
+                                                        images.filter((image: any) => image.id === member.id)[0].image
+                                                } />
+                                                &nbsp;&nbsp;
+                                                {member.nickname}
+                                                <br />
+                                            </div>
+                                        ))
+                                } trigger="hover" overlayInnerStyle={{ color: "rgb(50,50,50)" }}
+                                    arrow={false} placement="bottomRight" color="rgba(255,255,255,0.5)">
+                                    <div className={styles.read_right}>
+                                        {
+                                            members.filter((member: any) => member.readTime < message.timestamp).length
+                                        }
+                                        /
+                                        {
+                                            members.length
+                                        }
+                                        &thinsp;未读
+                                    </div>
+                                </Tooltip>
+                            </div>
+                        ) : (
+                            <div className={styles.message} key={index + 1} id={message.messageId}>
+                                <div className={styles.headshot_left}>
+                                    <Avatar src={
+                                        images.filter((image: any) => image.id === message.senderId)[0] === undefined
+                                            ?
+                                            "/headshot/01.svg"
+                                            :
+                                            images.filter((image: any) => image.id === message.senderId)[0].image
+                                    } />
+                                </div>
+                                <Tooltip title={
+                                    message.senderName + " " +
+                                    moment(message.timestamp).format("MM/DD HH:mm:ss")
+                                } trigger="hover"
+                                    arrow={false} placement="topLeft" color="rgba(100,100,100,0.5)">
+                                    <Dropdown menu={{
+                                        items: (message.reply === -1 ? (role <= 1 ? right_items : left_items) : (role <= 1 ? right_reply_items : left_reply_items)),
+                                        onClick: onDropDownClick(message.messageId, message.message, message.reply,
+                                            message.senderName + " " + moment(message.timestamp).format("MM/DD HH:mm:ss"))
+                                    }}
+                                        placement="bottomLeft" trigger={['contextMenu']}>
+                                        {
+                                            message.messageType === "text"
+                                                ?
+                                                <div className={styles.message_left}>
+                                                    <Linkify>{message.renderedMessage}</Linkify>
+                                                </div>
+                                                :
+                                                message.messageType === "notice"
+                                                    ?
+                                                    <div className={styles.message_left}>
+                                                        <Linkify>{"群公告\n" + message.message}</Linkify>
+                                                    </div>
+                                                    :
+                                                    message.messageType === "photo"
+                                                        ?
+                                                        <div className={styles.photo_left}>
+                                                            <Image src={message.message} />
+                                                        </div>
+                                                        :
+                                                        message.messageType === "audio"
+                                                            ?
+                                                            <div className={styles.photo_left}>
+                                                                <AudioPlayer base64Audio={message.message} />
+                                                            </div>
+                                                            :
+                                                            message.messageType === "file"
+                                                                ?
+                                                                <div className={styles.photo_left}>
+                                                                    <FileViewer base={message.message} />
+                                                                </div>
+                                                                :
+                                                                message.messageType === "history"
+                                                                    ?
+                                                                    <div className={styles.message_left} onClick={handleMulti(message)}>
+                                                                        转发消息
+                                                                    </div>
+                                                                    :
+                                                                    <div>
+
+                                                                    </div>
+                                        }
+                                    </Dropdown>
+                                </Tooltip>
+                                <Tooltip title={
+                                    members
+                                        .filter((member: any) => member.readTime < message.timestamp)
+                                        .map((member: any, index: any) => (
+                                            <div key={index}>
+                                                <Avatar src={
+                                                    images.filter((image: any) => image.id === member.id)[0] === undefined
+                                                        ?
+                                                        "/headshot/01.svg"
+                                                        :
+                                                        images.filter((image: any) => image.id === member.id)[0].image
+                                                } />
+                                                &nbsp;&nbsp;
+                                                {member.nickname}
+                                                <br />
+                                            </div>
+                                        ))
+                                } trigger="hover" overlayInnerStyle={{ color: "rgb(50,50,50)" }}
+                                    arrow={false} placement="bottomLeft" color="rgba(255,255,255,0.5)">
+                                    <div className={styles.read_left}>
+                                        {
+                                            members.filter((member: any) => member.readTime < message.timestamp).length
+                                        }
+                                        /
+                                        {
+                                            members.length
+                                        }
+                                        &thinsp;未读
+                                    </div>
+                                </Tooltip>
+                            </div>
+                        ))}
+                    <div id="THEEND" />
+                </div>
+                <SingleMessage sessionId={props.session.sessionId} setMessages={setMessages}
+                    members={members} reply={reply} text={text} setText={setText} />
+                <RightColumn session={props.session} members={members} messages={messages} images={images} setRefresh={props.setRefresh}
+                    setSession={props.setSession} setMessages={setMessages} role={role} setMembers={setMembers} setRole={setRole} />
+                <Modal title="翻译结果" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
+                    <p>{translated}</p>
+                </Modal>
+                <Modal title="转文字结果" open={isAudioModalOpen} onOk={handleAudioOk} onCancel={handleAudioCancel}>
+                    <p>{audio}</p>
+                </Modal>
+                <MultiPicker sessionId={props.session.sessionId} members={members} setMessages={setMessages}
+                    images={images} setOpen={setPickerOpen} open={isPickerOpen} list={props.list} />
+                <MultiChat open={isMultiChat} setOpen={setMultiChat} messages={multiSource} />
             </div>
-            <SingleMessage sessionId={props.session.sessionId} setMessages={setMessages}/>
-            <RightColumn session={props.session} members={members}  messages={messages} images={images} setRefresh={props.setRefresh} setSession={props.setSession} setMessages={setMessages} role={role} setMembers={setMembers} setRole={setRole}/>
-            <Modal title="翻译结果" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
-                <p>{translated}</p>
-            </Modal>
-            <MultiPicker sessionId={props.session.sessionId} members={members} setMessages={setMessages}
-                         images={images} setOpen={setPickerOpen} open={isPickerOpen} list={props.list}/>
-            <MultiChat open={isMultiChat} setOpen={setMultiChat} messages={multiSource} />
-        </div>
         )
         :
         (
