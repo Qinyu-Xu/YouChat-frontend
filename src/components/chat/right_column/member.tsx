@@ -11,7 +11,6 @@ const AddMember = (props: any) => {
     const [friends, setFriends] = useState([]);
     const [selected, setSelected] = useState<any[]>([]);
 
-
     useEffect(() => {
         request("api/people/friends?"+formatParams({id: store.getState().userId}), "GET", "").then((res: any) => {
             setFriends(res.friend);
