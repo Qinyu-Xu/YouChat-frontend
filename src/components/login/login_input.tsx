@@ -2,6 +2,8 @@ import {message, Tabs} from "antd";
 import {request} from "@/utils/network";
 import {ProFormCaptcha, ProFormText} from "@ant-design/pro-components";
 import {LockOutlined, MailOutlined, UserOutlined} from "@ant-design/icons";
+import {useEffect, useState} from "react";
+import {store} from "@/utils/store";
 
 const items = [
     {label: '账号密码', key: "account"},
@@ -49,6 +51,7 @@ const LoginInput = ( props: any ) => {
                             prefix: <UserOutlined className={'prefixIcon'} />,
                         }}
                         placeholder={'用户名'}
+                        disabled={props.place!=="login"}
                         rules={[
                             {
                                 required: true,
@@ -80,7 +83,9 @@ const LoginInput = ( props: any ) => {
                             prefix: <MailOutlined className={'prefixIcon'} />,
                         }}
                         name="email"
+                        disabled={props.place!=="login"}
                         placeholder={'邮箱'}
+
                         rules={[
                             {
                                 required: true,

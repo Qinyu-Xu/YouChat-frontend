@@ -1,15 +1,42 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import ProForm from "@ant-design/pro-form";
 import {useRouter} from "next/router";
 import {Button, message, Modal} from "antd";
 import {request} from "@/utils/network";
 import LoginInput from "@/components/login/login_input";
+import {store} from "@/utils/store";
+import {refreshReducer} from "next/dist/client/components/router-reducer/reducers/refresh-reducer";
 
 const SecondAuthentication = (props: any) => {
     const [open, setOpen] = useState(false);
     const [loginType, setLoginType] = useState('account');
     const [form] = ProForm.useForm();
     const router = useRouter();
+
+    const [refresh, setRefresh] = useState(false);
+    const [name, setName] = useState();
+    const [email, setEmail] = useState();
+
+    useEffect(() => {
+        if( props.place !== "login" ) {
+            request("/api/people/profile/"+store.getState().userId, "GET", "").then((res) => {
+                setName(res.profile.username);
+                setEmail(res.profile.email);
+            });
+        }
+    }, []);
+
+    const initial_value = {
+        'username': name,
+        'email': email,
+        'captcha': '',
+        'password': '',
+    }
+    useEffect(() => {
+        if(name !== undefined && email != undefined) {
+            setRefresh(true);
+        }
+    }, [name, email]);
 
     const handleAuth = () => {
         setOpen(true);
@@ -101,9 +128,18 @@ const SecondAuthentication = (props: any) => {
             <br />
             <Button onClick={handleAuth}>验证身份</Button>
             <Modal title="验证你的身份" open={open} onOk={props.type==="modify"?handleOk:handleDelete} onCancel={handleCancel}>
-                <ProForm form={form} submitter={{resetButtonProps: {style: {display: 'none'}}, submitButtonProps: {style: {display: 'none'}}}} >
-                    <LoginInput form={form} loginType={loginType} setLoginType={setLoginType}/>
-                </ProForm>
+                {
+                    !refresh
+                        ?
+                        <div></div>
+                        :
+                    <ProForm form={form} initialValues={initial_value} submitter={{
+                        resetButtonProps: {style: {display: 'none'}},
+                        submitButtonProps: {style: {display: 'none'}}
+                    }}>
+                        <LoginInput form={form} loginType={loginType} setLoginType={setLoginType} place={"setting"}/>
+                    </ProForm>
+                }
             </Modal>
         </div>
     );

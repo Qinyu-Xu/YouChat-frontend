@@ -90,7 +90,7 @@ const LoginBoard = () => {
                     form={form}
                     onFinish={loginType==='email'?handleEmailSubmit:handleUserSubmit}
                 >
-                    <LoginInput form={form} loginType={loginType} setLoginType={setLoginType}/>
+                    <LoginInput form={form} loginType={loginType} setLoginType={setLoginType} place={"login"}/>
                 </LoginForm>
             </div>
         </ProConfigProvider>

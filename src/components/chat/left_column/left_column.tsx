@@ -11,6 +11,32 @@ const SecondAuth = (props: any) => {
     const [form] = ProForm.useForm();
     const [loginType, setLoginType] = useState('account');
 
+    const [name, setName] = useState<any>(undefined);
+    const [email, setEmail] = useState<any>(undefined);
+    const [refersh, setRefresh] = useState(false);
+
+    useEffect(() => {
+        if( props.place !== "login" ) {
+            request("/api/people/profile/"+store.getState().userId, "GET", "").then((res) => {
+                setName(res.profile.username);
+                setEmail(res.profile.email);
+            });
+        }
+    }, []);
+
+    useEffect(() => {
+        if(name !== undefined && email != undefined) {
+            setRefresh(true);
+        }
+    }, [name, email]);
+
+    const initial_value = {
+        'username': name,
+        'email': email,
+        'captcha': '',
+        'password': '',
+    }
+
     const handleOk = async () => {
         if (loginType === 'email') {
             const email = form.getFieldValue('email');
@@ -28,9 +54,10 @@ const SecondAuth = (props: any) => {
                 })
             );
             if (response.code == 0) {
-                message.success('二次验证成功！')
+                message.success('二次验证成功！');
                 props.setOpen(false);
                 props.setAuth(true);
+                form.resetFields();
             } else {
                 message.error('二次验证失败！');
             }
@@ -53,6 +80,7 @@ const SecondAuth = (props: any) => {
                 message.success('二次验证成功！')
                 props.setOpen(false);
                 props.setAuth(true);
+                form.resetFields();
             } else {
                 message.error('二次验证失败！');
             }
@@ -65,9 +93,14 @@ const SecondAuth = (props: any) => {
 
     return (
         <Modal title="验证你的身份" open={props.open} onOk={handleOk} onCancel={handleCancel}>
-            <ProForm form={form} submitter={{resetButtonProps: {style: {display: 'none'}}, submitButtonProps: {style: {display: 'none'}}}} >
-                <LoginInput form={form} loginType={loginType} setLoginType={setLoginType}/>
-            </ProForm>
+            { !refersh ? <div></div> :
+                <ProForm form={form} initialValues={initial_value} submitter={{
+                    resetButtonProps: {style: {display: 'none'}},
+                    submitButtonProps: {style: {display: 'none'}}
+                }}>
+                    <LoginInput form={form} loginType={loginType} setLoginType={setLoginType} place={"secret"}/>
+                </ProForm>
+            }
         </Modal>
     );
 }
