@@ -350,7 +350,7 @@ const ChatBoard = (props: any) => {
                         if (k < message.length && message[k] === ')') {
                             const id = message.substring(j + 2 + 5, k);
                             result.push(
-                                <Linkify>
+                                <Linkify key={i}>
                                     {buffer}
                                 </Linkify>
                             );
@@ -395,7 +395,7 @@ const ChatBoard = (props: any) => {
             if (!found) buffer = buffer + message[i];
         }
         result.push(
-            <Linkify>
+            <Linkify key={message.length}>
                 {buffer}
             </Linkify>
         );
@@ -580,13 +580,13 @@ const ChatBoard = (props: any) => {
                                             message.messageType === "text"
                                                 ?
                                                 <div className={styles.message_right}>
-                                                    <Linkify>{message.renderedMessage}</Linkify>
+                                                    {message.renderedMessage}
                                                 </div>
                                                 :
                                                 message.messageType === "notice"
                                                     ?
                                                     <div className={styles.message_right}>
-                                                        <Linkify>{"群公告\n" + message.message}</Linkify>
+                                                        {"群公告\n" + message.message}
                                                     </div>
                                                     :
                                                     message.messageType === "photo"
@@ -676,13 +676,13 @@ const ChatBoard = (props: any) => {
                                             message.messageType === "text"
                                                 ?
                                                 <div className={styles.message_left}>
-                                                    <Linkify>{message.renderedMessage}</Linkify>
+                                                    {message.renderedMessage}
                                                 </div>
                                                 :
                                                 message.messageType === "notice"
                                                     ?
                                                     <div className={styles.message_left}>
-                                                        <Linkify>{"群公告\n" + message.message}</Linkify>
+                                                        {"群公告\n" + message.message}
                                                     </div>
                                                     :
                                                     message.messageType === "photo"
