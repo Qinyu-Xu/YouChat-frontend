@@ -287,6 +287,7 @@ const ChatBoard = (props: any) => {
                         ?
                         {
                             message: message.message,
+                            renderedMessage: message.message,
                             messageId: res.messageId,
                             messageType: message.messageType,
                             senderId: message.senderId,
@@ -299,6 +300,7 @@ const ChatBoard = (props: any) => {
                 setMessages((messages: any) => {
                     return [...messages, {
                         message: res.message,
+                        renderedMessage: res.message,
                         messageId: res.messageId,
                         messageType: res.messageType,
                         senderId: res.senderId,
@@ -314,6 +316,9 @@ const ChatBoard = (props: any) => {
         res = eval("(" + res.data + ")");
         if (res.type === 'pull') {
             setMload(true);
+            for (let i = 0; i < res.messages.length; ++i) {
+                res.messages[i].renderedMessage = res.messages[i].message;
+            }
             setMessages((messages: any) => [...res.messages.reverse(), ...messages]);
         }
     };
@@ -329,6 +334,7 @@ const ChatBoard = (props: any) => {
     };
 
     const randerMssage = (message: string, pos: string, timestamp: any) => {
+        if (!memload) return (<div>{message}</div>);
         let result: any = [];
         let buffer: string = "";
         for (let i = 0; i < message.length; ++i) {
@@ -344,42 +350,40 @@ const ChatBoard = (props: any) => {
                         if (k < message.length && message[k] === ')') {
                             const id = message.substring(j + 2 + 5, k);
                             result.push(
-                                <div>
-                                    <Linkify>
-                                        {buffer}
-                                    </Linkify>
-                                    <div style={{ display: "inline-block" }}>
-                                        <Tooltip title={
-                                            <div>
-                                                <Avatar src={
-                                                    images.filter((image: any) =>
-                                                        image.id.toString() === id)[0] === undefined
-                                                        ?
-                                                        "/headshot/01.svg"
-                                                        :
-                                                        images.filter((image: any) => image.id.toString() === id)[0].image
-                                                } />
-                                                &nbsp;&nbsp;
-                                                {name}
-                                            </div>
-                                        }
-                                            trigger="hover"
-                                            overlayInnerStyle={{ color: "rgb(50,50,50)" }}
-                                            color="rgba(255,255,255,0.75)"
-                                        >
-                                            <div style={{
-                                                display: "inline-block",
-                                                color: (pos === "left" ? "rgb(225,75,125)" : "rgb(255, 200, 220")
-                                            }}>
-                                                {name}
-                                                {
-                                                    members.filter((member: any) => member.id.toString() === id)[0].readTime < timestamp
-                                                        ? " (未读)" : ""
-                                                }
-                                            </div>
-                                        </Tooltip>
+                                <Linkify>
+                                    {buffer}
+                                </Linkify>
+                            );
+                            result.push(
+                                <Tooltip title={
+                                    <div>
+                                        <Avatar src={
+                                            images.filter((image: any) =>
+                                                image.id.toString() === id)[0] === undefined
+                                                ?
+                                                "/headshot/01.svg"
+                                                :
+                                                images.filter((image: any) => image.id.toString() === id)[0].image
+                                        } />
+                                        &nbsp;&nbsp;
+                                        {name}
                                     </div>
-                                </div>
+                                }
+                                    trigger="hover"
+                                    overlayInnerStyle={{ color: "rgb(50,50,50)" }}
+                                    color="rgba(255,255,255,0.75)"
+                                >
+                                    <div style={{
+                                        display: "inline-block",
+                                        color: (pos === "left" ? "rgb(225,75,125)" : "rgb(255, 200, 220")
+                                    }}>
+                                        {name}
+                                        {
+                                            members.filter((member: any) => member.id.toString() === id)[0].readTime < timestamp
+                                                ? " (未读)" : ""
+                                        }
+                                    </div>
+                                </Tooltip>
                             );
                             i = k;
                             found = true;
@@ -391,11 +395,9 @@ const ChatBoard = (props: any) => {
             if (!found) buffer = buffer + message[i];
         }
         result.push(
-            <div>
-                <Linkify>
-                    {buffer}
-                </Linkify>
-            </div>
+            <Linkify>
+                {buffer}
+            </Linkify>
         );
         return (
             <div>
@@ -539,7 +541,7 @@ const ChatBoard = (props: any) => {
                 messages[i].timestamp
             );
         }
-    }, [messages, members]);
+    }, [messages, members, memload]);
 
     return iload && mload && memload
         ?
