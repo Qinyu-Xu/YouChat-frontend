@@ -93,12 +93,11 @@ const LeftColumn = (props: any) => {
 
     const handleClick = (session: any) => {
         return () => {
-            if(session.isSecret === 1) {
+            if(session.isSecret) {
                 setPotential(session);
                 setAuth(false);
                 setOpen(true);
             } else {
-                console.log(session);
                 props.setSession(session);
                 clearList(session.sessionId);
             }

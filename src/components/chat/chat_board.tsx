@@ -496,9 +496,7 @@ const ChatBoard = (props: any) => {
         const timer = setInterval(() => {
             request("/api/session/chatroom?id=" + sessionId.current, "GET", "")
                 .then((res: any) => {
-                    console.log(res.sessionId + " " + sessionId.current);
                     if(res.sessionId === sessionId.current.toString()) {
-                        console.log(res.members);
                         setMembers(res.members);
                     }
                 });
