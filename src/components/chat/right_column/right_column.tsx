@@ -10,7 +10,6 @@ import UserList from "@/components/chat/right_column/user_list";
 import AddMember from "@/components/chat/right_column/member";
 import AddGroup from "@/components/chat/right_column/add_group";
 import Manager from "@/components/chat/right_column/manager";
-import { useRouter } from "next/router";
 
 const { confirm } = Modal;
 

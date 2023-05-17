@@ -3,6 +3,7 @@ import {useEffect, useState} from "react";
 import dayjs from "dayjs";
 import {request} from "@/utils/network";
 import {formatParams} from "@/utils/utilities";
+import {store} from "@/utils/store";
 const { RangePicker } = DatePicker;
 
 const AllPicker = (props: any) => {
@@ -204,7 +205,7 @@ const ChatHistory = (props: any) => {
      */
 
     useEffect(()=>{
-        request("api/session/history?"+formatParams({id: props.sessionId}),
+        request("api/session/history?"+formatParams({sessionId: props.sessionId, userId: store.getState().userId}),
             "GET",
             "").then((res: any) => {
                 setMessages(res.messages);

@@ -1,15 +1,85 @@
 import {useEffect, useState} from "react";
 import { request } from "@/utils/network";
-import {message, Spin} from "antd";
+import {message, Modal, Spin} from "antd";
 import { isBrowser } from "@/utils/store";
 import {store} from "@/utils/store";
 import MessageItem from "./message_item";
+import ProForm from "@ant-design/pro-form";
+import LoginInput from "@/components/login/login_input";
+
+const SecondAuth = (props: any) => {
+    const [form] = ProForm.useForm();
+    const [loginType, setLoginType] = useState('account');
+
+    const handleOk = async () => {
+        if (loginType === 'email') {
+            const email = form.getFieldValue('email');
+            const veri_code = form.getFieldValue('captcha');
+            if( email === "" || veri_code === "" ) {
+                message.error('请输入完整的信息！');
+                return;
+            }
+            const response = await request(
+                "api/people/modify/email",
+                "POST",
+                JSON.stringify({
+                    "email": email,
+                    "veri_code": veri_code as string,
+                })
+            );
+            if (response.code == 0) {
+                message.success('二次验证成功！')
+                props.setOpen(false);
+                props.setAuth(true);
+            } else {
+                message.error('二次验证失败！');
+            }
+        } else {
+            const user = form.getFieldValue('username');
+            const pwd = form.getFieldValue('password');
+            if( user === "" || pwd === "" ) {
+                message.error('请输入完整的信息！');
+                return;
+            }
+            const response = await request(
+                "/api/people/modify",
+                "POST",
+                JSON.stringify({
+                    "userName": user,
+                    "password": pwd,
+                })
+            );
+            if (response.code == 0) {
+                message.success('二次验证成功！')
+                props.setOpen(false);
+                props.setAuth(true);
+            } else {
+                message.error('二次验证失败！');
+            }
+        }
+    };
+
+    const handleCancel = () => {
+        props.setOpen(false);
+    };
+
+    return (
+        <Modal title="验证你的身份" open={props.open} onOk={handleOk} onCancel={handleCancel}>
+            <ProForm form={form} submitter={{resetButtonProps: {style: {display: 'none'}}, submitButtonProps: {style: {display: 'none'}}}} >
+                <LoginInput form={form} loginType={loginType} setLoginType={setLoginType}/>
+            </ProForm>
+        </Modal>
+    );
+}
 
 const LeftColumn = (props: any) => {
 
     const [load, setLoad] = useState(false);
     const [loadname, setLoadname] = useState(false);
     const [sorted, setSorted] = useState(false);
+    const [open, setOpen] = useState(false);
+    const [auth, setAuth] = useState(false);
+    const [potential, setPotential] = useState();
     const id = store.getState().userId;
 
     const cmp = (a: any, b:any) => {
@@ -20,6 +90,26 @@ const LeftColumn = (props: any) => {
     const clearList = (sessionId: number) => {
         props.list.filter((msg: any) => msg.sessionId === sessionId)[0].unread = 0;
     }
+
+    const handleClick = (session: any) => {
+        return () => {
+            if(session.isSecret === 1) {
+                setPotential(session);
+                setAuth(false);
+                setOpen(true);
+            } else {
+                props.setSession(session);
+                clearList(session.sessionId);
+            }
+        }
+    }
+
+    useEffect(() => {
+        if(auth) {
+            props.setSession(potential);
+            clearList(potential.sessionId);
+        }
+    }, [auth]);
 
     const refreshList = () => {
         request(
@@ -184,11 +274,12 @@ const LeftColumn = (props: any) => {
         <div>
             {
                 props.list.map((session: any) => (
-                    <div key={session.sessionId} onClick={ _ => {props.setSession(session); clearList(session.sessionId)}}>
+                    <div key={session.sessionId} onClick={handleClick(session)}>
                         <MessageItem session={session}/>
                     </div>
                 ))
             }
+            <SecondAuth open={open} setOpen={setOpen} setAuth={setAuth} />
         </div>
         )
         :

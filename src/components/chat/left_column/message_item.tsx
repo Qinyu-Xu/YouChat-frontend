@@ -4,7 +4,6 @@ import {Avatar, Badge} from "antd";
 import {store} from "@/utils/store";
 import {useEffect, useRef, useState} from "react";
 import moment from "moment";
-import integer from "async-validator/dist-types/validator/integer";
 
 const scaleImage = (image: any, width: any, height: any) => {
     const canvas = document.createElement('canvas');
@@ -30,7 +29,6 @@ const CombinedImage = (props: any) => {
     };
 
     const sz = remToPx(5);
-    console.log(sz);
 
     useEffect(() => {
         const canvas = canvasRef.current;

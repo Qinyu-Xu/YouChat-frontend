@@ -471,9 +471,12 @@ const ChatBoard = (props: any) => {
         const timer = setInterval(() => {
             request("/api/session/chatroom?id=" + props.session.sessionId, "GET", "")
                 .then((res: any) => {
-                    // console.log(res.members);
-                    setMembers(res.members);
-                    setRole(res.members.filter((member: any) => member.id === store.getState().userId)[0].role);
+                    if(/*res.sessionId === props.session.sessionId*/true) {
+                        console.log(props.session.sessionId);
+                        console.log(res.members);
+                        setMembers(res.members);
+                        setRole(res.members.filter((member: any) => member.id === store.getState().userId)[0].role);
+                    }
                 });
             request(
                 `api/session/message/${id}`,
@@ -483,8 +486,13 @@ const ChatBoard = (props: any) => {
                     readTime: Date.now()
                 })
             );
-        }, 1000);
-    }, []);
+        }, 5000);
+
+        return () => {
+            clearInterval(timer);
+        };
+
+    }, [props.session.sessionId]);
 
     useEffect(() => {
         if (getReply !== -1) {
