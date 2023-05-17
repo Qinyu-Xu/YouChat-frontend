@@ -131,6 +131,7 @@ const ChatBoard = (props: any) => {
     const [height, setHeight] = useState(0);
     const [iload, setIload] = useState(false);
     const [mload, setMload] = useState(false);
+    const [memload, setMemload] = useState(false);
     const [newinfo, setNewinfo] = useState(false);
     const [newmsg, setNewmsg] = useState(false);
     const [newpull, setNewpull] = useState(false);
@@ -149,6 +150,8 @@ const ChatBoard = (props: any) => {
 
     const [isMultiChat, setMultiChat] = useState(false);
     const [multiSource, setMultiSource] = useState();
+
+    const sessionId = useRef(props.session.sessionId);
 
     const handleMulti = (item: any) => {
         return (e: any) => {
@@ -327,9 +330,10 @@ const ChatBoard = (props: any) => {
 
     const randerMssage = (message: string, pos: string, timestamp: any) => {
         let result: any = [];
-        for (let i = 0; i + 1 < message.length; ++i) {
+        let buffer: string = "";
+        for (let i = 0; i < message.length; ++i) {
             let found = false;
-            if (message[i] === '@' && message[i + 1] === '[') {
+            if (i + 1 < message.length && message[i] === '@' && message[i + 1] === '[') {
                 let j = i + 2;
                 while (j < message.length && message[j] !== ']') ++j;
                 if (j < message.length && message[j] === ']') {
@@ -340,52 +344,69 @@ const ChatBoard = (props: any) => {
                         if (k < message.length && message[k] === ')') {
                             const id = message.substring(j + 2 + 5, k);
                             result.push(
-                                <div style={{ display: "inline-block" }}>
-                                    <Tooltip title={
-                                        <div>
-                                            <Avatar src={
-                                                images.filter((image: any) =>
-                                                    image.id.toString() === id)[0] === undefined
-                                                    ?
-                                                    "/headshot/01.svg"
-                                                    :
-                                                    images.filter((image: any) => image.id.toString() === id)[0].image
-                                            } />
-                                            &nbsp;&nbsp;
-                                            {name}
-                                        </div>
-                                    }
-                                        trigger="hover"
-                                        overlayInnerStyle={{ color: "rgb(50,50,50)" }}
-                                        color="rgba(255,255,255,0.75)"
-                                    >
-                                        <div style={{
-                                            display: "inline-block",
-                                            color: (pos === "left" ? "rgb(225,75,125)" : "rgb(255, 200, 220")
-                                        }}>
-                                            {name}
-                                            {
-                                                members.filter((member: any) => member.id.toString() === id)[0].readTime < timestamp
-                                                    ? " (未读)" : ""
-                                            }
-                                        </div>
-                                    </Tooltip>
+                                <div>
+                                    <Linkify>
+                                        {buffer}
+                                    </Linkify>
+                                    <div style={{ display: "inline-block" }}>
+                                        <Tooltip title={
+                                            <div>
+                                                <Avatar src={
+                                                    images.filter((image: any) =>
+                                                        image.id.toString() === id)[0] === undefined
+                                                        ?
+                                                        "/headshot/01.svg"
+                                                        :
+                                                        images.filter((image: any) => image.id.toString() === id)[0].image
+                                                } />
+                                                &nbsp;&nbsp;
+                                                {name}
+                                            </div>
+                                        }
+                                            trigger="hover"
+                                            overlayInnerStyle={{ color: "rgb(50,50,50)" }}
+                                            color="rgba(255,255,255,0.75)"
+                                        >
+                                            <div style={{
+                                                display: "inline-block",
+                                                color: (pos === "left" ? "rgb(225,75,125)" : "rgb(255, 200, 220")
+                                            }}>
+                                                {name}
+                                                {
+                                                    members.filter((member: any) => member.id.toString() === id)[0].readTime < timestamp
+                                                        ? " (未读)" : ""
+                                                }
+                                            </div>
+                                        </Tooltip>
+                                    </div>
                                 </div>
                             );
                             i = k;
                             found = true;
+                            buffer = "";
                         };
                     }
                 }
             }
-            if (!found) result.push(message[i]);
+            if (!found) buffer = buffer + message[i];
         }
+        result.push(
+            <div>
+                <Linkify>
+                    {buffer}
+                </Linkify>
+            </div>
+        );
         return (
             <div>
                 {result}
             </div>
         )
     };
+
+    useEffect(() => {
+        sessionId.current = props.session.sessionId;
+    }, [props.session.sessionId]);
 
     useEffect(() => {
         if (newpull && messages.length >= (count - 1) * 30) {
@@ -427,9 +448,11 @@ const ChatBoard = (props: any) => {
         setNewpull(false);
         setMload(false);
         setIload(false);
+        setMemload(false);        
         request("/api/session/chatroom?id=" + props.session.sessionId, "GET", "")
             .then((res: any) => {
                 setMembers(res.members);
+                setMemload(true);
                 setRole(res.members.filter((member: any) => member.id === store.getState().userId)[0].role);
             });
     }, [props.session.sessionId]);
@@ -469,30 +492,24 @@ const ChatBoard = (props: any) => {
 
     useEffect(() => {
         const timer = setInterval(() => {
-            request("/api/session/chatroom?id=" + props.session.sessionId, "GET", "")
+            request("/api/session/chatroom?id=" + sessionId.current, "GET", "")
                 .then((res: any) => {
-                    if(/*res.sessionId === props.session.sessionId*/true) {
-                        console.log(props.session.sessionId);
+                    console.log(res.sessionId + " " + sessionId.current);
+                    if(res.sessionId === sessionId.current.toString()) {
                         console.log(res.members);
                         setMembers(res.members);
-                        setRole(res.members.filter((member: any) => member.id === store.getState().userId)[0].role);
                     }
                 });
             request(
                 `api/session/message/${id}`,
                 "POST",
                 JSON.stringify({
-                    sessionId: props.session.sessionId,
+                    sessionId: sessionId.current,
                     readTime: Date.now()
                 })
             );
-        }, 5000);
-
-        return () => {
-            clearInterval(timer);
-        };
-
-    }, [props.session.sessionId]);
+        }, 1000);
+    }, []);
 
     useEffect(() => {
         if (getReply !== -1) {
@@ -524,7 +541,7 @@ const ChatBoard = (props: any) => {
         }
     }, [messages, members]);
 
-    return iload && mload
+    return iload && mload && memload
         ?
         (
             <div className={styles.container}>

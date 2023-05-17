@@ -98,6 +98,7 @@ const LeftColumn = (props: any) => {
                 setAuth(false);
                 setOpen(true);
             } else {
+                console.log(session);
                 props.setSession(session);
                 clearList(session.sessionId);
             }
