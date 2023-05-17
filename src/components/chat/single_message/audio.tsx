@@ -5,6 +5,7 @@ import {AudioFilled, AudioOutlined, CaretRightOutlined} from "@ant-design/icons"
 import {fileToBase64} from "@/utils/utilities";
 import {store} from "@/utils/store";
 import CircularJson from "circular-json";
+import Recorder from "js-audio-recorder";
 
 export const AudioPlayer = ({ base64Audio }: any) => {
     const audioRef = useRef<any>(null);
@@ -31,13 +32,19 @@ export const AudioPlayer = ({ base64Audio }: any) => {
 
 const AudioInput = (props: any) => {
 
+
     const [recording, setRecording] = useState(false);
-    const [mediaRecorder, setMediaRecorder] = useState<any>(null);
+    const [audioRecorder, setAudioRecorder] = useState<any>(null);
+    /*
     const [chunks, setChunks] = useState<any>([]);
     const [refresh, setRefresh] = useState(false);
+     */
+
+    useEffect(() => {initMediaRecorder();}, []);
 
     const initMediaRecorder = async () => {
         try {
+            /*
             const stream: any = await navigator.mediaDevices.getUserMedia({ audio: true });
             const recorder: any = new MediaRecorder(stream);
             recorder.audioChannels = 1;
@@ -45,11 +52,75 @@ const AudioInput = (props: any) => {
             recorder.mimeType = 'audio/wav'
             setMediaRecorder(recorder);
             recorder.start();
+             */
+            if(typeof(navigator.mediaDevices.getUserMedia) == "undefined") {
+                message.error("当前没有语音权限");
+                return;
+            }
+            if(navigator.mediaDevices.getUserMedia) {
+                const constraints = { audio: true };
+                navigator.mediaDevices.getUserMedia(constraints).then(
+                    () => {
+                        console.log("授权成功!");
+                    },
+                    () => {
+                        console.log("授权失败!");
+                });
+            } else {
+                console.log("浏览器不支持 getUserMedia");
+            }
+            const recorder = new Recorder({
+                sampleBits: 16,
+                sampleRate: 16000,
+                numChannels: 1,
+            });
+            setAudioRecorder(recorder);
         } catch (error: any) {
             message.error('Error initializing MediaRecorder:', error);
         }
     };
 
+    // 录音喊话
+    const onSpeak = () => {
+        setRecording(true);
+        audioRecorder.start().then(function() {
+            message.success('speaking...')
+        });
+    };
+
+    const sendSpeak = () => {
+        setRecording(false);
+        // 结束录音
+        audioRecorder.stop();
+        // 录音播放
+        audioRecorder.play();
+        // 获取 WAV 数据(Blob)
+        let blob = audioRecorder.getWAVBlob();
+        // 将WAV转化，获取 MP3 数据(Blob)，函数wavToMp3、blobToBase64见下两个代码块
+        fileToBase64(blob).then((base: any) => {
+            const socket: any = store.getState().webSocket;
+            const message = {
+                type: "send",
+                id: store.getState().userId,
+                sessionId: props.sessionId,
+                timestamp: Date.now(),
+                message: base,
+                messageType: "audio"
+            }
+            const addM = {
+                "senderId": store.getState().userId,
+                "timestamp": Date.now(),
+                "messageId": -1,
+                "message": base,
+                "messageType": "audio"
+            };
+            socket.send(CircularJson.stringify(message));
+            props.setMessages((message: any) => [...message, addM]);
+        });
+    };
+
+
+    /*
     useEffect(() => {
         if(recording) {
             initMediaRecorder();
@@ -110,9 +181,12 @@ const AudioInput = (props: any) => {
         }
     }
 
+     */
+
     return (
         <div className={styles.audio}>
-            <Avatar icon={recording ? <AudioFilled /> : <AudioOutlined />} size={"large"} onClick={startSpeechRecognition}/>
+            <Avatar icon={recording ? <AudioFilled /> : <AudioOutlined />}
+                    size={"large"} onClick={recording ? sendSpeak : onSpeak}/>
         </div>
     )
 }
