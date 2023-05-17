@@ -93,7 +93,7 @@ const LeftColumn = (props: any) => {
 
     const handleClick = (session: any) => {
         return () => {
-            if(session.isSecret === 1) {
+            if( session.isSecret ) {
                 setPotential(session);
                 setAuth(false);
                 setOpen(true);
@@ -135,6 +135,7 @@ const LeftColumn = (props: any) => {
                                 "message": new_list[i].message,
                                 "isTop": new_list[i].isTop,
                                 "isMute": new_list[i].isMute,
+                                "isSecret": new_list[i].isSecret,
                                 "unread": new_list[i].unread,
                             });
                     } else {
@@ -254,6 +255,7 @@ const LeftColumn = (props: any) => {
                     "message": msg.message,
                     "isTop": item.isTop,
                     "isMute": item.isMute,
+                    "isSecret": item.isSecret,
                     "unread": msg.senderId !== store.getState().userId ? item.unread + 1 : item.unread,
                 }));
                 props.setList((list : any) => list.sort(cmp));

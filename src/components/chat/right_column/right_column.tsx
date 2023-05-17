@@ -35,7 +35,7 @@ const RightColumn = (props: any) => {
     const [openInvite, setOpenInvite] = useState(false);
     const [curTop, setCurTop] = useState<boolean>(props.session.isTop);
     const [curMute, setCurMute] = useState<boolean>(props.session.isMute);
-
+    const [curSecret, setCurSecret] = useState<boolean>(props.session.isSecret);
 
     const handleMute = (isMute: boolean) => {
         setCurMute(isMute);
@@ -46,7 +46,8 @@ const RightColumn = (props: any) => {
                 userId: store.getState().userId,
                 sessionId: props.session.sessionId,
                 isMute: isMute,
-                isTop: curTop
+                isTop: curTop,
+                isSecret: curSecret,
             })
         ).then((res: any) => props.setRefresh((refresh: any)=>!refresh)).catch((e: any) => {
             message.error("设置静音失败！");
@@ -61,12 +62,30 @@ const RightColumn = (props: any) => {
                 userId: store.getState().userId,
                 sessionId: props.session.sessionId,
                 isMute: curMute,
-                isTop: isTop
+                isTop: isTop,
+                isSecret: curSecret,
             })
         ).then((res: any) => props.setRefresh((refresh: any)=>!refresh)).catch((e: any) => {
             message.error("设置置顶失败！");
         })
     }
+    const handleSecret = (isSecret: boolean) => {
+        setCurSecret(isSecret);
+        request(
+            "/api/session/setting",
+            "PUT",
+            JSON.stringify({
+                userId: store.getState().userId,
+                sessionId: props.session.sessionId,
+                isMute: curMute,
+                isTop: curTop,
+                isSecret: isSecret,
+            })
+        ).then((res: any) => props.setRefresh((refresh: any)=>!refresh)).catch((e: any) => {
+            message.error("设置️🔞㊙️㊙️㊙️🔞失败！");
+        })
+    }
+
 
     const handleHistory = () => setOpenHistory(true);
     const handleBoard = () => setOpenNotice(true);
@@ -144,6 +163,8 @@ const RightColumn = (props: any) => {
         设置静音<Switch onChange={handleMute} checked={curMute} />
         <br />
         设置置顶<Switch onChange={handleTop} checked={curTop} />
+        <br />
+        设置秘密群聊<Switch onChange={handleSecret} checked={curSecret} />
         <br />
         <Divider />
         {props.session.sessionType === 1 ? "" : (<div className={styles.drop} onClick={handleDropout}>

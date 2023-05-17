@@ -471,9 +471,7 @@ const ChatBoard = (props: any) => {
         const timer = setInterval(() => {
             request("/api/session/chatroom?id=" + props.session.sessionId, "GET", "")
                 .then((res: any) => {
-                    if(/*res.sessionId === props.session.sessionId*/true) {
-                        console.log(props.session.sessionId);
-                        console.log(res.members);
+                    if( res.sessionId === props.session.sessionId ) {
                         setMembers(res.members);
                         setRole(res.members.filter((member: any) => member.id === store.getState().userId)[0].role);
                     }
