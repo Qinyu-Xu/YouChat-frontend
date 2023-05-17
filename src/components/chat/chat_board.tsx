@@ -151,6 +151,8 @@ const ChatBoard = (props: any) => {
     const [isMultiChat, setMultiChat] = useState(false);
     const [multiSource, setMultiSource] = useState();
 
+    const sessionId = useRef(props.session.sessionId);
+
     const handleMulti = (item: any) => {
         return (e: any) => {
             setMultiChat(true);
@@ -403,6 +405,10 @@ const ChatBoard = (props: any) => {
     };
 
     useEffect(() => {
+        sessionId.current = props.session.sessionId;
+    }, [props.session.sessionId]);
+
+    useEffect(() => {
         if (newpull && messages.length >= (count - 1) * 30) {
             getPull(messages[0].timestamp - 1);
             setNewpull(false);
@@ -486,28 +492,24 @@ const ChatBoard = (props: any) => {
 
     useEffect(() => {
         const timer = setInterval(() => {
-            request("/api/session/chatroom?id=" + props.session.sessionId, "GET", "")
+            request("/api/session/chatroom?id=" + sessionId.current, "GET", "")
                 .then((res: any) => {
-                    if(res.sessionId === props.session.sessionId) {
+                    console.log(res.sessionId + " " + sessionId.current);
+                    if(res.sessionId === sessionId.current.toString()) {
+                        console.log(res.members);
                         setMembers(res.members);
-                        setRole(res.members.filter((member: any) => member.id === store.getState().userId)[0].role);
                     }
                 });
             request(
                 `api/session/message/${id}`,
                 "POST",
                 JSON.stringify({
-                    sessionId: props.session.sessionId,
+                    sessionId: sessionId.current,
                     readTime: Date.now()
                 })
             );
-        }, 5000);
-
-        return () => {
-            clearInterval(timer);
-        };
-
-    }, [props.session.sessionId]);
+        }, 1000);
+    }, []);
 
     useEffect(() => {
         if (getReply !== -1) {
