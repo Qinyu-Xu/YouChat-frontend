@@ -206,7 +206,7 @@ const ChatBoard = (props: any) => {
                     setIsModalOpen(true);
                 });
             } else if (key === '3') {
-                request("api/session/message/audio", "PUT",
+                request("api/session/audio", "PUT",
                     JSON.stringify({
                         "audio": ms
                     })
