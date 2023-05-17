@@ -56,7 +56,7 @@ const AddGroup = (props: any) => {
                         <List
                             itemLayout="vertical"
                             size="large"
-                            pagination={{pageSize: 3,}}
+                            // pagination={{pageSize: 3,}}
                             dataSource={friends}
                             renderItem={(item: any) => (
                                 <List.Item key={item.id}>
