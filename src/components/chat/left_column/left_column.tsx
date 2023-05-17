@@ -112,7 +112,7 @@ const LeftColumn = (props: any) => {
     const [sorted, setSorted] = useState(false);
     const [open, setOpen] = useState(false);
     const [auth, setAuth] = useState(false);
-    const [potential, setPotential] = useState();
+    const [potential, setPotential] = useState<any>();
     const id = store.getState().userId;
 
     const cmp = (a: any, b:any) => {
