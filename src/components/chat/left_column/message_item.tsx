@@ -4,10 +4,11 @@ import {Avatar, Badge} from "antd";
 import {store} from "@/utils/store";
 import {useEffect, useRef, useState} from "react";
 import moment from "moment";
+import integer from "async-validator/dist-types/validator/integer";
 
-const scaleImage = (image, width, height) => {
+const scaleImage = (image: any, width: any, height: any) => {
     const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
+    const ctx: any = canvas.getContext('2d');
 
     canvas.width = width;
     canvas.height = height;
@@ -23,7 +24,7 @@ const CombinedImage = (props: any) => {
     const canvasRef = useRef<any>();
     const gridSize = 2;
 
-    const remToPx = (rem) => {
+    const remToPx = (rem: any) => {
         const fontSize = parseFloat(getComputedStyle(document.documentElement).fontSize);
         return rem * fontSize;
     };
@@ -35,12 +36,12 @@ const CombinedImage = (props: any) => {
         const canvas = canvasRef.current;
         const context = canvas.getContext('2d');
 
-        images.slice(0, 4).forEach((image, index) => {
+        images.slice(0, 4).forEach((image: any, index: number) => {
             const img = new Image();
             img.src = image;
             img.onload = () => {
                 const scaledImage = scaleImage(img,2 * sz, sz);
-                context.drawImage(scaledImage, 2*sz*(index%2!==1), sz * (index <= 1));
+                context.drawImage(scaledImage, 2*sz* Number(index%2!==1), sz * Number(index <= 1));
             };
         });
     }, [images]);
@@ -79,12 +80,12 @@ const MessageItem = (props: any) => {
                     let i = 0;
                     for(; i < 4 && i < res.members.length; ++i) {
                         request("api/people/img/" + res.members[i].id, "GET", "").then((r: any) => {
-                            setCanv(images => [...images, r.img]);
+                            setCanv((images: any) => [...images, r.img]);
                         });
                     }
                     while(i < 4) {
                         i++;
-                        setCanv(images => [...images, ""]);
+                        setCanv((images: any) => [...images, ""]);
                     }
 
                 })
