@@ -237,7 +237,7 @@ const ChatBoard = (props: any) => {
     };
 
     const handleDelete = (res: any) => {
-        res = eval("(" + res.data + ")");
+        res = JSON.parse(res.data);
         const is_exist = () => {
             return messages.filter((message: any) => message.messageId !== res.messageId).length !== 0;
         }
@@ -269,7 +269,7 @@ const ChatBoard = (props: any) => {
     };
 
     const handleSend = (res: any) => {
-        res = eval("(" + res.data + ")");
+        res = JSON.parse(res.data);
         if (res.type === 'send' && res.sessionId === props.session.sessionId) {
             const socket: any = store.getState().webSocket;
             socket.send(JSON.stringify({
@@ -313,7 +313,8 @@ const ChatBoard = (props: any) => {
     };
 
     const handlePull = (res: any) => {
-        res = eval("(" + res.data + ")");
+        res = JSON.parse(res.data);
+
         if (res.type === 'pull') {
             setMload(true);
             for (let i = 0; i < res.messages.length; ++i) {
@@ -571,7 +572,7 @@ const ChatBoard = (props: any) => {
                                     } />
                                 </div>
                                 <Tooltip title={
-                                    message.senderName + " " +
+                                    (message.senderName ?  message.senderName : "Myself") + " " +
                                     moment(message.timestamp).format("MM/DD HH:mm:ss")
                                 } trigger="hover"
                                     arrow={false} placement="topRight" color="rgba(100,100,100,0.5)">

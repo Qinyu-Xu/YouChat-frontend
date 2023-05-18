@@ -19,7 +19,8 @@ export const FileViewer = ({base}: any) => {
         fetch(base).then(res => res.blob()).then(blob => {
             const url = URL.createObjectURL(blob);
             const win: any = window.open(url, "_blank");
-            win.focus();
+            if(win !== null) win.focus();
+            else message.error("弹窗未能正常弹出！");
         });
     }
     return (

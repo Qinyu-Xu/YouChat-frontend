@@ -4,6 +4,8 @@ import dayjs from "dayjs";
 import {request} from "@/utils/network";
 import {formatParams} from "@/utils/utilities";
 import {store} from "@/utils/store";
+import {FileViewer} from "@/components/chat/single_message/file";
+import {AudioPlayer} from "@/components/chat/single_message/audio";
 const { RangePicker } = DatePicker;
 
 const AllPicker = (props: any) => {
@@ -22,7 +24,10 @@ const AllPicker = (props: any) => {
                         title={(props.members.filter((member: any) => member.id === item.senderId))[0] === undefined
                                 ? "Stranger" :
                             (props.members.filter((member: any) => member.id === item.senderId))[0].nickname}
-                        description={ item.messageType === "text" || item.messageType === "notice" ? item.message : <Image src={item.message} />}
+                        description={ item.messageType === "text" || item.messageType === "notice" ? item.message :
+                            item.messageType === "photo" ? <Image src={item.message} /> : item.messageType === "file" ? <FileViewer base={item.message} />
+                                : item.messageType === "audio" ? <AudioPlayer base64Audio={item.message}/> : <div>转发</div>
+                        }
                     />
                 </List.Item>
             )}
@@ -59,7 +64,10 @@ const TimestampPicker = (props: any) => {
                         title={(props.members.filter((member: any) => member.id === item.senderId))[0] === undefined
                             ? "Stranger" :
                             (props.members.filter((member: any) => member.id === item.senderId))[0].nickname}
-                        description={ item.messageType === "text" || item.messageType === "notice" ? item.message : <Image src={item.message} />}
+                        description={ item.messageType === "text" || item.messageType === "notice" ? item.message :
+                            item.messageType === "photo" ? <Image src={item.message} /> : item.messageType === "file" ? <FileViewer base={item.message} />
+                                : item.messageType === "audio" ? <AudioPlayer base64Audio={item.message}/> : <div>转发</div>
+                        }
                     />
                 </List.Item>
             )}
@@ -96,7 +104,10 @@ const TypePicker = (props: any) => {
                         title={(props.members.filter((member: any) => member.id === item.senderId))[0] === undefined
                             ? "Stranger" :
                             (props.members.filter((member: any) => member.id === item.senderId))[0].nickname}
-                        description={ item.messageType === "text" || item.messageType === "notice" ? item.message : <Image src={item.message} />}
+                        description={ item.messageType === "text" || item.messageType === "notice" ? item.message :
+                            item.messageType === "photo" ? <Image src={item.message} /> : item.messageType === "file" ? <FileViewer base={item.message} />
+                            : item.messageType === "audio" ? <AudioPlayer base64Audio={item.message}/> : <div>转发</div>
+                    }
                     />
                 </List.Item>
             )}
@@ -142,7 +153,10 @@ const MemberPicker = (props: any) => {
                         title={(props.members.filter((member: any) => member.id === item.senderId))[0] === undefined
                             ? "Stranger" :
                             (props.members.filter((member: any) => member.id === item.senderId))[0].nickname}
-                        description={ item.messageType === "text" || item.messageType === "notice" ? item.message : <Image src={item.message} />}
+                        description={ item.messageType === "text" || item.messageType === "notice" ? item.message :
+                            item.messageType === "photo" ? <Image src={item.message} /> : item.messageType === "file" ? <FileViewer base={item.message} />
+                                : item.messageType === "audio" ? <AudioPlayer base64Audio={item.message}/> : <div>转发</div>
+                        }
                     />
                 </List.Item>
             )}

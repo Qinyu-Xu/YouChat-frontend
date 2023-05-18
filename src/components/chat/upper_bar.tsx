@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import type {MenuProps} from 'antd';
-import {Checkbox, Input, List, Modal} from 'antd';
+import {Checkbox, Input, List, message, Modal} from 'antd';
 import {request} from "@/utils/network";
 import {formatParams} from "@/utils/utilities";
 import {store} from "@/utils/store"
@@ -11,6 +11,7 @@ const CreateSession = (props: any) => {
     const [load, setLoad] = useState(true);
     const [friends, setFriends] = useState([]);
     const [selected, setSelected] = useState([store.getState().userId]);
+    const [isButtonDisabled, setDisable] = useState(false);
     const [name, setName] = useState('');
 
     useEffect(() => {
@@ -21,13 +22,21 @@ const CreateSession = (props: any) => {
         })}, [open]);
 
     const handleOk = () => {
+        message.success("正在创建!");
+        setDisable(true);
         request("api/session/chatroom", "PUT", JSON.stringify({
             userId: store.getState().userId,
             sessionName: name,
             initial: selected,
-        })).then(_=> {
+        })).then( (res: any) => {
+            setDisable(false);
             props.setOpen(false);
             props.setRefresh((s: any) => !s);
+            const socket: any = store.getState().webSocket;
+            socket.send(JSON.stringify({
+                "type": "new_session",
+                "sessionId": res.sessionId,
+            }));
         });
     }
 
@@ -43,7 +52,8 @@ const CreateSession = (props: any) => {
     }
     return (
 
-        <Modal title={"选择好友创建一个群聊"} open={props.open} onOk={handleOk} onCancel={handleCancel}>
+        <Modal title={"选择好友创建一个群聊"} open={props.open} onOk={handleOk} onCancel={handleCancel}
+               okButtonProps={{ disabled: isButtonDisabled }}>
             {load
                 ?
                 (

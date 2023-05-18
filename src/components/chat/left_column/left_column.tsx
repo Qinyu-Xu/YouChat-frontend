@@ -115,6 +115,24 @@ const LeftColumn = (props: any) => {
     const [potential, setPotential] = useState<any>();
     const id = store.getState().userId;
 
+    const handleNew = (res: any) => {
+        res = JSON.parse(res.data);
+        if(res.type === "new_session") {
+            const is_exist = () => {
+                return props.list.filter((message: any) => message.sessionId !== res.sessionId).length !== 0;
+            };
+            if (!is_exist()) refreshList();
+        }
+    }
+
+    useEffect(() => {
+        const socket: any = store.getState().webSocket;
+        socket.addEventListener("message", handleNew);
+        return () => {
+            socket.removeEventListener("message", handleNew);
+        }
+    }, []);
+
     const cmp = (a: any, b:any) => {
         if(a.isTop !== b.isTop) return - a.isTop + b.isTop;
         return - a.timestamp + b.timestamp;
