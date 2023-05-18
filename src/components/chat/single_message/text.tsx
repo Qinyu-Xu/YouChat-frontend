@@ -26,7 +26,8 @@ const TextBoard = (props: any) => {
                     "messageId": -1,
                     "message": props.text,
                     "messageType": "text",
-                    "reply": props.reply
+                    "reply": props.reply,
+                    "renderedMessage": props.text,
                 }
                 socket.send(CircularJson.stringify(message));
                 props.setMessages((message: any) => [...message, addM]);
@@ -93,7 +94,10 @@ const TextBoard = (props: any) => {
                     }}
                     trigger="@"
                     markup="@[__display__](user:__id__)"
-                    data={props.members.map((member: any) => ({id: member.id, display: "@" + member.nickname}))}
+                    data={
+                        props.members.map((member: any) => ({id: member.id, display: "@" + member.nickname}))
+                            .concat([{id: -2, display: "@全体成员" }])
+                    }
                     appendSpaceOnAdd={true}
                     renderSuggestion={(suggestion, search, highlightedDisplay) => (
                         <div>
