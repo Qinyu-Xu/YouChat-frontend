@@ -96,7 +96,7 @@ const MessageItem = (props: any) => {
                 styles.message_item_istop
             :
                 styles.message_item}>
-            <Badge count={props.session.unread} overflowCount={99}>
+            <Badge count={props.session.isMute ? 0 : props.session.unread} overflowCount={99}>
                 { props.session.sessionType === 1 ?
                     <Avatar className={styles.message_item_left} src={image}/>
                     : canv === undefined

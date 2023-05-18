@@ -149,6 +149,7 @@ const LeftColumn = (props: any) => {
                 setAuth(false);
                 setOpen(true);
             } else {
+                props.setId(session.sessionId);
                 props.setSession(session);
                 clearList(session.sessionId);
             }
@@ -157,6 +158,7 @@ const LeftColumn = (props: any) => {
 
     useEffect(() => {
         if(auth) {
+            props.setId(potential.sessionId);
             props.setSession(potential);
             clearList(potential.sessionId);
         }
@@ -294,8 +296,9 @@ const LeftColumn = (props: any) => {
         const socket: any = store.getState().webSocket;
 
         const handleNew =  (res: any) => {
-            const msg = (eval("("+res.data+")"));
+            const msg = JSON.parse(res.data);
             if (msg.type === 'send') {
+                console.log(props);
                 props.setList((list: any) => list.map((item: any) => item.sessionId !== msg.sessionId ? item : {
                     "sessionId": item.sessionId,
                     "sessionName": item.sessionName,
@@ -307,8 +310,16 @@ const LeftColumn = (props: any) => {
                     "isTop": item.isTop,
                     "isMute": item.isMute,
                     "isSecret": item.isSecret,
-                    "unread": msg.senderId !== store.getState().userId ? item.unread + 1 : item.unread,
+                    "unread": msg.senderId === store.getState().userId
+                        ?
+                        item.unread
+                        : (
+                            msg.sessionId !== props.id
+                                ?
+                                item.unread + 1 : item.unread)
+
                 }));
+                console.log(props.id);
                 props.setList((list : any) => list.sort(cmp));
             }
         };

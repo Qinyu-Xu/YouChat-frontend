@@ -9,7 +9,11 @@ const AddGroup = (props: any) => {
 
     const [load, setLoad] = useState(true);
     const [friends, setFriends] = useState([]);
-    const [selected, setSelected] = useState<any[]>([store.getState().userId, props.members.filter((x: any) => x.id !== store.getState().userId)[0].id]);
+    const [selected, setSelected] = useState<any>(
+        props.members.filter((x: any) => x.id !== store.getState().userId).length !== 1 ?
+        [store.getState().userId, props.members.filter((x: any) => x.id !== store.getState().userId)[0].id]
+        : [store.getState().userId]
+    );
     const [name, setName] = useState('');
 
     useEffect(() => {

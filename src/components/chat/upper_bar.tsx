@@ -33,10 +33,12 @@ const CreateSession = (props: any) => {
             props.setOpen(false);
             props.setRefresh((s: any) => !s);
             const socket: any = store.getState().webSocket;
+            /*
             socket.send(JSON.stringify({
                 "type": "new_session",
                 "sessionId": res.sessionId,
             }));
+             */
         });
     }
 
