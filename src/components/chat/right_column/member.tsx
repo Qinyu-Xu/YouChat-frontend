@@ -19,7 +19,7 @@ const AddMember = (props: any) => {
         })}, [open]);
 
     const handleOk = () => {
-        selected.map(selected_item => {
+        selected.forEach(selected_item => {
             request("api/session/chatroom", "POST", JSON.stringify({
                 userId: selected_item,
                 sessionId: props.sessionId,

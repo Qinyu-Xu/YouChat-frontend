@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {List, Avatar, Card, MenuProps, Dropdown} from "antd";
+import {List, Avatar, Card, MenuProps, Dropdown, message} from "antd";
 import styles from '@/styles/right.module.css'
 import {request} from "@/utils/network";
 import {store} from "@/utils/store";
@@ -14,7 +14,7 @@ const UserList = (props: any) => {
         request("api/people/friends?"+formatParams({id: store.getState().userId}), "GET", "").then((res: any) => {
             setFriends(res.friend);
             // setFriends((friends) => friends.filter((friend: any) => friend && friend.id !== store.getState().userId));
-        })});
+        })}, []);
 
     const member_type = (role: number) => {
         if (role === 0) {
@@ -216,7 +216,9 @@ const UserList = (props: any) => {
                         "id": applicant_id,
                         "group": "RequestTo",
                     }),
-                );
+                ).then((res: any) => {
+                    message.success("好友申请已发送！");
+                });
             }
             if(key === '4') {
                 request(

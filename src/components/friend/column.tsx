@@ -54,13 +54,13 @@ const FriendList = (props: FriendListProps) => {
         }
 	};
 
-	props.groups?.map(g => {
+	props.groups?.forEach(g => {
 		List.push(
 			<div className={styles.group_name}>
 				{g.group}
 			</div>
 		)
-		g.list.map(item => {
+		g.list.forEach(item => {
 			List.push(
 				<div className={styles.column_item} key={item.id.toString()} 
 				id={item.id.toString()} onClick={handleSelect}>

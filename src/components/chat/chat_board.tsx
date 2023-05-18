@@ -419,9 +419,12 @@ const ChatBoard = (props: any) => {
 
     useEffect(() => {
         if (iload && mload && (messages.length <= 30 || newmsg)) {
-            document
-                ?.getElementById("THEEND")
-                ?.scrollIntoView();
+            const element: any = document.getElementById("THEEND");
+            if(element){
+                element.scrollIntoView();
+            } else {
+                console.error('Element with id THEEND not found');
+            }
             setNewmsg(false);
         }
     }, [messages, iload, mload, newmsg]);
@@ -436,11 +439,13 @@ const ChatBoard = (props: any) => {
 
     useEffect(() => {
         for (let i = 0; i < members.length; ++i) {
-            request("api/people/img/" + members[i].id, "GET", "").then((r: any) => {
-                if (images.every((image: any) => image.id !== members[i].id)) {
-                    setImages((images: any) => [...images, { id: members[i].id, image: r.img }]);
-                }
-            }).then(() => { });
+            if(!iload) {
+                request("api/people/img/" + members[i].id, "GET", "").then((r: any) => {
+                    if (images.every((image: any) => image.id !== members[i].id)) {
+                        setImages((images: any) => [...images, {id: members[i].id, image: r.img}]);
+                    }
+                }).then(() => {});
+            }
         }
     }, [members]);
 
@@ -508,7 +513,7 @@ const ChatBoard = (props: any) => {
                     readTime: Date.now()
                 })
             );
-        }, 1000);
+        }, 10000);
     }, []);
 
     useEffect(() => {

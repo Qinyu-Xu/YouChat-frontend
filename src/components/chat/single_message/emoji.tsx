@@ -16,7 +16,7 @@ const EmojiBoard = (props: any) => {
     };
 
     const emojiList: any[] = [];
-    emoji_list.map(emoji => {
+    emoji_list.forEach(emoji => {
         emojiList.push(
             <button className={styles.emoji_item} id={emoji} onClick={handleEmoji}>
                 {emoji}
