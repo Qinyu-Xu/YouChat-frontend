@@ -50,7 +50,6 @@ function Register() {
                 })
                 await router.push('/login');
             } else {
-                console.log(response);
                 message.error(response.info);
             }
         } catch(err) {

@@ -455,7 +455,7 @@ const ChatBoard = (props: any) => {
         setNewpull(false);
         setMload(false);
         setIload(false);
-        setMemload(false);        
+        setMemload(false);
         request("/api/session/chatroom?id=" + props.session.sessionId, "GET", "")
             .then((res: any) => {
                 setMembers(res.members);

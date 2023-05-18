@@ -21,8 +21,8 @@ export const request = async (
     data?: any,
 ) => {
     const response = await network.request({ method, url, data }).catch((err: AxiosError) => {
-            return {data: {code: -1, info: "Error!"}};
-        });
+        return err.response;
+    });
     if (response?.data.code === 0) {
         return { ...response.data, code: 0 };
     } else {
