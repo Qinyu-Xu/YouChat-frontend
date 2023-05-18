@@ -356,18 +356,20 @@ const ChatBoard = (props: any) => {
                             );
                             result.push(
                                 <Tooltip title={
-                                    <div>
+                                    id === "-2" 
+                                    ? <div>全体成员</div>
+                                    : <div>
                                         <Avatar src={
                                             images.filter((image: any) =>
                                                 image.id.toString() === id)[0] === undefined
                                                 ?
-                                                "/headshot/01.svg"
+                                                    "/headshot/01.svg"
                                                 :
-                                                images.filter((image: any) => image.id.toString() === id)[0].image
+                                                    images.filter((image: any) => image.id.toString() === id)[0].image
                                         } />
-                                        &nbsp;&nbsp;
-                                        {name}
-                                    </div>
+                                            &nbsp;&nbsp;
+                                            {name}
+                                        </div>
                                 }
                                     trigger="hover"
                                     overlayInnerStyle={{ color: "rgb(50,50,50)" }}
@@ -379,8 +381,9 @@ const ChatBoard = (props: any) => {
                                     }}>
                                         {name}
                                         {
-                                            members.filter((member: any) => member.id.toString() === id)[0].readTime < timestamp
-                                                ? " (未读)" : ""
+                                            members.filter((member: any) => member.id.toString() === id).length !== 0 &&
+                                                members.filter((member: any) => member.id.toString() === id)[0].readTime < timestamp
+                                                    ? " (未读)" : ""
                                         }
                                     </div>
                                 </Tooltip>
