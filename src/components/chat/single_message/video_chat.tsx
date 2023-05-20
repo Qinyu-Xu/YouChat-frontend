@@ -5,6 +5,8 @@ import CircularJson from "circular-json";
 
 export const SenderBoard = (props: any) => {
 
+    const [ok, setOk] = useState(false);
+
     const handleClick = () => {
         const socket: any = store.getState().webSocket;
         socket.send(JSON.stringify({
@@ -22,16 +24,14 @@ export const SenderBoard = (props: any) => {
     }
 
     useEffect(() => {
-        const handleOffer = (res) => {
+        const handleOffer = (res: any) => {
             res = JSON.parse(res.data);
             if(res.type === "notice_video" && res.sessionId === props.sessionId) {
                 if(res.status === "agree" && res.from !== store.getState().userId) {
                     message.success("对方已经同意！");
-                    props.setSender(true);
-                    props.setOk(true);
+                    setOk(true);
                 }
             }
-            props.setOpen(false);
         }
         const socket: any = store.getState().webSocket;
         socket.addEventListener("message", handleOffer);
@@ -39,31 +39,30 @@ export const SenderBoard = (props: any) => {
     }, [props.to]);
 
     return (
-        <Modal open={props.open} onCancel={handleCancel}>
-        <div>
-            是否邀请对方进行视频通话
-            <br /><br />
-            <Button onClick={handleClick}>
+        <Modal open={props.open} width={750} onCancel={handleCancel}>
+            <div>
+                是否邀请对方进行视频通话
+                <br /><br />
+                <Button onClick={handleClick}>
                 确定邀请
             </Button>
-            <br/> <br />
             <Button onClick={handleCancel}>
                 取消邀请
             </Button>
-        </div>
+                <br />
+            </div>
+            <Sender sessionId={props.sessionId} to={props.to} ok={ok} />
         </Modal>
     )
 }
 
 export const ReceiverBoard = (props: any) => {
 
-    const [res, setRes] = useState();
+    const [res, setRes] = useState<any>();
     const [open, setOpen] = useState(false);
 
     const handleClick = () => {
         const socket: any = store.getState().webSocket;
-        props.setOk(true);
-        props.setSender(false);
         socket.send(JSON.stringify({
             type: "notice_video",
             from: res.to,
@@ -79,7 +78,7 @@ export const ReceiverBoard = (props: any) => {
 
     useEffect(() => {
         const socket: any = store.getState().webSocket;
-        const handleNotice = (res) => {
+        const handleNotice = (res: any) => {
             res = JSON.parse(res.data);
             if(res.type === "notice_video" && res.status === "query" && res.from !== store.getState().userId) {
                 setRes(res);
@@ -93,7 +92,7 @@ export const ReceiverBoard = (props: any) => {
 
 
     return (
-        <Modal open={open} onCancel={handleCancel}>
+        <Modal open={open} width={750} onCancel={handleCancel}>
             <div>
                 是否邀请同意进行视频通话
                 <br /><br />
@@ -102,10 +101,10 @@ export const ReceiverBoard = (props: any) => {
                 </Button>
                 <br/> <br />
             </div>
+            <Receiver to={props.to} />
         </Modal>
     )
 }
-
 
 export const Sender = (props: any) => {
     const local_video = useRef<any>();
@@ -113,6 +112,8 @@ export const Sender = (props: any) => {
     const [stream, setStream] = useState<any>(null);
     const [peer, setPeer] = useState<any>(null);
     const socket: any = store.getState().webSocket;
+
+    useEffect(() => {getMedia();}, []);
 
     const getMedia = async() => {
         let ori_stream = await navigator.mediaDevices.getUserMedia({
@@ -123,7 +124,6 @@ export const Sender = (props: any) => {
         if (local_video.current) {
             local_video.current.srcObject = ori_stream;
         }
-
         const turnConf = {
             iceServers: [
                 {
@@ -150,9 +150,9 @@ export const Sender = (props: any) => {
     }
 
     useEffect(() => {
-        if(peer !== null) {
+        if(peer !== null && props.ok) {
             peerInit();
-            peer.onicecandidate = (event) => {
+            peer.onicecandidate = (event: any) => {
                 if (event.candidate) {
                     socket.send(CircularJson.stringify({
                         type: 'candid',
@@ -163,14 +163,15 @@ export const Sender = (props: any) => {
                     }));
                 }
             };
-            stream.getTracks().forEach((track) => {
+            stream.getTracks().forEach((track: MediaStreamTrack) => {
                 peer.addTrack(track, stream);
             });
-            peer.ontrack = async (event) => {
+            peer.ontrack = async (event: any) => {
                 let [remoteStream] = event.streams;
+                console.log(remoteStream);
                 remote_video.current.srcObject = remoteStream;
             };
-        }}, [peer]);
+        }}, [peer, props.ok]);
 
     const handleCandid = (data: any) => {
         data = JSON.parse(data.data);
@@ -189,18 +190,18 @@ export const Sender = (props: any) => {
     }
 
     useEffect(() => {
-        getMedia();
-        socket.addEventListener("message", handleCandid);
-        socket.addEventListener("message", handleAnswer);
-        return () => {
-            socket.removeEventListener("message", handleCandid);
-            socket.removeEventListener("message", handleAnswer);
+        if(peer != null) {
+            socket.addEventListener("message", handleCandid);
+            socket.addEventListener("message", handleAnswer);
+            return () => {
+                socket.removeEventListener("message", handleCandid);
+                socket.removeEventListener("message", handleAnswer);
+            }
         }
-    },[]);
+    },[peer]);
 
     return  (
         <div>
-            <Modal open={true} width={750}>
             <div>
                 LOCAL
                 <br />
@@ -210,7 +211,6 @@ export const Sender = (props: any) => {
                 <br />
                 <video ref={remote_video} autoPlay muted />
             </div>
-            </Modal>
         </div>
     )
 
@@ -250,8 +250,12 @@ export const Receiver = (props: any) => {
     };
 
     useEffect(() => {
+        getMedia();
+    },[]);
+
+    useEffect(() => {
         if(peer !== null) {
-            peer.onicecandidate = (event) => {
+            peer.onicecandidate = (event: any) => {
                 if (event.candidate) {
                     socket.send(CircularJson.stringify({
                         type: 'candid',
@@ -262,12 +266,14 @@ export const Receiver = (props: any) => {
                     }));
                 }
             };
-            stream.getTracks().forEach((track) => {
+
+            stream.getTracks().forEach((track: MediaStreamTrack) => {
                 peer.addTrack(track, stream);
             });
 
-            peer.ontrack = async (event) => {
+            peer.ontrack = async (event: any) => {
                 let [remoteStream] = event.streams;
+                console.log(remoteStream);
                 remote_video.current.srcObject = remoteStream;
             };
 
@@ -285,45 +291,42 @@ export const Receiver = (props: any) => {
     const handleOffer = async (data: any) => {
         data = JSON.parse(data.data);
         if(data.type === "offer" && data.from !== store.getState().userId) {
+            setSessionId(data.sessionId);
             let offer = new RTCSessionDescription(data.data);
             await peer.setRemoteDescription(offer);
             let answer = await peer.createAnswer();
-            setSessionId(data.sessionId);
-
+            await peer.setLocalDescription(answer);
             socket.send(CircularJson.stringify({
                 type: 'answer',
                 from: data.to,
                 to: data.from,
-                sessionId: sessionId,
+                sessionId: data.sessionId,
                 data: answer,
             }));
-
-            await peer.setLocalDescription(answer);
         }
     }
 
     useEffect(() => {
-        getMedia();
-        socket.addEventListener("message", handleOffer);
-        socket.addEventListener("message", handleCandid);
-        return () => {
-            socket.removeEventListener("message", handleCandid);
-            socket.removeEventListener("message", handleOffer);
+        if(peer != null) {
+            socket.addEventListener("message", handleOffer);
+            socket.addEventListener("message", handleCandid);
+            return () => {
+                socket.removeEventListener("message", handleCandid);
+                socket.removeEventListener("message", handleOffer);
+            };
         }
-    },[]);
+    }, [peer]);
 
     return  (
         <div>
-            <Modal open={true} width={750}>
             <div>
                 LOCAL <br />
                 <video ref={local_video} autoPlay muted />
                 <br />
-                REMOVE <br />
+                REMOTE <br />
                 <video ref={remote_video} autoPlay muted />
                 <br/>
             </div>
-            </Modal>
         </div>
     )
 
