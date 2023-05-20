@@ -112,7 +112,9 @@ const MessageItem = (props: any) => {
                     {
                         props.session.lastSender
                     }
-                    ：
+                    {
+                        props.session.lastSender == "" ? "" : ":"
+                    }
                     {
                         props.session.type == "audio" ?
                             "[语音]"
@@ -136,6 +138,7 @@ const MessageItem = (props: any) => {
                 </div>
                 <div className={styles.message_item_time}>
                     {
+                        moment(props.session.timestamp).year() < 2000 ? "" :
                         moment().year() != moment(props.session.timestamp).year() 
                         ?
                             moment(props.session.timestamp).format("YYYY/MM/DD")
