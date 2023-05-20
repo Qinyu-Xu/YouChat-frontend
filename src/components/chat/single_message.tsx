@@ -6,6 +6,7 @@ import AudioInput, {AudioIcon} from "@/components/chat/single_message/audio";
 import EmojiBoard, {EmojiIcon} from "@/components/chat/single_message/emoji";
 import {FileIcon} from "@/components/chat/single_message/file";
 import {VideoIcon} from "@/components/chat/single_message/video";
+import {store} from "@/utils/store";
 
 
 const SingleMessage = (props: any) => {
@@ -20,7 +21,12 @@ const SingleMessage = (props: any) => {
                 <ImgIcon sessionId={props.sessionId} setMessages={props.setMessages}/>
                 <AudioIcon setAudio={setAudio} />
                 <FileIcon sessionId={props.sessionId} setMessages={props.setMessages}/>
-                <VideoIcon />
+                { props.members.length === 2 ?
+                    <VideoIcon
+                        sessionId={props.sessionId}
+                        to={props.members.filter((member: any) => member.id !== store.getState().userId)[0].id}/>
+                    : <div></div>
+                }
             </div>
             {
                 audio

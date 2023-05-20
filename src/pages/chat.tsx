@@ -27,6 +27,7 @@ const Chat = () => {
                     <ChatBoard list={list} session={session} setRefresh={setRefresh} setSession={setSession}/>
                 </div>
             }
+
         </div>
     );
 }
