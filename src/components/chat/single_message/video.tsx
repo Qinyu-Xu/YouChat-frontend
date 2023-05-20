@@ -13,7 +13,6 @@ export const VideoIcon = (props: any) => {
                 <img src="ui/phone-video-call.svg"/>
             </div>
             <SenderBoard to={props.to} sessionId={props.sessionId} setOpen={setSenderOpen} open={senderOpen}/>
-            <ReceiverBoard to={props.to} sessionId={props.sessionId}/>
         </div>
     );
 }

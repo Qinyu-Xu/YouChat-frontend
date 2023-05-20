@@ -3,6 +3,7 @@ import Profile from '@/components/friend/profile'
 import Sidebar from '@/components/sidebar'
 import styles from '@/styles/layout.module.css'
 import { useState } from 'react';
+import {ReceiverBoard} from "@/components/chat/single_message/video_chat";
 
 export interface profile_type {
     id: number;
@@ -36,6 +37,7 @@ function Friend() {
                         <Profile profile={profile}/>
                 }
             </div>
+            <ReceiverBoard />
         </div>
     );
 }

@@ -78,7 +78,7 @@ export function readSvgAsBase64(svgFilePath: any) {
     });
 }
 
-export const encryptParam = (password) => {
+export const encryptParam = (password: any) => {
     return MD5(password).toString();
 };
 
