@@ -63,7 +63,7 @@ export const SenderBoard = (props: any) => {
                     </Radio.Group>
                     <br/>
                 </div>
-                : <Sender is_video={isVideo} setOk={setOk} sessionId={props.sessionId} to={props.to} ok={ok} />
+                : <Sender is_video={isVideo} setOk={setOk} setOpen={props.setOpen} sessionId={props.sessionId} to={props.to} ok={ok} />
             }
         </Modal>
     )
@@ -123,7 +123,7 @@ export const ReceiverBoard = (props: any) => {
                 </Button>
                 <br/> <br />
             </div>
-            : to === -1 ? <div/> : <Receiver to={to} setOk={setOk} is_video={isVideo} sessionId={sessionId}/>
+            : to === -1 ? <div/> : <Receiver to={to} setOpen={setOpen} setOk={setOk} is_video={isVideo} sessionId={sessionId}/>
             }
         </Modal>
     )
@@ -198,6 +198,15 @@ export const Sender = (props: any) => {
                 remote_video.current.srcObject = remoteStream;
             };
 
+            const handleConnectionStateChange = () => {
+                console.log(peer.connectionState);
+                if(peer.connectionState === "disconnected") {
+                    onClick();
+                    peer.removeEventListener("connectionstatechange", handleConnectionStateChange);
+                }
+            }
+
+            peer.addEventListener("connectionstatechange", handleConnectionStateChange);
             peerInit();
 
         }}, [peer, props.ok, stream]);
@@ -237,6 +246,7 @@ export const Sender = (props: any) => {
                 track.stop();
             });
         }
+        props.setOpen(false);
         props.setOk(false);
     }
 
@@ -314,6 +324,17 @@ export const Receiver = (props: any) => {
                 let [remoteStream] = event.streams;
                 remote_video.current.srcObject = remoteStream;
             };
+
+            const handleConnectionStateChange = () => {
+                console.log(peer.connectionState);
+                if(peer.connectionState === "disconnected") {
+                    onClick();
+                    peer.removeEventListener("connectionstatechange", handleConnectionStateChange);
+                }
+            }
+
+            peer.addEventListener("connectionstatechange", handleConnectionStateChange);
+
         }
     }, [peer, stream]);
 
@@ -361,6 +382,7 @@ export const Receiver = (props: any) => {
                 track.stop();
             });
         }
+        props.setOpen(false);
         props.setOk(false);
     }
 
