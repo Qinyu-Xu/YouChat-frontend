@@ -60,6 +60,7 @@ export const ReceiverBoard = (props: any) => {
 
     const [res, setRes] = useState<any>();
     const [open, setOpen] = useState(false);
+    const [sessionId, setSessionId] = useState(0);
 
     const handleClick = () => {
         const socket: any = store.getState().webSocket;
@@ -81,11 +82,11 @@ export const ReceiverBoard = (props: any) => {
         const handleNotice = (res: any) => {
             res = JSON.parse(res.data);
             if(res.type === "notice_video" && res.status === "query" && res.from !== store.getState().userId) {
+                setSessionId(res.sessionId);
                 setRes(res);
                 setOpen(true);
             }
         }
-
         socket.addEventListener("message", handleNotice);
         return () => {socket.removeEventListener("message", handleNotice);}
     }, [props.sessionId]);
@@ -101,7 +102,7 @@ export const ReceiverBoard = (props: any) => {
                 </Button>
                 <br/> <br />
             </div>
-            <Receiver to={props.to} />
+            <Receiver to={props.to} sessionId={sessionId}/>
         </Modal>
     )
 }
@@ -125,7 +126,9 @@ export const Sender = (props: any) => {
             local_video.current.srcObject = ori_stream;
         }
         const turnConf = {
-            iceServers: [
+            iceServers: [  {
+                urls: 'stun:stun4.l.google.com:19302'
+            },
                 {
                     urls: 'turn:101.200.84.122:3478',
                     username: 'st',
@@ -134,6 +137,7 @@ export const Sender = (props: any) => {
             ],
         };
         const Peer = new RTCPeerConnection(turnConf);
+
         setPeer(Peer);
     };
 
@@ -150,8 +154,8 @@ export const Sender = (props: any) => {
     }
 
     useEffect(() => {
-        if(peer !== null && props.ok) {
-            peerInit();
+        if(peer !== null && props.ok && stream !== null) {
+
             peer.onicecandidate = (event: any) => {
                 if (event.candidate) {
                     socket.send(CircularJson.stringify({
@@ -163,15 +167,19 @@ export const Sender = (props: any) => {
                     }));
                 }
             };
+
             stream.getTracks().forEach((track: MediaStreamTrack) => {
                 peer.addTrack(track, stream);
             });
+
             peer.ontrack = async (event: any) => {
                 let [remoteStream] = event.streams;
-                console.log(remoteStream);
                 remote_video.current.srcObject = remoteStream;
             };
-        }}, [peer, props.ok]);
+
+            peerInit();
+
+        }}, [peer, props.ok, stream]);
 
     const handleCandid = (data: any) => {
         data = JSON.parse(data.data);
@@ -222,7 +230,6 @@ export const Receiver = (props: any) => {
     const remote_video = useRef<any>();
     const [stream, setStream] = useState<any>(null);
     const [peer, setPeer] = useState<any>(null);
-    const [sessionId, setSessionId] = useState<any>(0);
     const socket: any = store.getState().webSocket;
 
     const getMedia = async() => {
@@ -235,17 +242,20 @@ export const Receiver = (props: any) => {
             local_video.current.srcObject = ori_stream;
         }
 
-        const turnConf = {
+        const turnConf: any = {
             iceServers: [
                 {
+                    urls: 'stun:stun4.l.google.com:19302'
+                }, {
                     urls: 'turn:101.200.84.122:3478',
                     username: 'st',
                     credential: 'swimtogether',
-                },
+                }
             ],
         };
 
         const Peer = new RTCPeerConnection(turnConf);
+
         setPeer(Peer);
     };
 
@@ -254,31 +264,27 @@ export const Receiver = (props: any) => {
     },[]);
 
     useEffect(() => {
-        if(peer !== null) {
+        if(peer !== null && stream !== null) {
             peer.onicecandidate = (event: any) => {
                 if (event.candidate) {
                     socket.send(CircularJson.stringify({
                         type: 'candid',
                         from: store.getState().userId,
                         to: props.to,
-                        sessionId: sessionId,
+                        sessionId: props.sessionId,
                         data: event.candidate,
                     }));
                 }
             };
-
             stream.getTracks().forEach((track: MediaStreamTrack) => {
                 peer.addTrack(track, stream);
             });
-
             peer.ontrack = async (event: any) => {
                 let [remoteStream] = event.streams;
-                console.log(remoteStream);
                 remote_video.current.srcObject = remoteStream;
             };
-
         }
-    }, [peer]);
+    }, [peer, stream]);
 
     const handleCandid = (data: any) => {
         data = JSON.parse(data.data);
@@ -291,7 +297,6 @@ export const Receiver = (props: any) => {
     const handleOffer = async (data: any) => {
         data = JSON.parse(data.data);
         if(data.type === "offer" && data.from !== store.getState().userId) {
-            setSessionId(data.sessionId);
             let offer = new RTCSessionDescription(data.data);
             await peer.setRemoteDescription(offer);
             let answer = await peer.createAnswer();
@@ -311,8 +316,8 @@ export const Receiver = (props: any) => {
             socket.addEventListener("message", handleOffer);
             socket.addEventListener("message", handleCandid);
             return () => {
-                socket.removeEventListener("message", handleCandid);
                 socket.removeEventListener("message", handleOffer);
+                socket.removeEventListener("message", handleCandid);
             };
         }
     }, [peer]);
