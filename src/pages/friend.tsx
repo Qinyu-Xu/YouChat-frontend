@@ -5,7 +5,7 @@ import styles from '@/styles/layout.module.css'
 import { useState } from 'react';
 
 export interface profile_type {
-    id: number;
+    id?: number;
     nickname: string;
     username: string;
     email: string;
@@ -27,7 +27,7 @@ function Friend() {
             <Column setProfile={setProfile}/>
             <div className={styles.content}>
                 {
-                    profile.id === 0
+                    profile.id === undefined || profile.id === 0
                         ?
                         <div>
 
