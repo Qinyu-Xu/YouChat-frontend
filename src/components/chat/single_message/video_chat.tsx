@@ -137,7 +137,6 @@ export const Sender = (props: any) => {
             ],
         };
         const Peer = new RTCPeerConnection(turnConf);
-
         setPeer(Peer);
     };
 

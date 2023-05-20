@@ -113,13 +113,13 @@ const LeftColumn = (props: any) => {
     const [open, setOpen] = useState(false);
     const [auth, setAuth] = useState(false);
     const [potential, setPotential] = useState<any>();
-    const id = store.getState().userId;
+    const [id, setId] = useState(0);
 
     const handleNew = (res: any) => {
         res = JSON.parse(res.data);
         if(res.type === "new_session") {
             const is_exist = () => {
-                return props.list.filter((message: any) => message.sessionId !== res.sessionId).length !== 0;
+                return (props.list.filter((message: any) => message.sessionId === res.sessionId)).length !== 0;
             };
             if (!is_exist()) refreshList();
         }
@@ -149,7 +149,7 @@ const LeftColumn = (props: any) => {
                 setAuth(false);
                 setOpen(true);
             } else {
-                props.setId(session.sessionId);
+                setId(session.sessionId);
                 props.setSession(session);
                 clearList(session.sessionId);
             }
@@ -158,15 +158,16 @@ const LeftColumn = (props: any) => {
 
     useEffect(() => {
         if(auth) {
-            props.setId(potential.sessionId);
+            setId(potential.sessionId);
             props.setSession(potential);
             clearList(potential.sessionId);
+            console.log(id);
         }
     }, [auth]);
 
     const refreshList = () => {
         request(
-            `api/session/message/${id}`,
+            `api/session/message/${store.getState().userId}`,
             "GET",
             ""
         ).then((response) => {
@@ -212,7 +213,7 @@ const LeftColumn = (props: any) => {
     useEffect(() => {
         if (!load) {
             request(
-                `api/session/message/${id}`,
+                `api/session/message/${store.getState().userId}`,
                 "GET",
                 ""
             ).then((response) => {
@@ -298,7 +299,6 @@ const LeftColumn = (props: any) => {
         const handleNew =  (res: any) => {
             const msg = JSON.parse(res.data);
             if (msg.type === 'send') {
-                console.log(props);
                 props.setList((list: any) => list.map((item: any) => item.sessionId !== msg.sessionId ? item : {
                     "sessionId": item.sessionId,
                     "sessionName": item.sessionName,
@@ -314,12 +314,11 @@ const LeftColumn = (props: any) => {
                         ?
                         item.unread
                         : (
-                            msg.sessionId !== props.id
+                            msg.sessionId !== id
                                 ?
                                 item.unread + 1 : item.unread)
 
                 }));
-                console.log(props.id);
                 props.setList((list : any) => list.sort(cmp));
             }
         };
@@ -330,7 +329,7 @@ const LeftColumn = (props: any) => {
                 socket.removeEventListener("message", handleNew);
             }
         }
-    }, [loadname, sorted, store.getState().webSocket]);
+    }, [id, loadname, sorted, store.getState().webSocket]);
 
     return load && loadname && sorted
         ?

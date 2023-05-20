@@ -10,7 +10,6 @@ const Chat = () => {
     const [list, setList] = useState<any>([-1]);
     const [session, setSession] = useState(null);
     const [refresh, setRefresh] = useState(0);
-    const [id, setId] = useState(0);
 
     return (
         <div className={styles.container}>
@@ -19,7 +18,7 @@ const Chat = () => {
             </div>
             <div className={styles.column}>
                 <UpperBar setRefresh={setRefresh}/>
-                <LeftColumn setSession={setSession} id={id} setId={setId} refresh={refresh}
+                <LeftColumn setSession={setSession} refresh={refresh}
                     list={list} setList={setList}/>
             </div>
             { session === null ? <div></div> :
