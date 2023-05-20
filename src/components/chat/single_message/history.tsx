@@ -85,8 +85,8 @@ export const MultiPicker = (props: any) => {
                 <br/><br/>
                 是否逐条转发：
                 <Radio.Group name="radiogroup" defaultValue={1} onChange={handleRadioChange}>
-                    <Radio value={1}>是</Radio>
-                    <Radio value={2}>否</Radio>
+                    <Radio value={1}>否</Radio>
+                    <Radio value={2}>是</Radio>
                 </Radio.Group>
                 <List
                     itemLayout="horizontal"

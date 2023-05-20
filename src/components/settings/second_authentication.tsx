@@ -6,6 +6,7 @@ import {request} from "@/utils/network";
 import LoginInput from "@/components/login/login_input";
 import {store} from "@/utils/store";
 import {refreshReducer} from "next/dist/client/components/router-reducer/reducers/refresh-reducer";
+import {encryptParam} from "@/utils/utilities";
 
 const SecondAuthentication = (props: any) => {
     const [open, setOpen] = useState(false);
@@ -77,7 +78,7 @@ const SecondAuthentication = (props: any) => {
                 "POST",
                 JSON.stringify({
                     "userName": user,
-                    "password": pwd,
+                    "password": encryptParam(pwd),
                 })
             );
             if (response.code == 0) {
@@ -109,7 +110,7 @@ const SecondAuthentication = (props: any) => {
                 "DELETE",
                 JSON.stringify({
                     "userName": user,
-                    "password": pwd,
+                    "password": encryptParam(pwd),
                 })
             );
             if (response.code == 0) {

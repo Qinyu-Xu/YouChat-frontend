@@ -1,11 +1,16 @@
 import {useState, useRef, useEffect} from "react";
-import {Button, message, Modal} from "antd";
+import {Button, message, Modal, Radio} from "antd";
 import {store} from "@/utils/store";
 import CircularJson from "circular-json";
 
 export const SenderBoard = (props: any) => {
 
     const [ok, setOk] = useState(false);
+    const [isVideo, setVideo] = useState(true);
+
+    const handleRadioChange = (e: any) => {
+        setVideo(e.target.value === 1);
+    }
 
     const handleClick = () => {
         const socket: any = store.getState().webSocket;
@@ -14,7 +19,8 @@ export const SenderBoard = (props: any) => {
             from: store.getState().userId,
             to: props.to,
             sessionId: props.sessionId,
-            status: 'query'
+            status: 'query',
+            is_video: isVideo,
         }));
         message.success("已经发送请求！");
     }
@@ -40,18 +46,25 @@ export const SenderBoard = (props: any) => {
 
     return (
         <Modal open={props.open} width={750} onCancel={handleCancel}>
-            <div>
-                是否邀请对方进行视频通话
-                <br /><br />
-                <Button onClick={handleClick}>
-                确定邀请
-            </Button>
-            <Button onClick={handleCancel}>
-                取消邀请
-            </Button>
-                <br />
-            </div>
-            <Sender sessionId={props.sessionId} to={props.to} ok={ok} />
+            { !ok ?
+                <div>
+                    是否邀请对方进行视频通话
+                    <br/><br/>
+                    <Button onClick={handleClick}>
+                        确定邀请
+                    </Button>
+                    <Button onClick={handleCancel}>
+                        取消邀请
+                    </Button>
+                    是否视频聊天
+                    <Radio.Group name="radiogroup" defaultValue={1} onChange={handleRadioChange}>
+                        <Radio value={1}>是</Radio>
+                        <Radio value={2}>否</Radio>
+                    </Radio.Group>
+                    <br/>
+                </div>
+                : <Sender is_video={isVideo} setOk={setOk} sessionId={props.sessionId} to={props.to} ok={ok} />
+            }
         </Modal>
     )
 }
@@ -60,9 +73,13 @@ export const ReceiverBoard = (props: any) => {
 
     const [res, setRes] = useState<any>();
     const [open, setOpen] = useState(false);
+    const [to, setTo] = useState(-1);
     const [sessionId, setSessionId] = useState(0);
+    const [isVideo, setVideo] = useState(true);
+    const [ok, setOk] = useState(false);
 
     const handleClick = () => {
+        setOk(true);
         const socket: any = store.getState().webSocket;
         socket.send(JSON.stringify({
             type: "notice_video",
@@ -70,6 +87,7 @@ export const ReceiverBoard = (props: any) => {
             to: res.from,
             status: "agree",
             sessionId: res.sessionId,
+            is_video: isVideo,
         }));
     }
 
@@ -83,17 +101,20 @@ export const ReceiverBoard = (props: any) => {
             res = JSON.parse(res.data);
             if(res.type === "notice_video" && res.status === "query" && res.from !== store.getState().userId) {
                 setSessionId(res.sessionId);
+                setVideo(res.is_video);
+                setTo(res.from);
                 setRes(res);
                 setOpen(true);
             }
         }
         socket.addEventListener("message", handleNotice);
         return () => {socket.removeEventListener("message", handleNotice);}
-    }, [props.sessionId]);
+    }, []);
 
 
     return (
         <Modal open={open} width={750} onCancel={handleCancel}>
+            { !ok ?
             <div>
                 是否邀请同意进行视频通话
                 <br /><br />
@@ -102,7 +123,8 @@ export const ReceiverBoard = (props: any) => {
                 </Button>
                 <br/> <br />
             </div>
-            <Receiver to={props.to} sessionId={sessionId}/>
+            : to === -1 ? <div/> : <Receiver to={to} setOk={setOk} is_video={isVideo} sessionId={sessionId}/>
+            }
         </Modal>
     )
 }
@@ -119,7 +141,7 @@ export const Sender = (props: any) => {
     const getMedia = async() => {
         let ori_stream = await navigator.mediaDevices.getUserMedia({
             audio: true,
-            video: true,
+            video: props.is_video,
         });
         setStream(ori_stream);
         if (local_video.current) {
@@ -207,7 +229,18 @@ export const Sender = (props: any) => {
         }
     },[peer]);
 
-    return  (
+    const onClick = () => {
+        if (peer) peer.close();
+        setPeer(null);
+        if (stream) {
+            stream.getTracks().forEach((track: MediaStreamTrack) => {
+                track.stop();
+            });
+        }
+        props.setOk(false);
+    }
+
+    return (
         <div>
             <div>
                 LOCAL
@@ -218,9 +251,9 @@ export const Sender = (props: any) => {
                 <br />
                 <video ref={remote_video} autoPlay muted />
             </div>
+            <Button onClick={onClick} > 挂断 </Button>
         </div>
     )
-
 };
 
 export const Receiver = (props: any) => {
@@ -234,7 +267,7 @@ export const Receiver = (props: any) => {
     const getMedia = async() => {
         let ori_stream = await navigator.mediaDevices.getUserMedia({
             audio: true,
-            video: true,
+            video: props.is_video,
         });
         setStream(ori_stream);
         if (local_video.current) {
@@ -254,7 +287,6 @@ export const Receiver = (props: any) => {
         };
 
         const Peer = new RTCPeerConnection(turnConf);
-
         setPeer(Peer);
     };
 
@@ -321,17 +353,28 @@ export const Receiver = (props: any) => {
         }
     }, [peer]);
 
+    const onClick = () => {
+        if (peer) peer.close();
+        setPeer(null);
+        if (stream) {
+            stream.getTracks().forEach((track: MediaStreamTrack) => {
+                track.stop();
+            });
+        }
+        props.setOk(false);
+    }
+
     return  (
         <div>
             <div>
                 LOCAL <br />
-                <video ref={local_video} autoPlay muted />
+                <video ref={local_video} autoPlay />
                 <br />
                 REMOTE <br />
-                <video ref={remote_video} autoPlay muted />
+                <video ref={remote_video} autoPlay />
                 <br/>
+                <Button onClick={onClick} > 挂断 </Button>
             </div>
         </div>
     )
-
 };

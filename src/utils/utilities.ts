@@ -1,3 +1,5 @@
+import {MD5} from 'crypto-js';
+
 /* format json into url parameters */
 export const formatParams = (params: any) => {
     return Object.keys(params)
@@ -75,6 +77,10 @@ export function readSvgAsBase64(svgFilePath: any) {
         xhr.send();
     });
 }
+
+export const encryptParam = (password: any) => {
+    return MD5(password).toString();
+};
 
 export const DEFAULT_SVG = 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiP' +
     'z48c3ZnIHZpZXdCb3g9IjAgMCA0OCA0OCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj' +
