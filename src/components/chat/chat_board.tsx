@@ -676,7 +676,7 @@ const ChatBoard = (props: any) => {
                                 } trigger="hover"
                                     arrow={false} placement="topLeft" color="rgba(100,100,100,0.5)">
                                     <Dropdown menu={{
-                                        items: (message.reply === -1 ? (role === 0 || (role === 1 && members.filter((member: any) => member.id === message.senderId)[0].role === 2) ? right_items : left_items) : (role === 0 || (role === 1 && members.filter((member: any) => member.id === message.senderId)[0].role === 2) ? right_reply_items : left_reply_items)),
+                                        items: (message.reply === -1 ? (role === 0 || (role === 1 && members.filter((member: any) => member.id === message.senderId)[0]?.role !== 0 && members.filter((member: any) => member.id === message.senderId)[0]?.role !== 1) ? right_items : left_items) : (role === 0 || (role === 1 && members.filter((member: any) => member.id === message.senderId)[0]?.role !== 0 && members.filter((member: any) => member.id === message.senderId)[0]?.role !== 1) ? right_reply_items : left_reply_items)),
                                         onClick: onDropDownClick(message.messageId, message.message, message.reply,
                                             message.senderName + " " + moment(message.timestamp).format("MM/DD HH:mm:ss"))
                                     }}
