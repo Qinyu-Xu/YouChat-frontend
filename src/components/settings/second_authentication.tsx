@@ -138,7 +138,7 @@ const SecondAuthentication = (props: any) => {
                         resetButtonProps: {style: {display: 'none'}},
                         submitButtonProps: {style: {display: 'none'}}
                     }}>
-                        <LoginInput form={form} loginType={loginType} setLoginType={setLoginType} place={"setting"}/>
+                        <LoginInput form={form} loginType={loginType} setLoginType={setLoginType} place={"delete"}/>
                     </ProForm>
                 }
             </Modal>

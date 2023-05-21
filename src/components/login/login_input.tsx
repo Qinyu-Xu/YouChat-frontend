@@ -5,14 +5,15 @@ import {LockOutlined, MailOutlined, UserOutlined} from "@ant-design/icons";
 import {useEffect, useState} from "react";
 import {store} from "@/utils/store";
 
-const items = [
-    {label: '账号密码', key: "account"},
-    {label: '邮箱登陆', key: 'email'},
-]
-
 type LoginType = 'email' | 'account';
 
 const LoginInput = ( props: any ) => {
+
+    const items = [
+        {label: '账号密码', key: "account"},
+        {label: '邮箱登陆', key: 'email', disabled: props.place === "setting"},
+    ]
+
 
     const form = props.form;
     // handle request to send verification code
