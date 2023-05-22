@@ -9,7 +9,6 @@ interface ProfileProps {
 }
 
 const send = async (id: number, group: string) => {
-    console.log(id, group);
     try {
         const response = await request(
             "api/people/friends",
@@ -19,7 +18,6 @@ const send = async (id: number, group: string) => {
                 "group": group,
             }),
         ); 
-        console.log(response);
         location.reload();
     } catch(err) {
         console.log(err);
@@ -35,7 +33,6 @@ function Profile(props: ProfileProps) {
     useEffect(() => {
         setIload(false);
         request("api/people/img/"+props.profile.id, "GET", "").then(res => {
-            console.log(res);
             if(res.code === 0) {
                 if(res.img !== '')
                     setImage(res.img);
