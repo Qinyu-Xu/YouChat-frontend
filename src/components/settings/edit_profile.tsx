@@ -52,6 +52,7 @@ const EditProfile = (props: any) => {
             })
         )
         if (response.code === 0) {
+            props.setRefresh((refresh: any) => !refresh);
             message.success('修改成功！');
         } else {
             message.error('修改失败！');

@@ -15,7 +15,7 @@ const LogOut = () => {
     }
     return (
         <div>
-            <p>当前的账号是：</p>
+            <p>登出账号</p>
             <Button onClick={handleLogOut}>登出</Button>
         </div>
     );
@@ -29,17 +29,15 @@ const DeleteUser = () => {
     );
 };
 
-const UserSetting = () => {
-
-    const [isAuthenticated, setAuthentication] = useState(false);
-
+const UserSetting = (props: any) => {
+    const [isAuth, setAuth] = useState(false);
     return (
         <div>
                 <LogOut />
                 <Divider />
-                {isAuthenticated
-                    ? <EditProfile setAuth={setAuthentication}/>
-                    : <SecondAuthentication setAuth={setAuthentication} type={"modify"} />}
+                {isAuth
+                    ? <EditProfile setAuth={setAuth} setRefresh={props.setRefresh}/>
+                    : <SecondAuthentication setAuth={setAuth} type={"modify"} />}
                 <Divider />
                 <DeleteUser />
         </div>

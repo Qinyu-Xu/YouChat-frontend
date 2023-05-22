@@ -45,7 +45,8 @@ export const SenderBoard = (props: any) => {
     }, [props.to]);
 
     return (
-        <Modal open={props.open} width={750} onCancel={handleCancel} closable={false} cancelButtonProps={{style: {display: ok ? 'none' : "initial"}}} okButtonProps={{style: {display: 'none'}}}>
+        <Modal open={props.open} width={750} onCancel={handleCancel} closable={false} maskClosable={false}
+               cancelButtonProps={{style: {display: ok ? 'none' : "initial"}}} okButtonProps={{style: {display: 'none'}}}>
             { !ok ?
                 <div>
                     是否邀请对方进行视频通话
@@ -113,7 +114,8 @@ export const ReceiverBoard = (props: any) => {
 
 
     return (
-        <Modal open={open} width={750} onCancel={handleCancel} closable={false} cancelButtonProps={{style: {display: ok ? 'none' : "initial"}}} okButtonProps={{style: {display: 'none'}}}>
+        <Modal open={open} width={750} onCancel={handleCancel} closable={false} maskClosable={false}
+               cancelButtonProps={{style: {display: ok ? 'none' : "initial"}}} okButtonProps={{style: {display: 'none'}}}>
             { !ok ?
             <div>
                 是否邀请同意进行视频通话

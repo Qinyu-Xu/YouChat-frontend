@@ -6,27 +6,36 @@ import CircularJson from "circular-json";
 import {FileOutlined} from "@ant-design/icons";
 import {useEffect, useState} from "react";
 
-export const FileViewer = ({base}: any) => {
-    const [fileName, setFileName] = useState(null);
+const extractFileNameAndBase64 = (data) => {
+    const regex = /^(.*?)\/\/(.*)$/;
+    const matches = data.match(regex);
 
-    useEffect( () => {
-            fetch(base).then(res => res.blob()).then((blob: any) => {
-                setFileName(blob.name)
-            });
-        }
-    ,[]);
+    if (matches && matches.length === 3) {
+        const fileName = matches[1].trim();
+        const base64Data = matches[2].trim();
+        return { fileName, base64Data };
+    }
+
+    return { fileName: '文件！', base64Data: '' };
+};
+
+export const FileViewer = ({base}: any) => {
+    const {fileName, base64Data} = extractFileNameAndBase64(base);
+
     const handleClick = () => {
-        fetch(base).then(res => res.blob()).then(blob => {
+        fetch(base64Data).then(res => res.blob()).then(blob => {
             const url = URL.createObjectURL(blob);
             const win: any = window.open(url, "_blank");
             if(win !== null) win.focus();
             else message.error("弹窗未能正常弹出！");
+        }).catch((error: any) => {
+            message.error("文件编码有误！");
         });
     }
     return (
     <div onClick={handleClick}>
         <FileOutlined />
-        {fileName === null ? "文件" : fileName}
+        {fileName}
     </div>
     );
 }
@@ -52,14 +61,14 @@ export const FileIcon = (props: any) => {
                         id: store.getState().userId,
                         sessionId: props.sessionId,
                         timestamp: Date.now(),
-                        message: res,
+                        message: file.name + "//" +res,
                         messageType: "file"
                     }
                     const addM = {
                         "senderId": store.getState().userId,
                         "timestamp": Date.now(),
                         "messageId": -1,
-                        "message": res,
+                        "message": file.name + "//" + res,
                         "messageType": "file"
                     };
                     socket.send(CircularJson.stringify(message));
