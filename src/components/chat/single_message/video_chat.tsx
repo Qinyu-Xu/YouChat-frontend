@@ -26,7 +26,7 @@ export const SenderBoard = (props: any) => {
     }
 
     const handleCancel = () => {
-        props.setOpen(false);
+        if(!ok) props.setOpen(false);
     }
 
     useEffect(() => {
@@ -45,7 +45,7 @@ export const SenderBoard = (props: any) => {
     }, [props.to]);
 
     return (
-        <Modal open={props.open} width={750} onCancel={handleCancel}>
+        <Modal open={props.open} width={750} onCancel={handleCancel} closable={false} cancelButtonProps={{style: {display: ok ? 'none' : "initial"}}} okButtonProps={{style: {display: 'none'}}}>
             { !ok ?
                 <div>
                     是否邀请对方进行视频通话
@@ -92,7 +92,7 @@ export const ReceiverBoard = (props: any) => {
     }
 
     const handleCancel = () => {
-        setOpen(false);
+        if(!ok) setOpen(false);
     }
 
     useEffect(() => {
@@ -113,7 +113,7 @@ export const ReceiverBoard = (props: any) => {
 
 
     return (
-        <Modal open={open} width={750} onCancel={handleCancel}>
+        <Modal open={open} width={750} onCancel={handleCancel} closable={false} cancelButtonProps={{style: {display: ok ? 'none' : "initial"}}} okButtonProps={{style: {display: 'none'}}}>
             { !ok ?
             <div>
                 是否邀请同意进行视频通话
@@ -259,7 +259,7 @@ export const Sender = (props: any) => {
                 <br />
                 REMOTE
                 <br />
-                <video ref={remote_video} autoPlay muted />
+                <video ref={remote_video} autoPlay />
             </div>
             <Button onClick={onClick} > 挂断 </Button>
         </div>
@@ -390,7 +390,7 @@ export const Receiver = (props: any) => {
         <div>
             <div>
                 LOCAL <br />
-                <video ref={local_video} autoPlay />
+                <video ref={local_video} muted autoPlay />
                 <br />
                 REMOTE <br />
                 <video ref={remote_video} autoPlay />

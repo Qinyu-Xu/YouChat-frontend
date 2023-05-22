@@ -218,7 +218,6 @@ const ChatBoard = (props: any) => {
                     setAudio(res.text);
                     setIsAudioModalOpen(true);
                 });
-
             } else if (key === '4') {
                 setPickerOpen(true);
 
@@ -238,12 +237,9 @@ const ChatBoard = (props: any) => {
 
     const handleDelete = (res: any) => {
         res = JSON.parse(res.data);
-        const is_exist = () => {
-            return messages.filter((message: any) => message.messageId !== res.messageId).length !== 0;
-        }
-        if (res.type === 'delete' && is_exist()) {
+        if (res.type === 'delete') {
             if (res.code === 0) {
-                setMessages((messages: any) => messages.filter((message: any) => message.messageId !== res.messageId));
+                setMessages((messages: any) => [...(messages.filter((message: any) => message.messageId !== res.messageId))]);
             } else if (res.code === 1) {
                 message.error("User Not Existed");
             } else if (res.code === 2) {

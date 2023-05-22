@@ -96,7 +96,7 @@ const MessageItem = (props: any) => {
                 styles.message_item_istop
             :
                 styles.message_item}>
-            <Badge count={props.session.isMute ? 0 : props.session.unread} overflowCount={99}>
+            <Badge count={props.session.isMute || props.session.isSecret ? 0 : props.session.unread} overflowCount={99}>
                 { props.session.sessionType === 1 ?
                     <Avatar className={styles.message_item_left} src={image}/>
                     : canv === undefined
@@ -109,21 +109,20 @@ const MessageItem = (props: any) => {
                     {props.session.sessionName}
                 </div>
                 <div className={styles.message_item_content}>
-                    {
+                    { !props.session.isSecret ?
                         props.session.lastSender
-                    }
-                    {
-                        props.session.lastSender == "" ? "" : ":"
-                    }
-                    {
+                        +
+                        props.session.lastSender == "" || props.session.isSecret ? "" : ":"
+                        + (
                         props.session.type == "audio" ?
-                            "[语音]"
+                        "[语音]"
                         : ( props.session.type == "photo" ?
-                                "[图片]"
-                            :
-                                props.session.message
-                        )
+                        "[图片]"
+                        :
+                        props.session.message ))
+                        : "[私密群聊！]"
                     }
+
                 </div>
             </div>
             <div className={styles.message_item_right}>

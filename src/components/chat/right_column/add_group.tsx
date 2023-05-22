@@ -6,8 +6,6 @@ import {formatParams} from "@/utils/utilities";
 import {store} from "@/utils/store"
 
 const AddGroup = (props: any) => {
-    console.log(props.members);
-
     const [load, setLoad] = useState(true);
     const [friends, setFriends] = useState([]);
     const [selected, setSelected] = useState<any>(
