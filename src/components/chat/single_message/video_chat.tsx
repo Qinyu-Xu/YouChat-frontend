@@ -136,6 +136,7 @@ export const Sender = (props: any) => {
     const remote_video = useRef<any>();
     const [stream, setStream] = useState<any>(null);
     const [peer, setPeer] = useState<any>(null);
+    const [ready, setReady] = useState(false);
     const socket: any = store.getState().webSocket;
 
     useEffect(() => {getMedia();}, []);
@@ -164,7 +165,7 @@ export const Sender = (props: any) => {
         setPeer(Peer);
     };
 
-    const peerInit = async () => {
+    const peerOffer = async () => {
         let offer = await peer.createOffer();
         peer.setLocalDescription(offer);
         socket.send(CircularJson.stringify({
@@ -193,6 +194,7 @@ export const Sender = (props: any) => {
 
             stream.getTracks().forEach((track: MediaStreamTrack) => {
                 peer.addTrack(track, stream);
+                setReady(true);
             });
 
             peer.ontrack = async (event: any) => {
@@ -209,9 +211,12 @@ export const Sender = (props: any) => {
             }
 
             peer.addEventListener("connectionstatechange", handleConnectionStateChange);
-            peerInit();
 
         }}, [peer, props.ok, stream]);
+
+    useEffect(() => {
+        if(ready) peerOffer();
+    }, [ready])
 
     const handleCandid = (data: any) => {
         data = JSON.parse(data.data);
@@ -250,6 +255,7 @@ export const Sender = (props: any) => {
         }
         props.setOpen(false);
         props.setOk(false);
+        setReady(false);
     }
 
     return (
@@ -272,9 +278,11 @@ export const Receiver = (props: any) => {
 
     const local_video = useRef<any>();
     const remote_video = useRef<any>();
+    const socket: any = store.getState().webSocket;
     const [stream, setStream] = useState<any>(null);
     const [peer, setPeer] = useState<any>(null);
-    const socket: any = store.getState().webSocket;
+    const [offerData, setOfferData] = useState<any>(null);
+    const [ready, setReady] = useState(false);
 
     const getMedia = async() => {
         let ori_stream = await navigator.mediaDevices.getUserMedia({
@@ -321,6 +329,7 @@ export const Receiver = (props: any) => {
             };
             stream.getTracks().forEach((track: MediaStreamTrack) => {
                 peer.addTrack(track, stream);
+                setReady(true);
             });
             peer.ontrack = async (event: any) => {
                 let [remoteStream] = event.streams;
@@ -350,20 +359,29 @@ export const Receiver = (props: any) => {
 
     const handleOffer = async (data: any) => {
         data = JSON.parse(data.data);
+
         if(data.type === "offer" && data.from !== store.getState().userId) {
-            let offer = new RTCSessionDescription(data.data);
-            await peer.setRemoteDescription(offer);
-            let answer = await peer.createAnswer();
-            await peer.setLocalDescription(answer);
-            socket.send(CircularJson.stringify({
-                type: 'answer',
-                from: data.to,
-                to: data.from,
-                sessionId: data.sessionId,
-                data: answer,
-            }));
+            setOfferData(data);
         }
+    };
+
+    const readyOffer = async () => {
+        let offer = new RTCSessionDescription(offerData.data);
+        await peer.setRemoteDescription(offer);
+        let answer = await peer.createAnswer();
+        await peer.setLocalDescription(answer);
+        socket.send(CircularJson.stringify({
+            type: 'answer',
+            from: offerData.to,
+            to: offerData.from,
+            sessionId: offerData.sessionId,
+            data: answer,
+        }));
     }
+
+    useEffect(() => {
+        if(ready) readyOffer();
+    }, [ready, offerData])
 
     useEffect(() => {
         if(peer != null) {
@@ -386,6 +404,8 @@ export const Receiver = (props: any) => {
         }
         props.setOpen(false);
         props.setOk(false);
+        setReady(false);
+        setOfferData(null);
     }
 
     return  (
