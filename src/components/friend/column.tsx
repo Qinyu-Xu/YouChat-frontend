@@ -53,7 +53,7 @@ const FriendList = (props: FriendListProps) => {
 
 	props.groups?.forEach(g => {
 		List.push(
-			<div className={styles.group_name}>
+			<div className={styles.group_name} key={g.group}>
 				{g.group}
 			</div>
 		)
