@@ -16,6 +16,8 @@ const UserList = (props: any) => {
             // setFriends((friends) => friends.filter((friend: any) => friend && friend.id !== store.getState().userId));
         })}, []);
 
+    console.log(friends);
+
     const member_type = (role: number) => {
         if (role === 0) {
             return "群主";
@@ -247,7 +249,7 @@ const UserList = (props: any) => {
             renderItem={(item: any, index: any) => (
                 item.role === 3 ? <div></div> :
                 <List.Item >
-                    <Dropdown menu={{ items: friends.filter((friend: any) => friend && friend.id === item.id).length === 1 ? 
+                    <Dropdown menu={{ items: (friends.filter((friend: any) => friend && friend.id === item.id).length === 1 || item.id === store.getState().userId) ? 
                     (props.role === 0 && item.role === 1
                         ? 
                         master_to_manager_items 
