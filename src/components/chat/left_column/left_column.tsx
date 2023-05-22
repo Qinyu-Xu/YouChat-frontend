@@ -184,8 +184,8 @@ const LeftColumn = (props: any) => {
                                 "sessionName": msg.sessionName,
                                 "sessionType": msg.sessionType,
                                 "timestamp": new_list[i].timestamp,
-                                "type": new_list[i].messageType,
-                                "lastSender": new_list[i].senderName,
+                                "type": new_list[i].type,
+                                "lastSender": new_list[i].lastSender,
                                 "message": new_list[i].message,
                                 "isTop": new_list[i].isTop,
                                 "isMute": new_list[i].isMute,
@@ -204,6 +204,7 @@ const LeftColumn = (props: any) => {
                 }
                 old_list = old_list.sort(cmp);
                 props.setList([...old_list]);
+                console.log(props.list);
             } else {
                 message.error("获取聊天列表发生错误！").then(_ => _);
             }
@@ -305,7 +306,7 @@ const LeftColumn = (props: any) => {
                     "sessionType": item.sessionType,
                     "timestamp": msg.timestamp,
                     "type": msg.messageType,
-                    "lastSender": msg.senderName,
+                    "lastSender": msg.SenderName,
                     "message": msg.message,
                     "isTop": item.isTop,
                     "isMute": item.isMute,
