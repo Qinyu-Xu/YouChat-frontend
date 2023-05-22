@@ -6,7 +6,7 @@ import CircularJson from "circular-json";
 import {FileOutlined} from "@ant-design/icons";
 import {useEffect, useState} from "react";
 
-const extractFileNameAndBase64 = (data) => {
+const extractFileNameAndBase64 = (data: any) => {
     const regex = /^(.*?)\/\/(.*)$/;
     const matches = data.match(regex);
 
