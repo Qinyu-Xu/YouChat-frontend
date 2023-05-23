@@ -112,7 +112,7 @@ const MessageItem = (props: any) => {
                     { !props.session.isSecret ?
                         props.session.lastSender
                         +
-                        props.session.lastSender == "" || props.session.isSecret ? "" : ":"
+                        (props.session.lastSender == "" || props.session.isSecret ? "" : ":")
                         + (
                         props.session.type == "audio" ?
                         "[语音]"
