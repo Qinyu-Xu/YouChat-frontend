@@ -638,7 +638,7 @@ const ChatBoard = (props: any) => {
                                     } />
                                 </div>
                                 <Tooltip title={
-                                    (message.senderName ?  message.senderName : members.filter((member: any) => member.id === store.getState().userId)[0]?.nickname) + " " +
+                                    (message.senderName ?  message.senderName : "Myself") + " " +
                                     moment(message.timestamp).format("MM/DD HH:mm:ss")
                                 } trigger="hover"
                                     arrow={false} placement="topRight" color="rgba(100,100,100,0.5)">
