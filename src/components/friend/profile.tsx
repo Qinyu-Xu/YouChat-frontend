@@ -2,7 +2,6 @@ import styles from '@/styles/profile.module.css'
 import {Avatar, Button, Input, Spin} from "antd";
 import { request } from "@/utils/network";
 import {useEffect, useState} from 'react';
-import {store} from "@/utils/store";
 
 interface ProfileProps {
     profile: any,
@@ -63,7 +62,7 @@ function Profile(props: ProfileProps) {
             </Button>
         );
     }
-    else if (props.profile.group == "RequestTo") {
+    else if (props.profile.group == "RequestTo" || props.profile.group == "Myself") {
 
     }
     else {

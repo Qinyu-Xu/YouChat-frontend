@@ -1,6 +1,6 @@
 import styles from "@/styles/chat.module.css";
 import {useState} from "react";
-import {Receiver, ReceiverBoard, Sender, SenderBoard} from "@/components/chat/single_message/video_chat";
+import {SenderBoard} from "@/components/chat/single_message/video_chat";
 
 export const VideoIcon = (props: any) => {
 

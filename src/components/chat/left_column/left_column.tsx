@@ -39,9 +39,9 @@ const SecondAuth = (props: any) => {
 
     const handleOk = async () => {
         if (loginType === 'email') {
-            const email = form.getFieldValue('email');
+            const email_ = form.getFieldValue('email');
             const veri_code = form.getFieldValue('captcha');
-            if( email === "" || veri_code === "" ) {
+            if( email_ === "" || veri_code === "" ) {
                 message.error('请输入完整的信息！');
                 return;
             }
@@ -49,7 +49,7 @@ const SecondAuth = (props: any) => {
                 "api/people/modify/email",
                 "POST",
                 JSON.stringify({
-                    "email": email,
+                    "email": email_,
                     "veri_code": veri_code as string,
                 })
             );
@@ -119,7 +119,7 @@ const LeftColumn = (props: any) => {
         res = JSON.parse(res.data);
         if(res.type === "new_session") {
             const is_exist = () => {
-                return (props.list.filter((message: any) => message.sessionId === res.sessionId)).length !== 0;
+                return (props.list.filter((_message: any) => _message.sessionId === res.sessionId)).length !== 0;
             };
             if (!is_exist()) {
                 refreshList();
@@ -302,7 +302,7 @@ const LeftColumn = (props: any) => {
     useEffect(() => {
         const socket: any = store.getState().webSocket;
 
-        const handleNew =  (res: any) => {
+        const handleNewSend =  (res: any) => {
             const msg = JSON.parse(res.data);
             if (msg.type === 'send') {
                 props.setList((list: any) => list.map((item: any) => item.sessionId !== msg.sessionId ? item : {
@@ -330,9 +330,9 @@ const LeftColumn = (props: any) => {
         };
 
         if(isBrowser && socket != null && socket.readyState === 1) {
-            socket.addEventListener("message", handleNew);
+            socket.addEventListener("message", handleNewSend);
             return () => {
-                socket.removeEventListener("message", handleNew);
+                socket.removeEventListener("message", handleNewSend);
             }
         }
     }, [id, loadname, sorted, store.getState().webSocket]);

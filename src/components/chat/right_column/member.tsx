@@ -32,6 +32,7 @@ const AddMember = (props: any) => {
                     "readTime": Date.now(),
                     "role": 3
                 }
+                store.dispatch({type: 'addMember', members: {key: props.sessionId, value: [...store.getState().members[props.sessionId], addM]}})
                 props.setMembers((members: any) => [...members, addM]);
             })
             

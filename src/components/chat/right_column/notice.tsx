@@ -15,9 +15,7 @@ const NoticePicker = (props: any) => {
                 <List.Item>
                     <List.Item.Meta
                         avatar={<Avatar src={
-                            props.images.filter( (image: any) => image.id === item.senderId)[0] === undefined
-                                ? "/headshot/01.svg"
-                                : props.images.filter( (image: any) => image.id === item.senderId)[0].image
+                            !props.images.hasOwnProperty(item.senderId) ?"/headshot/01.svg" :props.images[item.senderId]
                         } />}
                         title={(props.members.filter((member: any) => member.id === item.senderId))[0] === undefined
                                 ? "Stranger" :

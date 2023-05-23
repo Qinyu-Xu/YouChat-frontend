@@ -16,8 +16,6 @@ const UserList = (props: any) => {
             // setFriends((friends) => friends.filter((friend: any) => friend && friend.id !== store.getState().userId));
         })}, []);
 
-    console.log(friends);
-
     const member_type = (role: number) => {
         if (role === 0) {
             return "群主";
@@ -282,9 +280,7 @@ const UserList = (props: any) => {
                         <Card>
                             <List.Item.Meta
                                 avatar={<Avatar src={
-                                    props.images.filter( (image: any) => image.id === item.id)[0] === undefined
-                                        ? "/headshot/01.svg"
-                                        : props.images.filter( (image: any) => image.id === item.id)[0].image
+                                    !props.images.hasOwnProperty(item.id) ?"/headshot/01.svg" :props.images[item.id]
                                 } />}
                                 title={(props.members.filter((member: any) => member.id === item.id))[0] === undefined
                                     ? "Stranger" :

@@ -98,13 +98,13 @@ export const ReceiverBoard = (props: any) => {
 
     useEffect(() => {
         const socket: any = store.getState().webSocket;
-        const handleNotice = (res: any) => {
-            res = JSON.parse(res.data);
-            if(res.type === "notice_video" && res.status === "query" && res.from !== store.getState().userId) {
-                setSessionId(res.sessionId);
-                setVideo(res.is_video);
-                setTo(res.from);
-                setRes(res);
+        const handleNotice = (res_: any) => {
+            res_ = JSON.parse(res_.data);
+            if(res_.type === "notice_video" && res_.status === "query" && res_.from !== store.getState().userId) {
+                setSessionId(res_.sessionId);
+                setVideo(res_.is_video);
+                setTo(res_.from);
+                setRes(res_);
                 setOpen(true);
             }
         }

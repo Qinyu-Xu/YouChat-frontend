@@ -18,7 +18,7 @@ const AddGroup = (props: any) => {
     useEffect(() => {
         request("api/people/friends?"+formatParams({id: store.getState().userId}), "GET", "").then((res: any) => {
             setFriends(res.friend);
-            setFriends((friends) => friends.filter((friend: any) => friend && friend.id !== store.getState().userId));
+            setFriends((_friends) => _friends.filter((friend: any) => friend && friend.id !== store.getState().userId));
             setLoad(false);
         })}, [open]);
 
@@ -39,9 +39,8 @@ const AddGroup = (props: any) => {
 
     const onChange = (item: any) => {
         return (e: any) => {
-            console.log(selected);
-            if (e.target.checked) setSelected((selected: any) => [...selected, item.id]);
-            else setSelected((selected: any) => selected.filter((x: any) => x !== item.id));
+            if (e.target.checked) setSelected((_selected: any) => [..._selected, item.id]);
+            else setSelected((_selected: any) => _selected.filter((x: any) => x !== item.id));
         };
     }
     return (
