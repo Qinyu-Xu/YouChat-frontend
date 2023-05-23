@@ -8,7 +8,9 @@ const defaultState = {
     webSocket: null,
     userId: 0,
     csrf: '',
-    imgMap: new Map<number, Map<number,string>>()
+    message: {} as { [key: number]: any },
+    imgMap: {} as { [key: number]: any },
+    members: {} as { [key: number]: any },
 }
 
 const persistConfig = {
@@ -17,6 +19,7 @@ const persistConfig = {
 };
 
 const reducer = (state = defaultState, action: any) => {
+
       switch(action.type) {
           case 'socketConnect':
               return {...state, webSocket: action.data};
@@ -25,10 +28,19 @@ const reducer = (state = defaultState, action: any) => {
           case 'csrf':
               return {...state, csrf: action.data};
           case 'addImage':
-              const { key, value } = action.data;
-              const newMap = new Map(state.imgMap);
-              newMap.set(key, value);
-              return { ...state, imgMap: newMap };
+              const  {key, value} = action.data;
+              state.imgMap[key] = value;
+              return { ...state, imgMap: state.imgMap };
+          case 'addMember':
+              const sessionId = action.members.key;
+              const members = action.members.value;
+              state.members[sessionId] = members;
+              return { ...state, members: state.members};
+          case 'addMessage':
+              const id = action.message.key;
+              const msg = action.message.value;
+              state.message[id] = msg;
+              return { ...state, message: state.message};
           default:
               return state;
       }

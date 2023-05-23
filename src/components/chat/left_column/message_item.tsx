@@ -64,9 +64,14 @@ const MessageItem = (props: any) => {
                     const id = (res.members.filter((member: any) =>
                             member.id !== store.getState().userId)
                     )[0].id;
-                    request("api/people/img/" + id, "GET", "").then((r: any) => {
-                        setImage(r.img);
-                    });
+                    if(!store.getState().imgMap.hasOwnProperty(id)) {
+                        request("api/people/img/" + id, "GET", "").then((r: any) => {
+                            store.dispatch({type: "addImage", data: {key: id, value: r.img}});
+                            setImage(r.img);
+                        });
+                    } else {
+                        setImage(store.getState().imgMap[id]);
+                    }
                 }
             )
         } else {
@@ -77,9 +82,15 @@ const MessageItem = (props: any) => {
                 "").then((res: any) => {
                     let i = 0;
                     for(; i < 4 && i < res.members.length; ++i) {
-                        request("api/people/img/" + res.members[i].id, "GET", "").then((r: any) => {
-                            setCanv((images: any) => [...images, r.img]);
-                        });
+                        const resId = res.members[i].id;
+                        if(!store.getState().imgMap.hasOwnProperty(res.members[i].id)) {
+                            request("api/people/img/" + res.members[i].id, "GET", "").then((r: any) => {
+                                store.dispatch({type: "addImage", data: {key: r.user_id, value: r.img}});
+                                setCanv((images: any) => [...images, r.img]);
+                            });
+                        } else {
+                            setCanv((images: any) => [...images, store.getState().imgMap[resId]]);
+                        }
                     }
                     while(i < 4) {
                         i++;

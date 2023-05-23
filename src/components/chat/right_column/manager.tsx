@@ -23,6 +23,17 @@ const RequestList = (props: any) => {
             //     else if(item.style.right === "0px") item.style.right = "-20rem";
             //     else item.style.right = "0px";
             // }
+            store.dispatch({type: 'addMember', members: {key: props.sessionId, value: store.getState().members[props.sessionId].map((member: any) => {
+                return member.id === applicant_id
+                    ?
+                    {
+                        id: member.id,
+                        nickname: member.nickname,
+                        readTime: member.readTime,
+                        role: 2
+                    }
+                    : member;
+            })}});
             props.setMembers((members: any) => members.map((member: any) => {
                 return member.id === applicant_id
                     ?
@@ -49,9 +60,7 @@ const RequestList = (props: any) => {
                     <Card>
                             <List.Item.Meta
                                 avatar={<Avatar src={
-                                    props.images.filter( (image: any) => image.id === item.id)[0] === undefined
-                                        ? "/headshot/01.svg"
-                                        : props.images.filter( (image: any) => image.id === item.id)[0].image
+                                    !props.images.hasOwnProperty(item.senderId) ?"/headshot/01.svg" :props.images[item.senderId]
                                 } />}
                                 title={(props.members.filter((member: any) => member.id === item.id))[0] === undefined
                                     ? "Stranger" :

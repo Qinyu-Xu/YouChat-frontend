@@ -14,6 +14,7 @@ import { AudioPlayer } from "@/components/chat/single_message/audio";
 import { FileViewer } from "@/components/chat/single_message/file";
 import { MultiPicker } from "@/components/chat/single_message/history";
 import MultiChat from "@/components/chat/single_message/history";
+import {number} from "prop-types";
 
 const left_items: MenuProps['items'] = [
     {
@@ -127,7 +128,6 @@ const ChatBoard = (props: any) => {
 
     const [messages, setMessages] = useState<any>([]);
     const [members, setMembers] = useState<any>([]);
-    const [images, setImages] = useState<any>([]);
     const [height, setHeight] = useState(0);
     const [iload, setIload] = useState(false);
     const [mload, setMload] = useState(false);
@@ -351,6 +351,12 @@ const ChatBoard = (props: any) => {
         }
     };
 
+    useEffect(() => {
+        if(messages) {
+            store.dispatch({type: 'addMessage', message: {key: props.session.sessionId, value: messages}});
+        }
+    }, [messages]);
+
     const handlePull = (res: any) => {
         res = JSON.parse(res.data);
 
@@ -400,12 +406,9 @@ const ChatBoard = (props: any) => {
                                     ? <div>全体成员</div>
                                     : <div>
                                         <Avatar src={
-                                            images.filter((image: any) =>
-                                                image.id.toString() === id)[0] === undefined
-                                                ?
-                                                    "/headshot/01.svg"
-                                                :
-                                                    images.filter((image: any) => image.id.toString() === id)[0].image
+                                            store.getState().imgMap.hasOwnProperty(parseInt(id))
+                                                ? "/headshot/01.svg"
+                                                : store.getState().imgMap[parseInt(id)]
                                         } />
                                             &nbsp;&nbsp;
                                             {name}
@@ -450,6 +453,12 @@ const ChatBoard = (props: any) => {
     };
 
     useEffect(() => {
+        if(memload) console.log("memload");
+        if(iload) console.log("iload");
+        if(mload) console.log("mload");
+    },[memload, iload, mload])
+
+    useEffect(() => {
         sessionId.current = props.session.sessionId;
     }, [props.session.sessionId]);
 
@@ -483,9 +492,10 @@ const ChatBoard = (props: any) => {
     useEffect(() => {
         for (let i = 0; i < members.length; ++i) {
             if(!iload) {
+                console.log(members[i]);
                 request("api/people/img/" + members[i].id, "GET", "").then((r: any) => {
-                    if (images.every((image: any) => image.id !== members[i].id)) {
-                        setImages((images: any) => [...images, {id: members[i].id, image: r.img}]);
+                    if (!store.getState().imgMap.hasOwnProperty(members[i].id)) {
+                        store.dispatch({type: "addImage", data: {key: members[i].id, value: r.img}});
                     }
                 }).then(() => {});
             }
@@ -499,22 +509,29 @@ const ChatBoard = (props: any) => {
         setMload(false);
         setIload(false);
         setMemload(false);
-        request("/api/session/chatroom?id=" + props.session.sessionId, "GET", "")
-            .then((res: any) => {
-                setMembers(res.members);
-                setMemload(true);
-                setRole(res.members.filter((member: any) => member.id === store.getState().userId)[0].role);
-            });
+        if(store.getState().members.hasOwnProperty(props.session.sessionId)) {
+            console.log(1);
+            setMembers(store.getState().members[props.session.sessionId]);
+            setMemload(true);
+        } else {
+            request("/api/session/chatroom?id=" + props.session.sessionId, "GET", "")
+                .then((res: any) => {
+                    store.dispatch({type: "addMember", members: {key: props.session.sessionId, value: res.members}});
+                    setMembers(res.members);
+                    setMemload(true);
+                    setRole(res.members.filter((member: any) => member.id === store.getState().userId)[0].role);
+                });
+        }
     }, [props.session.sessionId]);
 
     useEffect(() => {
         if (members.length !== 0) {
             let isTrue = true;
             for (let i = 0; i < members.length; ++i)
-                if (images.every((image: any) => image.id !== members[i].id)) isTrue = false;
+                if (store.getState().imgMap.hasOwnProperty(members[i].id)) isTrue = false;
             if (isTrue) setIload(true);
         }
-    }, [images, props.session.sessionId]);
+    }, [store.getState().imgMap, props.session.sessionId]);
 
     useEffect(() => {
         setMessages((_: any) => []);
@@ -523,7 +540,12 @@ const ChatBoard = (props: any) => {
             socket.addEventListener("message", handleSend);
             socket.addEventListener("message", handlePull);
             socket.addEventListener("message", handleDelete);
-            getPull(Date.now());
+            if(!store.getState().message.hasOwnProperty(props.session.sessionId)) {
+                getPull(Date.now());
+            } else {
+                setMload(true);
+                setMessages(store.getState().message[props.session.sessionId]);
+            }
         }
         return () => {
             socket.removeEventListener('message', handleSend);
@@ -589,7 +611,7 @@ const ChatBoard = (props: any) => {
         }
     }, [messages, members, memload]);
 
-    return iload && mload && memload
+    return mload && memload
         ?
         (
             <div className={styles.container}>
@@ -599,18 +621,17 @@ const ChatBoard = (props: any) => {
                 <div className={styles.menu_show}>
                     <MenuShow />
                 </div>
-
                 <div id="board" className={styles.display_board} >
                     {messages.map((message: any, index: any) =>
                         message.senderId === store.getState().userId ? (
                             <div className={styles.message} key={index + 1} id={message.messageId}>
                                 <div className={styles.headshot_right}>
                                     <Avatar src={
-                                        images.filter((image: any) => image.id === message.senderId)[0] === undefined
+                                        !store.getState().imgMap.hasOwnProperty(message.senderId)
                                             ?
                                             "/headshot/01.svg"
                                             :
-                                            images.filter((image: any) => image.id === message.senderId)[0].image
+                                            store.getState().imgMap[message.senderId]
                                     } />
                                 </div>
                                 <Tooltip title={
@@ -673,11 +694,11 @@ const ChatBoard = (props: any) => {
                                         .map((member: any, index: any) => (
                                             <div key={index}>
                                                 <Avatar src={
-                                                    images.filter((image: any) => image.id === member.id)[0] === undefined
+                                                    !store.getState().imgMap.hasOwnProperty(member.id)
                                                         ?
                                                         "/headshot/01.svg"
                                                         :
-                                                        images.filter((image: any) => image.id === member.id)[0].image
+                                                        store.getState().imgMap[member.id]
                                                 } />
                                                 &nbsp;&nbsp;
                                                 {member.nickname}
@@ -702,11 +723,11 @@ const ChatBoard = (props: any) => {
                             <div className={styles.message} key={index + 1} id={message.messageId}>
                                 <div className={styles.headshot_left}>
                                     <Avatar src={
-                                        images.filter((image: any) => image.id === message.senderId)[0] === undefined
+                                        !store.getState().imgMap.hasOwnProperty(message.senderId)
                                             ?
                                             "/headshot/01.svg"
                                             :
-                                            images.filter((image: any) => image.id === message.senderId)[0].image
+                                            store.getState().imgMap[message.senderId]
                                     } />
                                 </div>
                                 <Tooltip title={
@@ -769,11 +790,11 @@ const ChatBoard = (props: any) => {
                                         .map((member: any, index: any) => (
                                             <div key={index}>
                                                 <Avatar src={
-                                                    images.filter((image: any) => image.id === member.id)[0] === undefined
+                                                    !store.getState().imgMap.hasOwnProperty(member.id)
                                                         ?
                                                         "/headshot/01.svg"
                                                         :
-                                                        images.filter((image: any) => image.id === member.id)[0].image
+                                                        store.getState().imgMap[member.id]
                                                 } />
                                                 &nbsp;&nbsp;
                                                 {member.nickname}
@@ -799,7 +820,7 @@ const ChatBoard = (props: any) => {
                 </div>
                 <SingleMessage sessionId={props.session.sessionId} setMessages={setMessages}
                     members={members} reply={reply} text={text} setText={setText} />
-                <RightColumn session={props.session} members={members} messages={messages} images={images} setRefresh={props.setRefresh}
+                <RightColumn session={props.session} members={members} messages={messages} images={store.getState().imgMap} setRefresh={props.setRefresh}
                     setSession={props.setSession} setMessages={setMessages} role={role} setMembers={setMembers} setRole={setRole} />
                 <Modal title="翻译结果" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
                     <p>{translated}</p>
@@ -808,7 +829,7 @@ const ChatBoard = (props: any) => {
                     <p>{audio}</p>
                 </Modal>
                 <MultiPicker sessionId={props.session.sessionId} members={members} setMessages={setMessages}
-                    images={images} setOpen={setPickerOpen} open={isPickerOpen} list={props.list} />
+                    images={store.getState().imgMap} setOpen={setPickerOpen} open={isPickerOpen} list={props.list} />
                 <MultiChat open={isMultiChat} setOpen={setMultiChat} messages={multiSource} />
             </div>
         )

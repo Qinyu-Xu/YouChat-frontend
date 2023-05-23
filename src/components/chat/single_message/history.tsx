@@ -96,9 +96,7 @@ export const MultiPicker = (props: any) => {
                             <Checkbox checked={selected.filter((s: any) => s.messageId === item.messageId).length !== 0} onChange={handleChoose(item)} />
                             <List.Item.Meta
                                 avatar={<Avatar src={
-                                    props.images.filter( (image: any) => image.id === item.senderId)[0] === undefined
-                                        ? "/headshot/01.svg"
-                                        : props.images.filter( (image: any) => image.id === item.senderId)[0].image
+                                    !props.images.hasOwnProperty(item.senderId) ?"/headshot/01.svg" :props.images[item.senderId]
                                 } />}
                                 title={(props.members.filter((member: any) => member.id === item.senderId))[0] === undefined
                                     ? "Stranger" :
@@ -124,7 +122,6 @@ const MultiChat = (props: any) => {
         props.setOpen(false);
     };
 
-    const [images, setImages] = useState<any>([]);
     const [members, setMembers] = useState<any>([]);
 
     useEffect(() => {
@@ -135,9 +132,6 @@ const MultiChat = (props: any) => {
                         id: props.messages[i].senderId,
                         nickname: res.profile.nickname
                     }]);
-                });
-                request("api/people/img/" + props.messages[i].senderId, "GET", "").then(res => {
-                    setImages((images: any) => [...images, {id: props.messages[i].senderId, image: res.img}]);
                 });
             }
         }
@@ -152,9 +146,7 @@ const MultiChat = (props: any) => {
                 <List.Item>
                     <List.Item.Meta
                         avatar={<Avatar src={
-                            images.filter( (image: any) => image.id === item.senderId)[0] === undefined
-                                ? "/headshot/01.svg"
-                                : images.filter( (image: any) => image.id === item.senderId)[0].image
+                            !props.images.hasOwnProperty(item.senderId) ?"/headshot/01.svg" :props.images[item.senderId]
                         } />}
                         title={(members.filter((member: any) => member.id === item.senderId))[0] === undefined
                             ? "Stranger" :
