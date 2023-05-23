@@ -34,93 +34,93 @@ const UserList = (props: any) => {
     const master_to_manager_items: MenuProps['items'] = [
         {
           key: '0',
-          label: (<text>转让群主</text>),
+          label: "转让群主",
         },
         {
           key: '2',
-          label: (<text>设为群成员</text>),
+          label: "设为群成员",
         },
         {
           key: '4',
-          label: (<text>移出群聊</text>),
+          label: "移出群聊",
         },
     ];
 
     const master_to_member_items: MenuProps['items'] = [
         {
           key: '0',
-          label: (<text>转让群主</text>),
+          label: "转让群主",
         },
         {
           key: '1',
-          label: (<text>设为管理员</text>),
+          label: "设为管理员",
         },
         {
           key: '4',
-          label: (<text>移出群聊</text>),
+          label: "移出群聊",
         },
     ];
 
     const manager_to_member_items: MenuProps['items'] = [
         {
           key: '4',
-          label: (<text>移出群聊</text>),
+          label: "移出群聊",
         },
     ];
 
     const master_to_manager_items_friend: MenuProps['items'] = [
         {
           key: '0',
-          label: (<text>转让群主</text>),
+          label: "转让群主",
         },
         {
           key: '2',
-          label: (<text>设为群成员</text>),
+          label: "设为群成员",
         },
         {
           key: '3',
-          label: (<text>添加好友</text>),
+          label: "添加好友",
         },
         {
           key: '4',
-          label: (<text>移出群聊</text>),
+          label: "移出群聊",
         },
     ];
 
     const master_to_member_items_friend: MenuProps['items'] = [
         {
           key: '0',
-          label: (<text>转让群主</text>),
+          label: "转让群主",
         },
         {
           key: '1',
-          label: (<text>设为管理员</text>),
+          label: "设为管理员",
         },
         {
           key: '3',
-          label: (<text>添加好友</text>),
+          label: "添加好友",
         },
         {
           key: '4',
-          label: (<text>移出群聊</text>),
+          label: "移出群聊",
         },
     ];
 
     const manager_to_member_items_friend: MenuProps['items'] = [
         {
           key: '3',
-          label: (<text>添加好友</text>),
+          label: "添加好友",
         },
         {
           key: '4',
-          label: (<text>移出群聊</text>),
+          label: "移出群聊",
         },
     ];
 
     const only_friend: MenuProps['items'] = [
         {
           key: '3',
-          label: (<text>添加好友</text>),
+          label: "添加好友",
         },
     ];
     const nothing: MenuProps['items'] = [

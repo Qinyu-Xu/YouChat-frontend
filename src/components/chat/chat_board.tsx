@@ -489,11 +489,11 @@ const ChatBoard = (props: any) => {
     useEffect(() => {
         for (let i = 0; i < members.length; ++i) {
             if(!iload) {
-                request("api/people/img/" + members[i].id, "GET", "").then((r: any) => {
-                    if (!store.getState().imgMap.hasOwnProperty(members[i].id)) {
+                if(!store.getState().imgMap.hasOwnProperty(members[i].id)) {
+                    request("api/people/img/" + members[i].id, "GET", "").then((r: any) => {
                         store.dispatch({type: "addImage", data: {key: members[i].id, value: r.img}});
-                    }
-                }).then(() => {});
+                    }).then(() => {});
+                }
             }
         }
     }, [members]);

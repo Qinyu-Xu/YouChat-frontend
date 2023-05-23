@@ -8,6 +8,7 @@ import {store} from "@/utils/store"
 const AddGroup = (props: any) => {
     const [load, setLoad] = useState(true);
     const [friends, setFriends] = useState([]);
+    const [isDisabled, setDisabled] = useState(false);
     const [selected, setSelected] = useState<any>(
         props.members.filter((x: any) => x.id !== store.getState().userId).length === 1 ?
         [store.getState().userId, props.members.filter((x: any) => x.id !== store.getState().userId)[0]?.id]
@@ -23,11 +24,13 @@ const AddGroup = (props: any) => {
         })}, [open]);
 
     const handleOk = () => {
+        setDisabled(true);
         request("api/session/chatroom", "PUT", JSON.stringify({
             userId: store.getState().userId,
             sessionName: name,
             initial: selected,
         })).then(_=> {
+            setDisabled(false);
             props.setOpen(false);
             props.setRefresh((s: any) => !s);
         });
@@ -44,7 +47,7 @@ const AddGroup = (props: any) => {
         };
     }
     return (
-        <Modal title={"创建群聊"} open={props.open} onOk={handleOk} onCancel={handleCancel}>
+        <Modal title={"创建群聊"} open={props.open} onOk={handleOk} onCancel={handleCancel} okButtonProps={{disabled: isDisabled}}>
             {load
                 ?
                 (
