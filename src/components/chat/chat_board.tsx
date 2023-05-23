@@ -258,7 +258,6 @@ const ChatBoard = (props: any) => {
                 });
             } else if (key === '4') {
                 setPickerOpen(true);
-
             }
             else if (key === '5') {
                 if(Date.now() - timestamp > 120000) {
@@ -673,7 +672,7 @@ const ChatBoard = (props: any) => {
                                                                 message.messageType === "history"
                                                                     ?
                                                                     <div className={styles.message_right} onClick={handleMulti(message)}>
-                                                                        转发消息
+                                                                        [转发消息]
                                                                     </div>
                                                                     :
                                                                     <div>
@@ -769,7 +768,7 @@ const ChatBoard = (props: any) => {
                                                                 message.messageType === "history"
                                                                     ?
                                                                     <div className={styles.message_left} onClick={handleMulti(message)}>
-                                                                        转发消息
+                                                                        [转发消息]
                                                                     </div>
                                                                     :
                                                                     <div>
@@ -822,7 +821,7 @@ const ChatBoard = (props: any) => {
                 <Modal title="转文字结果" open={isAudioModalOpen} onOk={handleAudioOk} onCancel={handleAudioCancel}>
                     <p>{audio}</p>
                 </Modal>
-                <MultiPicker sessionId={props.session.sessionId} members={members} setMessages={setMessages}
+                <MultiPicker sessionId={props.session.sessionId} members={members} setMessages={setMessages} messages={messages}
                     images={store.getState().imgMap} setOpen={setPickerOpen} open={isPickerOpen} list={props.list} />
                 <MultiChat open={isMultiChat} setOpen={setMultiChat} messages={multiSource} />
             </div>

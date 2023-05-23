@@ -7,12 +7,6 @@ export const formatParams = (params: any) => {
         .join("&");
 };
 
-export function getRandomNumber(min: number, max: number) {
-    const number = Math.floor(Math.random() * (max - min + 1)) + min;
-    if(number >= 1 && number <= 9) return "0" + number.toString();
-    else return number.toString();
-}
-
 export const fileToBase64 = async (file: any) => {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();

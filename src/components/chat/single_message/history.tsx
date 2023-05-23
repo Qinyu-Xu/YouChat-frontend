@@ -4,22 +4,15 @@ import {formatParams} from "@/utils/utilities";
 import {store} from "@/utils/store";
 import {Avatar, Checkbox, Image, List, Modal, Select, Radio} from "antd";
 import CircularJson from "circular-json";
+import {FileViewer} from "@/components/chat/single_message/file";
+import {AudioPlayer} from "@/components/chat/single_message/audio";
 
 export const MultiPicker = (props: any) => {
-    const [messages, setMessages] = useState<any>([]);
     const [selected, setSelected] = useState<any>([]);
     const [session, setSession] = useState(-1);
     const [transfer, setTransfer] = useState(1);
 
-    useEffect(() => {
-        request("api/session/history?"+formatParams({sessionId: props.sessionId, userId: store.getState().userId}), "GET", "").then((res) => {
-            setMessages(res.messages);
-        });
-    }, []);
-
-    const handleSelect = (e: any) => {
-        setSession(e);
-    }
+    const handleSelect = (e: any) => {setSession(e);}
 
     const handleChoose = (item: any) => {
         return (e: any) => {
@@ -39,6 +32,16 @@ export const MultiPicker = (props: any) => {
                 message: CircularJson.stringify(selected),
                 messageType: "history"
             };
+            const addM = {
+                "senderId": store.getState().userId,
+                "timestamp": Date.now(),
+                "messageId": -1,
+                "message": CircularJson.stringify(selected),
+                "messageType": "history",
+                "reply": -1,
+                "renderedMessage": "",
+            }
+            if(props.sessionId === session) {props.setMessages((_messages: any) => [..._messages, addM]);}
             socket.send(CircularJson.stringify(message));
         } else {
             const socket: any = store.getState().webSocket;
@@ -51,6 +54,17 @@ export const MultiPicker = (props: any) => {
                     message: selected[i].message,
                     messageType: selected[i].messageType !== "notice" ? selected[i].messageType : "text",
                 };
+                const addM = {
+                    "senderId": store.getState().userId,
+                    "timestamp": Date.now(),
+                    "messageId": -1,
+                    "message": selected[i].message,
+                    "messageType":selected[i].messageType !== "notice" ? selected[i].messageType : "text",
+                    "reply": -1,
+                    "renderedMessage": selected[i].message,
+                }
+                if(props.sessionId === session)
+                    props.setMessages((_messages: any) => [..._messages, addM]);
                 socket.send(CircularJson.stringify(message));
             }
             setSelected([]);
@@ -90,18 +104,21 @@ export const MultiPicker = (props: any) => {
                 </Radio.Group>
                 <List
                     itemLayout="horizontal"
-                    dataSource={messages}
+                    dataSource={props.messages}
                     renderItem={(item: any, index: number) => (
                         <List.Item>
                             <Checkbox checked={selected.filter((s: any) => s.messageId === item.messageId).length !== 0} onChange={handleChoose(item)} />
                             <List.Item.Meta
                                 avatar={<Avatar src={
-                                    !props.images.hasOwnProperty(item.senderId) ?"/headshot/01.svg" :props.images[item.senderId]
+                                    !store.getState().imgMap.hasOwnProperty(item.senderId) ?"/headshot/01.svg" : store.getState().imgMap[item.senderId]
                                 } />}
                                 title={(props.members.filter((member: any) => member.id === item.senderId))[0] === undefined
                                     ? "Stranger" :
                                     (props.members.filter((member: any) => member.id === item.senderId))[0].nickname}
-                                description={ item.messageType === "text" || item.messageType === "notice" ? item.message : <Image src={item.message} />}
+                                description={ item.messageType === "text" || item.messageType === "notice" ? item.message :
+                                    item.messageType === "photo" ? <Image src={item.message} /> : item.messageType === "file" ? <FileViewer base={item.message} />
+                                        : item.messageType === "audio" ? <AudioPlayer base64Audio={item.message}/> : <div>[转发]</div>
+                                }
                             />
                         </List.Item>
                     )}
@@ -146,12 +163,15 @@ const MultiChat = (props: any) => {
                 <List.Item>
                     <List.Item.Meta
                         avatar={<Avatar src={
-                            !props.images.hasOwnProperty(item.senderId) ?"/headshot/01.svg" :props.images[item.senderId]
+                            !store.getState().imgMap.hasOwnProperty(item.senderId) ?"/headshot/01.svg" :store.getState().imgMap[item.senderId]
                         } />}
                         title={(members.filter((member: any) => member.id === item.senderId))[0] === undefined
                             ? "Stranger" :
                             (members.filter((member: any) => member.id === item.senderId))[0].nickname}
-                        description={ item.messageType === "text" || item.messageType === "notice" ? item.message : <Image src={item.message} />}
+                        description={ item.messageType === "text" || item.messageType === "notice" ? item.message :
+                            item.messageType === "photo" ? <Image src={item.message} /> : item.messageType === "file" ? <FileViewer base={item.message} />
+                                : item.messageType === "audio" ? <AudioPlayer base64Audio={item.message}/> : <div>[转发]</div>
+                        }
                     />
                 </List.Item>
             )}
