@@ -194,7 +194,7 @@ const ChatBoard = (props: any) => {
     const handleMulti = (item: any) => {
         return (e: any) => {
             setMultiChat(true);
-            setMultiSource(eval(item.message));
+            setMultiSource(JSON.parse(item.message));
         }
     };
 
