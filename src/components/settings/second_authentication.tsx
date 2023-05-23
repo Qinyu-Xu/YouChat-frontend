@@ -5,7 +5,6 @@ import {Button, message, Modal} from "antd";
 import {request} from "@/utils/network";
 import LoginInput from "@/components/login/login_input";
 import {store} from "@/utils/store";
-import {refreshReducer} from "next/dist/client/components/router-reducer/reducers/refresh-reducer";
 import {encryptParam} from "@/utils/utilities";
 
 const SecondAuthentication = (props: any) => {
@@ -45,9 +44,9 @@ const SecondAuthentication = (props: any) => {
 
     const handleOk = async (e: any) => {
         if (loginType === 'email') {
-            const email = form.getFieldValue('email');
+            const _email = form.getFieldValue('email');
             const veri_code = form.getFieldValue('captcha');
-            if( email === "" || veri_code === "" ) {
+            if( _email === "" || veri_code === "" ) {
                 message.error('请输入完整的信息！');
                 return;
             }
@@ -55,7 +54,7 @@ const SecondAuthentication = (props: any) => {
                 "api/people/modify/email",
                 "POST",
                 JSON.stringify({
-                    "email": email,
+                    "email": _email,
                     "veri_code": veri_code as string,
                 })
             );

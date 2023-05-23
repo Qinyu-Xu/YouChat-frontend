@@ -14,7 +14,6 @@ import { AudioPlayer } from "@/components/chat/single_message/audio";
 import { FileViewer } from "@/components/chat/single_message/file";
 import { MultiPicker } from "@/components/chat/single_message/history";
 import MultiChat from "@/components/chat/single_message/history";
-import {number} from "prop-types";
 
 const left_items: MenuProps['items'] = [
     {
@@ -151,8 +150,8 @@ const ChatBoard = (props: any) => {
     const id = store.getState().userId;
     const sessionId = useRef(props.session.sessionId);
 
-    const getRightItems = (reply: any, timestamp: number) => {
-        if(reply === -1 || reply === undefined) {
+    const getRightItems = (reply_status: any, timestamp: number) => {
+        if(reply_status === -1 || reply_status === undefined) {
             if ((Date.now() - timestamp <= 120000 || props.session.sessionType === 2 && (role === 0 || role === 1))) return right_items;
             else return left_items;
         } else {
@@ -161,8 +160,8 @@ const ChatBoard = (props: any) => {
         }
     }
 
-    const getLeftItems = (reply, timestamp: number, senderId: number) => {
-        if (reply === -1 || reply === undefined)  {
+    const getLeftItems = (reply_status: any, timestamp: number, senderId: number) => {
+        if (reply_status === -1 || reply_status === undefined)  {
             if(
                 props.session.sessionType == 2 &&
                 ( role === 0
@@ -271,7 +270,7 @@ const ChatBoard = (props: any) => {
                             "messageId": messageId
                         })
                     ).then((res: any) => {
-                        setMessages((messages: any) => messages.filter((message: any) => message.messageId !== messageId));
+                        setMessages((_messages: any) => _messages.filter((_message: any) => _message.messageId !== messageId));
                     });
                 }
             }
@@ -282,7 +281,7 @@ const ChatBoard = (props: any) => {
         res = JSON.parse(res.data);
         if (res.type === 'delete') {
             if (res.code === 0) {
-                setMessages((messages: any) => [...(messages.filter((message: any) => message.messageId !== res.messageId))]);
+                setMessages((_messages: any) => [...(_messages.filter((_message: any) => _message.messageId !== res.messageId))]);
             } else if (res.code === 1) {
                 message.error("User Not Existed");
             } else if (res.code === 2) {
@@ -382,22 +381,22 @@ const ChatBoard = (props: any) => {
         }
     };
 
-    const randerMssage = (message: string, pos: string, timestamp: any) => {
-        if (!memload) return (<div>{message}</div>);
+    const randerMssage = (message_: string, pos: string, timestamp: any) => {
+        if (!memload) return (<div>{message_}</div>);
         let result: any = [];
         let buffer: string = "";
-        for (let i = 0; i < message.length; ++i) {
+        for (let i = 0; i < message_.length; ++i) {
             let found = false;
-            if (i + 1 < message.length && message[i] === '@' && message[i + 1] === '[') {
+            if (i + 1 < message_.length && message_[i] === '@' && message_[i + 1] === '[') {
                 let j = i + 2;
-                while (j < message.length && message[j] !== ']') ++j;
-                if (j < message.length && message[j] === ']') {
-                    const name = message.substring(i + 2, j);
-                    if (j + 1 < message.length && message[j + 1] === '(') {
+                while (j < message_.length && message_[j] !== ']') ++j;
+                if (j < message_.length && message_[j] === ']') {
+                    const name = message_.substring(i + 2, j);
+                    if (j + 1 < message_.length && message_[j + 1] === '(') {
                         let k = j + 2;
-                        while (k < message.length && message[k] !== ')') ++k;
-                        if (k < message.length && message[k] === ')') {
-                            const id = message.substring(j + 2 + 5, k);
+                        while (k < message_.length && message_[k] !== ')') ++k;
+                        if (k < message_.length && message_[k] === ')') {
+                            const id_ = message_.substring(j + 2 + 5, k);
                             result.push(
                                 <Linkify key={i}>
                                     {buffer}
@@ -405,13 +404,13 @@ const ChatBoard = (props: any) => {
                             );
                             result.push(
                                 <Tooltip title={
-                                    id === "-2" 
+                                    id_ === "-2"
                                     ? <div>全体成员</div>
                                     : <div>
                                         <Avatar src={
-                                            store.getState().imgMap.hasOwnProperty(parseInt(id))
+                                            store.getState().imgMap.hasOwnProperty(parseInt(id_))
                                                 ? "/headshot/01.svg"
-                                                : store.getState().imgMap[parseInt(id)]
+                                                : store.getState().imgMap[parseInt(id_)]
                                         } />
                                             &nbsp;&nbsp;
                                             {name}
@@ -427,8 +426,8 @@ const ChatBoard = (props: any) => {
                                     }}>
                                         {name}
                                         {
-                                            members.filter((member: any) => member.id.toString() === id).length !== 0 &&
-                                                members.filter((member: any) => member.id.toString() === id)[0].readTime < timestamp
+                                            members.filter((member: any) => member.id.toString() === id_).length !== 0 &&
+                                                members.filter((member: any) => member.id.toString() === id_)[0].readTime < timestamp
                                                     ? " (未读)" : ""
                                         }
                                     </div>
@@ -441,10 +440,10 @@ const ChatBoard = (props: any) => {
                     }
                 }
             }
-            if (!found) buffer = buffer + message[i];
+            if (!found) buffer = buffer + message_[i];
         }
         result.push(
-            <Linkify key={message.length}>
+            <Linkify key={message_.length}>
                 {buffer}
             </Linkify>
         );
@@ -467,7 +466,7 @@ const ChatBoard = (props: any) => {
     }, [messages, newpull]);
 
     useEffect(() => {
-        if (iload && mload && (messages.length <= 30 || newmsg)) {
+        if (mload && (messages.length <= 30 || newmsg)) {
             const element: any = document.getElementById("THEEND");
             if(element){
                 element.scrollIntoView();
@@ -476,7 +475,7 @@ const ChatBoard = (props: any) => {
             }
             setNewmsg(false);
         }
-    }, [messages, iload, mload, newmsg]);
+    }, [messages, mload, newmsg]);
 
     useEffect(() => {
         if (newinfo) {
@@ -551,14 +550,14 @@ const ChatBoard = (props: any) => {
 
     useEffect(() => {
         const board = document.getElementById('board');
-        if (mload && iload && board) board.addEventListener('scroll', scroll);
+        if (mload && board) board.addEventListener('scroll', scroll);
         return () => {
             if (board) board.removeEventListener('scroll', scroll);
         }
-    }, [props.session.sessionId, mload, iload]);
+    }, [props.session.sessionId, mload]);
 
     useEffect(() => {
-        const timer = setInterval(() => {
+        setInterval(() => {
             request("/api/session/chatroom?id=" + sessionId.current, "GET", "")
                 .then((res: any) => {
                     if(res.sessionId === sessionId.current.toString()) {

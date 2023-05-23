@@ -4,15 +4,12 @@ import {fileToBase64} from "@/utils/utilities";
 import {store} from "@/utils/store";
 import CircularJson from "circular-json";
 import {FileOutlined} from "@ant-design/icons";
-import {useEffect, useState} from "react";
 
 const extractFileNameAndBase64 = (data: any) => {
-    const regex = /^(.*?)\/\/(.*)$/;
-    const matches = data.match(regex);
-
-    if (matches && matches.length === 3) {
-        const fileName = matches[1].trim();
-        const base64Data = matches[2].trim();
+    const separatorIndex = data.indexOf('//');
+    if (separatorIndex !== -1) {
+        const fileName = data.substring(0, separatorIndex).trim();
+        const base64Data = data.substring(separatorIndex + 2).trim();
         return { fileName, base64Data };
     }
 

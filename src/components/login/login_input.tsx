@@ -2,8 +2,6 @@ import {message, Tabs} from "antd";
 import {request} from "@/utils/network";
 import {ProFormCaptcha, ProFormText} from "@ant-design/pro-components";
 import {LockOutlined, MailOutlined, UserOutlined} from "@ant-design/icons";
-import {useEffect, useState} from "react";
-import {store} from "@/utils/store";
 
 type LoginType = 'email' | 'account';
 
