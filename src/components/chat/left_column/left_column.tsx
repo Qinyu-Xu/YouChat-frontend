@@ -6,6 +6,7 @@ import {store} from "@/utils/store";
 import MessageItem from "./message_item";
 import ProForm from "@ant-design/pro-form";
 import LoginInput from "@/components/login/login_input";
+import {encryptParam} from "@/utils/utilities";
 
 const SecondAuth = (props: any) => {
     const [form] = ProForm.useForm();
@@ -73,7 +74,7 @@ const SecondAuth = (props: any) => {
                 "POST",
                 JSON.stringify({
                     "userName": user,
-                    "password": pwd,
+                    "password": encryptParam(pwd),
                 })
             );
             if (response.code == 0) {
