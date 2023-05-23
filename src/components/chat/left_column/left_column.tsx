@@ -121,7 +121,34 @@ const LeftColumn = (props: any) => {
             const is_exist = () => {
                 return (props.list.filter((message: any) => message.sessionId === res.sessionId)).length !== 0;
             };
-            if (!is_exist()) refreshList();
+            if (!is_exist()) {
+                refreshList();
+                loadName();
+            }
+        }
+    }
+
+    const loadName = () => {
+        let l : any[] = [];
+        for (let i = 0; i < props.list.length; ++ i) {
+            l.push(props.list[i]);
+        }
+        for(let i = 0; i < l.length; ++i) {
+            if(l[i].sessionType === 1 && l[i].sessionName === "friend") {
+                request(
+                    "api/session/chatroom?id=" + l[i].sessionId,
+                    "GET",
+                    ""
+                ).then((res: any) => {
+                    l[i].sessionName =
+                        (res.members.filter((member: any) =>
+                                member.id !== store.getState().userId)
+                        )[0].nickname;
+                    // console.log("@@@@@@@@@@@");
+                    // console.log(l);
+                    props.setList(() => l.slice());
+                })
+            }
         }
     }
 
@@ -161,7 +188,6 @@ const LeftColumn = (props: any) => {
             setId(potential.sessionId);
             props.setSession(potential);
             clearList(potential.sessionId);
-            console.log(id);
         }
     }, [auth]);
 
@@ -204,7 +230,6 @@ const LeftColumn = (props: any) => {
                 }
                 old_list = old_list.sort(cmp);
                 props.setList([...old_list]);
-                console.log(props.list);
             } else {
                 message.error("获取聊天列表发生错误！").then(_ => _);
             }
@@ -237,27 +262,7 @@ const LeftColumn = (props: any) => {
         if (!load) {
             if (props.list[0] != -1) {
                 setLoad(true);
-                let l : any[] = [];
-                for (let i = 0; i < props.list.length; ++ i) {
-                    l.push(props.list[i]);
-                }
-                for(let i = 0; i < l.length; ++i) {
-                    if(l[i].sessionType === 1 && l[i].sessionName === "friend") {
-                        request(
-                            "api/session/chatroom?id=" + l[i].sessionId,
-                            "GET",
-                            ""
-                        ).then((res: any) => {
-                            l[i].sessionName =
-                                (res.members.filter((member: any) =>
-                                    member.id !== store.getState().userId)
-                                )[0].nickname;
-                            // console.log("@@@@@@@@@@@");
-                            // console.log(l);
-                            props.setList(() => l.slice());
-                        })
-                    }
-                }
+                loadName();
             }
         }
         else if (!loadname) {
