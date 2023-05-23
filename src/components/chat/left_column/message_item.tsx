@@ -121,7 +121,7 @@ const MessageItem = (props: any) => {
                 </div>
                 <div className={styles.message_item_content}>
                     { !props.session.isSecret ?
-                        props.session.lastSender
+                        (props.session.lastSender ? props.session.lastSenderName : "Myself")
                         +
                         (props.session.lastSender == "" || props.session.isSecret ? "" : ":")
                         + (
