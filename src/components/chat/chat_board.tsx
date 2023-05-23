@@ -151,8 +151,8 @@ const ChatBoard = (props: any) => {
     const id = store.getState().userId;
     const sessionId = useRef(props.session.sessionId);
 
-    const getRightItems = (reply: number, timestamp: number) => {
-        if(reply === -1 ) {
+    const getRightItems = (reply: any, timestamp: number) => {
+        if(reply === -1 || reply === undefined) {
             if ((Date.now() - timestamp <= 120000 || props.session.sessionType === 2 && (role === 0 || role === 1))) return right_items;
             else return left_items;
         } else {
@@ -161,8 +161,8 @@ const ChatBoard = (props: any) => {
         }
     }
 
-    const getLeftItems = (reply: number, timestamp: number, senderId: number) => {
-        if (reply === -1)  {
+    const getLeftItems = (reply, timestamp: number, senderId: number) => {
+        if (reply === -1 || reply === undefined)  {
             if(
                 props.session.sessionType == 2 &&
                 ( role === 0
@@ -456,12 +456,6 @@ const ChatBoard = (props: any) => {
     };
 
     useEffect(() => {
-        if(memload) console.log("memload");
-        if(iload) console.log("iload");
-        if(mload) console.log("mload");
-    },[memload, iload, mload])
-
-    useEffect(() => {
         sessionId.current = props.session.sessionId;
     }, [props.session.sessionId]);
 
@@ -495,7 +489,6 @@ const ChatBoard = (props: any) => {
     useEffect(() => {
         for (let i = 0; i < members.length; ++i) {
             if(!iload) {
-                console.log(members[i]);
                 request("api/people/img/" + members[i].id, "GET", "").then((r: any) => {
                     if (!store.getState().imgMap.hasOwnProperty(members[i].id)) {
                         store.dispatch({type: "addImage", data: {key: members[i].id, value: r.img}});
@@ -513,7 +506,6 @@ const ChatBoard = (props: any) => {
         setIload(false);
         setMemload(false);
         if(store.getState().members.hasOwnProperty(props.session.sessionId)) {
-            console.log(1);
             setMembers(store.getState().members[props.session.sessionId]);
             setMemload(true);
         } else {
