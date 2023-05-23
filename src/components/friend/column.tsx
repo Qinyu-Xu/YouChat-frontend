@@ -51,23 +51,25 @@ const FriendList = (props: FriendListProps) => {
         }
 	};
 
-	for(let i = 0; i < props.groups?.length; i++) {
-		if (props.groups) {
-			const g = props.groups[i];
-			List.push(
-				<div className={styles.group_name} key={g.group}>
-					{g.group}
-				</div>
-			)
-			for(let j = 0; j < g.list.length; ++j) {
-				const item = g.list[j];
+	if(props.groups?.length) {
+		for (let i = 0; i < props.groups?.length; i++) {
+			if (props.groups) {
+				const g = props.groups[i];
 				List.push(
-					<div className={styles.column_item} key={item.id.toString()}
-						 id={item.id.toString()} onClick={handleSelect}>
-						<Image className={styles.column_item_left} id={item.id}/>
-						{item.nickname}
+					<div className={styles.group_name} key={g.group}>
+						{g.group}
 					</div>
 				)
+				for (let j = 0; j < g.list.length; ++j) {
+					const item = g.list[j];
+					List.push(
+						<div className={styles.column_item} key={item.id.toString()}
+							 id={item.id.toString()} onClick={handleSelect}>
+							<Image className={styles.column_item_left} id={item.id}/>
+							{item.nickname}
+						</div>
+					)
+				}
 			}
 		}
 	}
