@@ -44,20 +44,20 @@ function Profile(props: ProfileProps) {
 
     if (props.profile.group == "Stranger") {
         operation.push(
-            <Button onClick={() => { send(props.profile.id, "RequestTo"); }}>
+            <Button id={"1"} onClick={() => { send(props.profile.id, "RequestTo"); }}>
                 Request
             </Button>
         );
     }
     else if (props.profile.group == "RequestFrom") {
         operation.push(
-            <Button onClick={() => { send(props.profile.id, "Default"); }}>
+            <Button id={"2"} onClick={() => { send(props.profile.id, "Default"); }}>
                 Accept
             </Button>
         );
         operation.push(<br/>);
         operation.push(
-            <Button onClick={() => { send(props.profile.id, "Stranger"); }}>
+            <Button id={"3"} onClick={() => { send(props.profile.id, "Stranger"); }}>
                 Reject
             </Button>
         );
@@ -67,18 +67,18 @@ function Profile(props: ProfileProps) {
     }
     else {
         operation.push(
-            <Button onClick={() => { send(props.profile.id, "Stranger"); }}>
+            <Button id={"4"} onClick={() => { send(props.profile.id, "Stranger"); }}>
                 Delete
             </Button>
         );
         operation.push(<br/>);
         operation.push(
-            <div style={{display: "flex"}}>
-                <Input type="text"
+            <div id={"5"} style={{display: "flex"}}>
+                <Input id={"6"} type="text"
                     onChange={(e) => { setGroup(e.target.value); }}
                     value={group}
                 />
-                <Button onClick={() => { send(props.profile.id, group); }}>
+                <Button id={"7"} onClick={() => { send(props.profile.id, group); }}>
                     Move
                 </Button>
             </div>

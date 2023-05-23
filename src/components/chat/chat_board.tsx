@@ -329,7 +329,8 @@ const ChatBoard = (props: any) => {
                             messageType: message.messageType,
                             senderId: message.senderId,
                             senderName: message.senderName,
-                            timestamp: message.timestamp
+                            timestamp: message.timestamp,
+                            reply: message.reply,
                         }
                         : message;
                 }))
@@ -342,7 +343,8 @@ const ChatBoard = (props: any) => {
                         messageType: res.messageType,
                         senderId: res.senderId,
                         senderName: res.senderName,
-                        timestamp: res.timestamp
+                        timestamp: res.timestamp,
+                        reply: res.reply,
                     }]
                 })
             }
@@ -361,7 +363,7 @@ const ChatBoard = (props: any) => {
     const handlePull = (res: any) => {
         res = JSON.parse(res.data);
 
-        if (res.type === 'pull') {
+        if (res.type === 'pull' && res.sessionId === props.session.sessionId) {
             setMload(true);
             for (let i = 0; i < res.messages.length; ++i) {
                 res.messages[i].renderedMessage = res.messages[i].message;
@@ -815,10 +817,10 @@ const ChatBoard = (props: any) => {
                     members={members} reply={reply} text={text} setText={setText} />
                 <RightColumn session={props.session} members={members} messages={messages} images={store.getState().imgMap} setRefresh={props.setRefresh}
                     setSession={props.setSession} setMessages={setMessages} role={role} setMembers={setMembers} setRole={setRole} />
-                <Modal title="翻译结果" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
+                <Modal title="翻译结果" open={isModalOpen} onOk={handleOk} onCancel={handleCancel} cancelButtonProps={{style: {display: 'none'}}}>
                     <p>{translated}</p>
                 </Modal>
-                <Modal title="转文字结果" open={isAudioModalOpen} onOk={handleAudioOk} onCancel={handleAudioCancel}>
+                <Modal title="转文字结果" open={isAudioModalOpen} onOk={handleAudioOk} onCancel={handleAudioCancel} cancelButtonProps={{style: {display: 'none'}}}>
                     <p>{audio}</p>
                 </Modal>
                 <MultiPicker sessionId={props.session.sessionId} members={members} setMessages={setMessages} messages={messages}

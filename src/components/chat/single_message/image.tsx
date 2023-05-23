@@ -16,6 +16,8 @@ export const ImgIcon = (props: any) => {
         if(file) {
             if (!file.type.startsWith("image/")) {
                 message.error("请上传图片！");
+            } else if(file.size > 1024 * 1024) {
+                message.error("请上传小于1M的图片")
             } else {
                 fileToBase64(file).then((res: any) => {
                     const socket: any = store.getState().webSocket;

@@ -92,8 +92,6 @@ const AudioInput = (props: any) => {
         setRecording(false);
         // 结束录音
         audioRecorder.stop();
-        // 录音播放
-        audioRecorder.play();
         // 获取 WAV 数据(Blob)
         let blob = audioRecorder.getWAVBlob();
         // 将WAV转化，获取 MP3 数据(Blob)，函数wavToMp3、blobToBase64见下两个代码块

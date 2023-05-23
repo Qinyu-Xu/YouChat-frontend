@@ -312,7 +312,7 @@ const LeftColumn = (props: any) => {
                     "sessionType": item.sessionType,
                     "timestamp": msg.timestamp,
                     "type": msg.messageType,
-                    "lastSender": msg.SenderName,
+                    "lastSender": msg.senderName,
                     "message": msg.message,
                     "isTop": item.isTop,
                     "isMute": item.isMute,

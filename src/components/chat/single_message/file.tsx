@@ -47,9 +47,8 @@ export const FileIcon = (props: any) => {
     const handleFileSelect = (e: any) => {
         const file = e.target.files[0];
         if(file) {
-            if (/*!file.type.startsWith("file/")*/false) {
-                console.log(file.type);
-                message.error("请上传文件！");
+            if (file.size > 1024 * 1024) {
+                message.error("请上传小于1M的文件！");
             } else {
                 fileToBase64(file).then((res: any) => {
                     const socket: any = store.getState().webSocket;

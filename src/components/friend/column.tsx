@@ -38,17 +38,20 @@ const FriendList = (props: FriendListProps) => {
 	const List: any[] = [];
 
 	const handleSelect = async (e: any) => {
-		const url = "api/people/profile/" + e.target.id;
-        try {
-            const response = await request(
-                url,
-                "GET",
-                "",
-            );
-			props.setProfile(response?.profile);
-        } catch(err) {
-            console.log(err);
-        }
+		if(e.target.id!=="") {
+			const url = "api/people/profile/" + e.target.id;
+			try {
+				request(
+					url,
+					"GET",
+					"",
+				).then((response) => {
+					props.setProfile(response?.profile);
+				})
+			} catch (err) {
+				console.log(err);
+			}
+		}
 	};
 
 	if(props.groups?.length) {
