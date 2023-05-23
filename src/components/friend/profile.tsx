@@ -63,7 +63,7 @@ function Profile(props: ProfileProps) {
             </Button>
         );
     }
-    else if (props.profile.group == "RequestTo") {
+    else if (props.profile.group == "RequestTo" || props.profile.group == "Myself") {
 
     }
     else {
