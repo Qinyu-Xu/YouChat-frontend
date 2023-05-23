@@ -49,7 +49,7 @@ export const SenderBoard = (props: any) => {
                cancelButtonProps={{style: {display: ok ? 'none' : "initial"}}} okButtonProps={{style: {display: 'none'}}}>
             { !ok ?
                 <div>
-                    是否邀请对方进行视频通话
+                    是否邀请对方进行视频通话(请不要科学上网，请使用https)
                     <br/><br/>
                     <Button onClick={handleClick}>
                         确定邀请
@@ -118,7 +118,7 @@ export const ReceiverBoard = (props: any) => {
                cancelButtonProps={{style: {display: ok ? 'none' : "initial"}}} okButtonProps={{style: {display: 'none'}}}>
             { !ok ?
             <div>
-                是否邀请同意进行视频通话
+                是否邀请同意进行视频通话(请不要科学上网，请使用https)
                 <br /><br />
                 <Button onClick={handleClick}>
                     同意邀请
@@ -380,7 +380,7 @@ export const Receiver = (props: any) => {
     }
 
     useEffect(() => {
-        if(ready) readyOffer();
+        if(ready && offerData !== null) readyOffer();
     }, [ready, offerData])
 
     useEffect(() => {
