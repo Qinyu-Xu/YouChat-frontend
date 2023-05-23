@@ -140,18 +140,57 @@ const ChatBoard = (props: any) => {
     const [reply, setReply] = useState(-1);
     const [getReply, setGetReply] = useState(-1);
     const [text, setText] = useState("");
-    const id = store.getState().userId;
-
     const [translated, setTranslated] = useState("");
     const [audio, setAudio] = useState("");
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isAudioModalOpen, setIsAudioModalOpen] = useState(false);
     const [isPickerOpen, setPickerOpen] = useState(false);
-
     const [isMultiChat, setMultiChat] = useState(false);
     const [multiSource, setMultiSource] = useState();
 
+    const id = store.getState().userId;
     const sessionId = useRef(props.session.sessionId);
+
+    const getRightItems = (reply: number, timestamp: number) => {
+        if(reply === -1 ) {
+            if ((Date.now() - timestamp <= 120000 || props.session.sessionType === 2 && (role === 0 || role === 1))) return right_items;
+            else return left_items;
+        } else {
+            if ((Date.now() - timestamp <= 120000 || props.session.sessionType === 2 && (role === 0 || role === 1))) return right_reply_items;
+            else return left_reply_items;
+        }
+    }
+
+    const getLeftItems = (reply: number, timestamp: number, senderId: number) => {
+        if (reply === -1)  {
+            if(
+                props.session.sessionType == 2 &&
+                ( role === 0
+                    || (role === 1
+                        && members.filter((member: any) => member.id === senderId)[0]?.role !== 0
+                        && members.filter((member: any) => member.id === senderId)[0]?.role !== 1)
+                )
+            ) {
+                return right_items;
+            } else {
+                return left_items;
+            }
+        } else  {
+            if(
+                props.session.sessionType == 2 &&
+                ( role === 0
+                    || (role === 1
+                        && members.filter((member: any) => member.id === senderId)[0]?.role !== 0
+                        && members.filter((member: any) => member.id === senderId)[0]?.role !== 1)
+                )
+            ) {
+                return right_reply_items;
+            } else {
+                return left_reply_items;
+            }
+        }
+    }
+
 
     const handleMulti = (item: any) => {
         return (e: any) => {
@@ -166,7 +205,7 @@ const ChatBoard = (props: any) => {
     const handleAudioOk = () => { setIsAudioModalOpen(false); };
     const handleAudioCancel = () => { setIsAudioModalOpen(false); };
 
-    const onDropDownClick: any = (messageId: any, ms: any, replyId: number, info: string) => {
+    const onDropDownClick: any = (messageId: any, ms: any, timestamp: any,  replyId: number, info: string) => {
         return ({ key }: any) => {
             if (key === '-1') {
                 setGetReply(replyId);
@@ -223,14 +262,18 @@ const ChatBoard = (props: any) => {
 
             }
             else if (key === '5') {
-                request("api/session/delete", "PUT",
-                    JSON.stringify({
-                        "userId": store.getState().userId,
-                        "messageId": messageId
-                    })
-                ).then((res: any) => {
-                    setMessages((messages: any) => messages.filter((message: any) => message.messageId !== messageId));
-                });
+                if(Date.now() - timestamp > 120000) {
+                    message.error("撤回时间太长啦！");
+                } else {
+                    request("api/session/delete", "PUT",
+                        JSON.stringify({
+                            "userId": store.getState().userId,
+                            "messageId": messageId
+                        })
+                    ).then((res: any) => {
+                        setMessages((messages: any) => messages.filter((message: any) => message.messageId !== messageId));
+                    });
+                }
             }
         };
     };
@@ -576,8 +619,8 @@ const ChatBoard = (props: any) => {
                                 } trigger="hover"
                                     arrow={false} placement="topRight" color="rgba(100,100,100,0.5)">
                                     <Dropdown menu={{
-                                        items: (message.reply === -1 ? right_items : right_reply_items),
-                                        onClick: onDropDownClick(message.messageId, message.message, message.reply,
+                                        items: getRightItems(message.reply, message.timestamp),
+                                        onClick: onDropDownClick(message.messageId, message.message, message.timestamp, message.reply,
                                             message.senderName + " " + moment(message.timestamp).format("MM/DD HH:mm:ss"))
                                     }}
                                         placement="bottomLeft" trigger={['contextMenu']}>
@@ -672,8 +715,8 @@ const ChatBoard = (props: any) => {
                                 } trigger="hover"
                                     arrow={false} placement="topLeft" color="rgba(100,100,100,0.5)">
                                     <Dropdown menu={{
-                                        items: (message.reply === -1 ? (role === 0 || (role === 1 && members.filter((member: any) => member.id === message.senderId)[0]?.role !== 0 && members.filter((member: any) => member.id === message.senderId)[0]?.role !== 1) ? right_items : left_items) : (role === 0 || (role === 1 && members.filter((member: any) => member.id === message.senderId)[0]?.role !== 0 && members.filter((member: any) => member.id === message.senderId)[0]?.role !== 1) ? right_reply_items : left_reply_items)),
-                                        onClick: onDropDownClick(message.messageId, message.message, message.reply,
+                                        items: getLeftItems(message.reply, message.timestamp, message.senderId),
+                                        onClick: onDropDownClick(message.messageId, message.message, message.timestamp, message.reply,
                                             message.senderName + " " + moment(message.timestamp).format("MM/DD HH:mm:ss"))
                                     }}
                                         placement="bottomLeft" trigger={['contextMenu']}>
