@@ -1,5 +1,5 @@
 .sidenav {
-    height: 100%;
+    height: 95%;
     width: 16rem;
     position: fixed;
     z-index: 1;
@@ -11,4 +11,78 @@
     padding: 2rem;
 }
 
+.drop {
+    text-align: center;
+    font-weight: bold;
+    color: red;
+}
 
+.add_button {
+    margin: 1rem;
+    border: 0;
+    padding: 0;
+    height: 2rem;
+    width: 2rem;
+    opacity: 0.6;
+}
+.add_button:hover {
+    opacity: 0.9;
+}
+
+.top {
+    margin: 0;
+    border: 0;
+    padding: 0;
+    height: 4rem;
+    display: flex;
+    flex-direction: row;
+}
+
+.title {
+    width: 14rem;
+    height: 1rem;
+    border-radius: 0.5rem;
+    margin: 1rem 0 1rem 1rem;
+    padding: 0.5rem;
+    border: 0;
+    font-size: 1rem;
+}
+.member_list {
+    margin: 1rem 0 0 0;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-content: flex-start;
+}
+
+.member {
+    width: 2.5rem;
+    height: 3rem;
+    padding: 0;
+    border: 0;
+    margin: 0.25rem;    
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.member_photo {
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+    border: 0;
+    margin: 0;
+}
+
+.member_name {
+    width: 2.5rem;
+    height: 0.8rem;
+    font-size: 0.6rem;
+    line-height: 0.8rem;
+    padding: 0;
+    border: 0;
+    margin: 0.2rem 0 0 0;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    text-align: center;
+}

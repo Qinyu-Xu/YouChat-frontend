@@ -27,7 +27,7 @@
 
 .message_left {
     background-color: rgba(255, 255, 255, 0.5);
-    box-shadow: 1px 1px 2px #888888;
+    /* box-shadow: 1px 1px 2px #888888; */
     border-radius: 0.5rem;
     margin: 0;
     padding: 0.25rem 0.5rem;
@@ -40,11 +40,12 @@
     line-height: 1.5rem;
     word-wrap: break-word;
     word-break: break-all;
+    white-space: pre-wrap;
 }
 
 .photo_left {
     background-color: rgba(255, 255, 255, 0.5);
-    box-shadow: 1px 1px 2px #888888;
+    /* box-shadow: 1px 1px 2px #888888; */
     border-radius: 0.5rem;
     margin: 0;
     padding: 0.25rem 0.5rem;
@@ -55,6 +56,15 @@
     min-width: 0;
     max-width: 40%;
     min-height: 1.5rem;
+}
+
+.read_left {
+    float: left;
+    height: 1rem;
+    margin: 0 0 0 0.4rem;
+    font-size: 0.6rem;
+    color:rgba(0, 0, 0, 0.5);
+    line-height: 1rem;
 }
 
 .headshot_left {
@@ -69,7 +79,7 @@
 
 .message_right {
     background-color: rgba(51, 125, 235, 0.75);
-    box-shadow: 1px 1px 2px #888888;
+    /* box-shadow: 1px 1px 2px #888888; */
     border-radius: 0.5rem;
     margin: 0;
     padding: 0.25rem 0.5rem;
@@ -82,11 +92,12 @@
     max-width: 70%;
     word-wrap: break-word;
     word-break: break-all;
+    white-space: pre-wrap;
 }
 
 .photo_right {
     background-color: rgba(51, 125, 235, 0.75);
-    box-shadow: 1px 1px 2px #888888;
+    /* box-shadow: 1px 1px 2px #888888; */
     border-radius: 0.5rem;
     margin: 0;
     padding: 0.25rem 0.5rem;
@@ -97,6 +108,15 @@
     min-width: 0;
     max-width: 40%;
     min-height: 1.5rem;
+}
+
+.read_right {
+    float: right;
+    height: 1rem;
+    margin: 0 0.4rem 0 0;
+    font-size: 0.6rem;
+    color:rgba(0, 0, 0, 0.5);
+    line-height: 1rem;
 }
 
 .headshot_right {
@@ -142,22 +162,8 @@
 }
 
 .writing_box {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-}
-
-.writing {
-    background-color: rgba(255, 255, 255, 0);
-    overflow: auto;
-    font-size: 1rem;
-    line-height: 1.5rem;
-    margin: 0.5rem 0 0 0;
-    border: 0;
-    padding: 0 0.5rem 0 0.5rem;
-    resize: none;
-    outline: none;
-    flex: 1;
+    height: 12.5rem;
+    padding: 0.5rem 0 0 0;
 }
 
 .emoji_board {
@@ -209,7 +215,7 @@
 
 .message_item_istop {
     border-radius: 0.5rem;
-    box-shadow: 1px 1px 2px #dbd9d9;
+    /* box-shadow: 1px 1px 2px #dbd9d9; */
     margin: 0.5rem;
     border: 0;
     padding: 0;
@@ -226,7 +232,7 @@
 
 .message_item {
     border-radius: 0.5rem;
-    box-shadow: 1px 1px 2px #dbd9d9;
+    /* box-shadow: 1px 1px 2px #dbd9d9; */
     margin: 0.5rem;
     border: 0;
     padding: 0;
@@ -258,30 +264,39 @@
 }
 
 .message_item_right {
-    height: 2rem;
-    width: 2rem;
-    margin: 0.75rem;
+    height: 2.5rem;
+    width: 2.5rem;
+    margin: 0.5rem;
     border: 0;
     padding: 0;
-}
-
-.message_item_time {
-    font-size: 0.6rem;
-    color: #aaa;
-    text-align: right;
-    overflow: hidden;
-    flex: 1;
+    display: flex;
+    flex-direction: column;
+    /* background-color: #888; */
 }
 
 .message_item_mute {
-    text-align: left;
     overflow: hidden;
-    flex: 1;
+    margin: 0.2rem 0 0.1rem 1.7rem;
+    border: 0;
+    padding: 0;
+    height: 1.1rem;
+    line-height: 0.8rem;
+    width: 0.8rem;
+    opacity: 0.3;
+}
+
+.message_item_time {
+    height: 1.4rem;
+    font-size: 0.6rem;
+    line-height: 1.4rem;
+    color: #aaa;
+    text-align: right;
+    overflow: hidden;
 }
 
 .message_item_title {
     height: 1.25rem;
-    width: 10rem;
+    width: 8rem;
     line-height: 1.25rem;
     text-align: left;
     text-overflow: ellipsis;
@@ -290,7 +305,7 @@
 
 .message_item_content {
     height: 1.25rem;
-    width: 12rem;
+    width: 10rem;
     line-height: 1.25rem;
     font-size: 0.75rem;
     text-align: left;

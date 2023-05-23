@@ -3,6 +3,7 @@ import {useRef, useState} from "react";
 import {request} from "@/utils/network";
 import {Button, Input, message, Space} from "antd";
 import {store} from "@/utils/store";
+import {encryptParam} from "@/utils/utilities";
 
 const EditProfile = (props: any) => {
 
@@ -47,10 +48,11 @@ const EditProfile = (props: any) => {
             JSON.stringify({
                 "userName": username,
                 "code": code.current,
-                "new": new_val
+                "new": code.current === 2 ? encryptParam( new_val ) : new_val,
             })
         )
         if (response.code === 0) {
+            props.setRefresh((refresh: any) => !refresh);
             message.success('修改成功！');
         } else {
             message.error('修改失败！');

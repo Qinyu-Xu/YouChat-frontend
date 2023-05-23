@@ -1,14 +1,12 @@
 import {Divider, Modal, MenuProps, Menu, DatePicker, Select, SelectProps, List, Avatar, Image} from "antd";
 import {useEffect, useState} from "react";
-import {isBrowser, store} from "@/utils/store";
-import type { Dayjs } from 'dayjs';
 import dayjs from "dayjs";
+import {request} from "@/utils/network";
+import {formatParams} from "@/utils/utilities";
+import {store} from "@/utils/store";
+import {FileViewer} from "@/components/chat/single_message/file";
+import {AudioPlayer} from "@/components/chat/single_message/audio";
 const { RangePicker } = DatePicker;
-
-type Generic = string;
-type GenericFn = (value: Dayjs) => string;
-
-export type FormatType = Generic | GenericFn | Array<Generic | GenericFn>;
 
 const AllPicker = (props: any) => {
     return <div>
@@ -26,7 +24,10 @@ const AllPicker = (props: any) => {
                         title={(props.members.filter((member: any) => member.id === item.senderId))[0] === undefined
                                 ? "Stranger" :
                             (props.members.filter((member: any) => member.id === item.senderId))[0].nickname}
-                        description={ item.messageType === "text" ? item.message : <Image src={item.message} />}
+                        description={ item.messageType === "text" || item.messageType === "notice" ? item.message :
+                            item.messageType === "photo" ? <Image src={item.message} /> : item.messageType === "file" ? <FileViewer base={item.message} />
+                                : item.messageType === "audio" ? <AudioPlayer base64Audio={item.message}/> : <div>转发</div>
+                        }
                     />
                 </List.Item>
             )}
@@ -63,7 +64,10 @@ const TimestampPicker = (props: any) => {
                         title={(props.members.filter((member: any) => member.id === item.senderId))[0] === undefined
                             ? "Stranger" :
                             (props.members.filter((member: any) => member.id === item.senderId))[0].nickname}
-                        description={ item.messageType === "text" ? item.message : <Image src={item.message} />}
+                        description={ item.messageType === "text" || item.messageType === "notice" ? item.message :
+                            item.messageType === "photo" ? <Image src={item.message} /> : item.messageType === "file" ? <FileViewer base={item.message} />
+                                : item.messageType === "audio" ? <AudioPlayer base64Audio={item.message}/> : <div>转发</div>
+                        }
                     />
                 </List.Item>
             )}
@@ -100,7 +104,10 @@ const TypePicker = (props: any) => {
                         title={(props.members.filter((member: any) => member.id === item.senderId))[0] === undefined
                             ? "Stranger" :
                             (props.members.filter((member: any) => member.id === item.senderId))[0].nickname}
-                        description={ item.messageType === "text" ? item.message : <Image src={item.message} />}
+                        description={ item.messageType === "text" || item.messageType === "notice" ? item.message :
+                            item.messageType === "photo" ? <Image src={item.message} /> : item.messageType === "file" ? <FileViewer base={item.message} />
+                            : item.messageType === "audio" ? <AudioPlayer base64Audio={item.message}/> : <div>转发</div>
+                    }
                     />
                 </List.Item>
             )}
@@ -146,7 +153,10 @@ const MemberPicker = (props: any) => {
                         title={(props.members.filter((member: any) => member.id === item.senderId))[0] === undefined
                             ? "Stranger" :
                             (props.members.filter((member: any) => member.id === item.senderId))[0].nickname}
-                        description={ item.messageType === "text" ? item.message : <Image src={item.message} />}
+                        description={ item.messageType === "text" || item.messageType === "notice" ? item.message :
+                            item.messageType === "photo" ? <Image src={item.message} /> : item.messageType === "file" ? <FileViewer base={item.message} />
+                                : item.messageType === "audio" ? <AudioPlayer base64Audio={item.message}/> : <div>转发</div>
+                        }
                     />
                 </List.Item>
             )}
@@ -173,14 +183,14 @@ const ChatHistory = (props: any) => {
         },
     ];
 
-
     const [current, setCurrent] = useState('all');
     const [messages, setMessages] = useState([]);
-
     const onClick: MenuProps['onClick'] = (e: any) => setCurrent(e.key);
     const handleOk = () => props.setOpen(false);
     const handleCancel = () => props.setOpen(false);
 
+    /*
+    const [messages, setMessages] = useState<any>([]);
     useEffect(() => {
         const getPull = () => {
             const socket: any = store.getState().webSocket;
@@ -201,10 +211,20 @@ const ChatHistory = (props: any) => {
         const socket: any = store.getState().webSocket;
         if(isBrowser && socket != null && socket.readyState === 1) {
             socket.addEventListener("message", handlePull);
-            getPull();
+            // getPull();
         }
         return () => {socket.removeEventListener('message', handlePull);};
     }, [props.sessionId, store.getState().webSocket]);
+
+     */
+
+    useEffect(()=>{
+        request("api/session/history?"+formatParams({sessionId: props.sessionId, userId: store.getState().userId}),
+            "GET",
+            "").then((res: any) => {
+                setMessages(res.messages);
+        });
+    },[]);
 
     return (
         <Modal title={"筛选聊天记录"} open={props.open} onOk={handleOk} onCancel={handleCancel} width={800}>
@@ -212,12 +232,12 @@ const ChatHistory = (props: any) => {
             <Menu onClick={onClick} selectedKeys={[current]} mode="horizontal" items={items} />
             <br />
             {current === 'all'
-                ? <AllPicker members={props.members} messages={messages} images={props.images}/>
+                ? <AllPicker members={props.members} messages={props.messages} images={props.images}/>
                 : (current === 'type'
-                    ? <TypePicker members={props.members} messages={messages} images={props.images}/>
+                    ? <TypePicker members={props.members} messages={props.messages} images={props.images}/>
                     : (current === 'time'
-                        ? <TimestampPicker members={props.members} messages={messages} images={props.images}/>
-                        : <MemberPicker members={props.members} messages={messages} images={props.images}/>
+                        ? <TimestampPicker members={props.members} messages={props.messages} images={props.images}/>
+                        : <MemberPicker members={props.members} messages={props.messages} images={props.images}/>
                         )
                     )
             }

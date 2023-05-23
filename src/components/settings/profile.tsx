@@ -44,7 +44,7 @@ const ImageUpload = (props: any) => {
     )
 }
 
-const Profile = () => {
+const Profile = (props: any) => {
 
     const [response, setResponse] = useState<any>(null);
     const [image, setImage] = useState<any>('/headshot/01.svg');
@@ -60,7 +60,7 @@ const Profile = () => {
                 message.error("获取用户信息错误！").then(r => "error");
             }
         })
-        }, []
+        }, [props.refresh]
     );
 
     useEffect(() => {

@@ -3,9 +3,10 @@ import Profile from '@/components/friend/profile'
 import Sidebar from '@/components/sidebar'
 import styles from '@/styles/layout.module.css'
 import { useState } from 'react';
+import {ReceiverBoard} from "@/components/chat/single_message/video_chat";
 
 export interface profile_type {
-    id: number;
+    id?: number;
     nickname: string;
     username: string;
     email: string;
@@ -27,7 +28,7 @@ function Friend() {
             <Column setProfile={setProfile}/>
             <div className={styles.content}>
                 {
-                    profile.id === 0
+                    profile.id === undefined || profile.id === 0
                         ?
                         <div>
 
@@ -36,6 +37,7 @@ function Friend() {
                         <Profile profile={profile}/>
                 }
             </div>
+            <ReceiverBoard />
         </div>
     );
 }

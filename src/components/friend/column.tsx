@@ -38,9 +38,7 @@ const FriendList = (props: FriendListProps) => {
 	const List: any[] = [];
 
 	const handleSelect = async (e: any) => {
-		console.log(e);
 		const url = "api/people/profile/" + e.target.id;
-		console.log(url);
         try {
             const response = await request(
                 url,
@@ -48,19 +46,18 @@ const FriendList = (props: FriendListProps) => {
                 "",
             );
 			props.setProfile(response?.profile);
-			console.log(response.profile);
         } catch(err) {
             console.log(err);
         }
 	};
 
-	props.groups?.map(g => {
+	props.groups?.forEach(g => {
 		List.push(
-			<div className={styles.group_name}>
+			<div className={styles.group_name} key={g.group}>
 				{g.group}
 			</div>
 		)
-		g.list.map(item => {
+		g.list.forEach(item => {
 			List.push(
 				<div className={styles.column_item} key={item.id.toString()} 
 				id={item.id.toString()} onClick={handleSelect}>
@@ -101,7 +98,8 @@ function Column(props: ColumnProps) {
             console.log(err);
         }
 	};
-	useEffect(() => { handleQuery(); }, [query]);
+
+	useEffect(() => { handleQuery(); }, []);
 
 	return load ?
 		(
@@ -109,8 +107,9 @@ function Column(props: ColumnProps) {
 			<div className={styles.column_search}>
 				<input className={styles.search_bar}
                     type="text"
-					placeholder="Search"
+					placeholder="Press Enter to Search"
                     onChange={(e) => { setQuery(e.target.value); }}
+					onKeyDown={(e) => { if (e.key === 'Enter') handleQuery(); }}
                     value={query}
 				/>
 			</div>

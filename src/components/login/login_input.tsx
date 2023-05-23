@@ -2,15 +2,18 @@ import {message, Tabs} from "antd";
 import {request} from "@/utils/network";
 import {ProFormCaptcha, ProFormText} from "@ant-design/pro-components";
 import {LockOutlined, MailOutlined, UserOutlined} from "@ant-design/icons";
-
-const items = [
-    {label: '账号密码', key: "account"},
-    {label: '邮箱登陆', key: 'email'},
-]
+import {useEffect, useState} from "react";
+import {store} from "@/utils/store";
 
 type LoginType = 'email' | 'account';
 
 const LoginInput = ( props: any ) => {
+
+    const items = [
+        {label: '账号密码', key: "account"},
+        {label: '邮箱登陆', key: 'email', disabled: props.place === "setting"},
+    ]
+
 
     const form = props.form;
     // handle request to send verification code
@@ -49,6 +52,7 @@ const LoginInput = ( props: any ) => {
                             prefix: <UserOutlined className={'prefixIcon'} />,
                         }}
                         placeholder={'用户名'}
+                        disabled={props.place!=="login"}
                         rules={[
                             {
                                 required: true,
@@ -80,7 +84,9 @@ const LoginInput = ( props: any ) => {
                             prefix: <MailOutlined className={'prefixIcon'} />,
                         }}
                         name="email"
+                        disabled={props.place!=="login"}
                         placeholder={'邮箱'}
+
                         rules={[
                             {
                                 required: true,

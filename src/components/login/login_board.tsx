@@ -7,6 +7,7 @@ import { useRouter } from "next/router";
 import { isBrowser } from "@/utils/store";
 import { store } from "@/utils/store";
 import LoginInput from "@/components/login/login_input";
+import {encryptParam} from "@/utils/utilities";
 
 type LoginType = 'email' | 'account';
 
@@ -28,7 +29,7 @@ const LoginBoard = () => {
     const handleUserSubmit = async (e: any) => {
         const userInfo = {
             "userName": e.username,
-            "password": e.password,
+            "password": encryptParam(e.password),
         };
 
         try {
@@ -90,7 +91,7 @@ const LoginBoard = () => {
                     form={form}
                     onFinish={loginType==='email'?handleEmailSubmit:handleUserSubmit}
                 >
-                    <LoginInput form={form} loginType={loginType} setLoginType={setLoginType}/>
+                    <LoginInput form={form} loginType={loginType} setLoginType={setLoginType} place={"login"}/>
                 </LoginForm>
             </div>
         </ProConfigProvider>

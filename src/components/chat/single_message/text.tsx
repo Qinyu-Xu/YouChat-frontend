@@ -1,8 +1,8 @@
 import {isBrowser, store} from "@/utils/store";
+import { MentionsInput, Mention } from 'react-mentions';
 import CircularJson from "circular-json";
 import styles from "@/styles/chat.module.css";
 import {Button} from "antd";
-
 
 
 const TextBoard = (props: any) => {
@@ -17,14 +17,17 @@ const TextBoard = (props: any) => {
                     sessionId: props.sessionId,
                     timestamp: Date.now(),
                     message: props.text,
-                    messageType: "text"
+                    messageType: "text",
+                    reply: props.reply
                 };
                 const addM = {
                     "senderId": store.getState().userId,
                     "timestamp": Date.now(),
-                    "messageId": Date.now(),
+                    "messageId": -1,
                     "message": props.text,
-                    "messageType": "text"
+                    "messageType": "text",
+                    "reply": props.reply,
+                    "renderedMessage": props.text,
                 }
                 socket.send(CircularJson.stringify(message));
                 props.setMessages((message: any) => [...message, addM]);
@@ -35,10 +38,74 @@ const TextBoard = (props: any) => {
 
     return (
         <div className={styles.writing_box}>
-            <textarea
-                className={styles.writing}
+            <MentionsInput
+                style={{
+                    height: "12.5rem",
+                    '&multiLine': {
+                        input: {
+                            padding: "0 0.5rem 0 0.5rem",
+                            margin: "0",
+                            border: "0",
+                            outline: "none",
+                            overflow: "auto",
+                            width: "100%",
+                            height: "12.5rem",
+                            fontSize: "1rem",
+                            lineHeight: "1.5rem",
+                        },
+                        highlighter: {
+                            padding: "0 0.5rem 0 0.5rem",
+                            margin: "0",
+                            border: "0",
+                            outline: "none",
+                            overflow: "auto",
+                            width: "100%",
+                            height: "12.5rem",
+                            fontSize: "1rem",
+                            lineHeight: "1.5rem",
+                        },
+                        suggestions: {
+                            backgroundColor: "rgba(255,255,255,0.75)",
+                            borderRadius: "0.5rem",
+                            border: "0rem",
+                            fontSize: "1rem",
+                            lineHeight: "1.25rem",
+                            color: "black",
+                            padding: "0rem",
+                            margin: "0",
+                            zIndex: 1,
+                            item: {
+                                padding: '0.25rem 0.3rem',
+                                borderRadius: '0.5rem',
+                                '&focused': {
+                                  backgroundColor: 'rgba(170, 220, 220, 0.5)',
+                                },
+                            }
+                        },
+                    },
+                }}
+                allowSpaceInQuery={true}
                 onChange={(e: any) => props.setText(e.target.value)}
-                value={props.text} />
+                value={props.text}>
+                <Mention 
+                    style={{
+                        backgroundColor: "rgba(255,255,255,0.5)",
+                        borderRadius: "0.25rem",
+                    }}
+                    trigger="@"
+                    markup="@[__display__](user:__id__)"
+                    data={
+                        props.members.map((member: any) => ({id: member.id, display: "@" + member.nickname}))
+                            .concat([{id: -2, display: "@全体成员" }])
+                    }
+                    appendSpaceOnAdd={true}
+                    renderSuggestion={(suggestion, search, highlightedDisplay) => (
+                        <div>
+                            {highlightedDisplay}
+                        </div>
+                    )}
+                />
+            </MentionsInput>
             <div className={styles.send}>
                 <Button onClick={handleClick} >发送</Button>
             </div>

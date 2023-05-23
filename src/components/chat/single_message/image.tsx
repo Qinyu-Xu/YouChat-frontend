@@ -30,7 +30,7 @@ export const ImgIcon = (props: any) => {
                     const addM = {
                         "senderId": store.getState().userId,
                         "timestamp": Date.now(),
-                        "messageId": Date.now(),
+                        "messageId": -1,
                         "message": res,
                         "messageType": "photo"
                     };
