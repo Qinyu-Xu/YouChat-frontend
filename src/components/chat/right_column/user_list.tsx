@@ -280,7 +280,7 @@ const UserList = (props: any) => {
                         <Card>
                             <List.Item.Meta
                                 avatar={<Avatar src={
-                                    !props.images.hasOwnProperty(item.senderId) ?"/headshot/01.svg" :props.images[item.senderId]
+                                    !props.images.hasOwnProperty(item.id) ?"/headshot/01.svg" :props.images[item.id]
                                 } />}
                                 title={(props.members.filter((member: any) => member.id === item.id))[0] === undefined
                                     ? "Stranger" :

@@ -352,8 +352,11 @@ const ChatBoard = (props: any) => {
     };
 
     useEffect(() => {
-        if(messages) {
-            store.dispatch({type: 'addMessage', message: {key: props.session.sessionId, value: messages}});
+        if( messages.length !== 0 ) {
+            store.dispatch(
+                { type: 'addMessage',
+                        message: {key: props.session.sessionId, value: messages}
+                });
         }
     }, [messages]);
 
