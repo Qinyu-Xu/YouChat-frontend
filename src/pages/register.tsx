@@ -46,7 +46,7 @@ function Register() {
             if(response.code === 0) {
                 message.success('成功注册！');
                 await request("api/people/img/"+response.id, "PUT", {
-                    img: await readSvgAsBase64(`/headshot/1.svg`),
+                    img: await readSvgAsBase64(`/headshot/01.svg`),
                 })
                 await router.push('/login');
             } else {
