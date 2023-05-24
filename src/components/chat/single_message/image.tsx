@@ -30,11 +30,12 @@ export const ImgIcon = (props: any) => {
                         messageType: "photo"
                     }
                     const addM = {
+                        "senderName": props.myName,
                         "senderId": store.getState().userId,
                         "timestamp": Date.now(),
                         "messageId": -1,
                         "message": res,
-                        "messageType": "photo"
+                        "messageType": "photo",
                     };
                     socket.send(CircularJson.stringify(message));
                     props.setMessages((message: any) => [...message, addM]);

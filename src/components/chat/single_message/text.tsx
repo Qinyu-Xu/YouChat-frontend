@@ -21,6 +21,7 @@ const TextBoard = (props: any) => {
                     reply: props.reply
                 };
                 const addM = {
+                    "senderName": props.myName,
                     "senderId": store.getState().userId,
                     "timestamp": Date.now(),
                     "messageId": -1,
