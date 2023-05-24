@@ -82,14 +82,16 @@ const MessageItem = (props: any) => {
                 "").then((res: any) => {
                     let i = 0;
                     for(; i < 4 && i < res.members.length; ++i) {
-                        const resId = res.members[i].id;
-                        if(!store.getState().imgMap.hasOwnProperty(res.members[i].id)) {
-                            request("api/people/img/" + res.members[i].id, "GET", "").then((r: any) => {
-                                store.dispatch({type: "addImage", data: {key: r.user_id, value: r.img}});
-                                setCanv((images: any) => [...images, r.img]);
-                            });
-                        } else {
-                            setCanv((images: any) => [...images, store.getState().imgMap[resId]]);
+                        if(res.members[i].role !== 3) {
+                            const resId = res.members[i].id;
+                            if (!store.getState().imgMap.hasOwnProperty(res.members[i].id)) {
+                                request("api/people/img/" + res.members[i].id, "GET", "").then((r: any) => {
+                                    store.dispatch({type: "addImage", data: {key: r.user_id, value: r.img}});
+                                    setCanv((images: any) => [...images, r.img]);
+                                });
+                            } else {
+                                setCanv((images: any) => [...images, store.getState().imgMap[resId]]);
+                            }
                         }
                     }
                     while(i < 4) {
