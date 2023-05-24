@@ -2,9 +2,33 @@ import styles from '@/styles/profile.module.css'
 import {Avatar, Button, Input, Spin} from "antd";
 import { request } from "@/utils/network";
 import {useEffect, useState} from 'react';
+import {store} from "@/utils/store";
 
 interface ProfileProps {
     profile: any,
+}
+
+const admit = async (id: number, group: string) => {
+    try {
+        const response = await request(
+            "api/people/friends",
+            "PUT",
+            JSON.stringify({
+                "id": id,
+                "group": group,
+            }),
+        );
+        if(response.sessionId !== undefined) {
+            const socket: any = store.getState().webSocket;
+            socket.send(JSON.stringify({
+                type: 'new_session',
+                sessionId: response.sessionId,
+            }));
+        }
+        location.reload();
+    } catch(err) {
+        console.log(err);
+    }
 }
 
 const send = async (id: number, group: string) => {
@@ -51,7 +75,7 @@ function Profile(props: ProfileProps) {
     }
     else if (props.profile.group == "RequestFrom") {
         operation.push(
-            <Button id={"2"} onClick={() => { send(props.profile.id, "Default"); }}>
+            <Button id={"2"} onClick={() => { admit(props.profile.id, "Default"); }}>
                 Accept
             </Button>
         );

@@ -41,13 +41,12 @@ const FriendList = (props: FriendListProps) => {
 		if(e.target.id!=="") {
 			const url = "api/people/profile/" + e.target.id;
 			try {
-				request(
+				const response = await request(
 					url,
 					"GET",
 					"",
-				).then((response) => {
-					props.setProfile(response?.profile);
-				})
+				)
+				props.setProfile(response?.profile);
 			} catch (err) {
 				console.log(err);
 			}
