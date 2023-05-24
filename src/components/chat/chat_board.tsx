@@ -163,7 +163,7 @@ const ChatBoard = (props: any) => {
     const getLeftItems = (reply_status: any, timestamp: number, senderId: number) => {
         if (reply_status === -1 || reply_status === undefined)  {
             if(
-                props.session.sessionType == 2 &&
+                props.session.sessionType === 2 &&
                 ( role === 0
                     || (role === 1
                         && members.filter((member: any) => member.id === senderId)[0]?.role !== 0
@@ -176,7 +176,7 @@ const ChatBoard = (props: any) => {
             }
         } else  {
             if(
-                props.session.sessionType == 2 &&
+                props.session.sessionType === 2 &&
                 ( role === 0
                     || (role === 1
                         && members.filter((member: any) => member.id === senderId)[0]?.role !== 0
@@ -330,7 +330,7 @@ const ChatBoard = (props: any) => {
                             senderId: message.senderId,
                             senderName: message.senderName,
                             timestamp: message.timestamp,
-                            reply: message.reply,
+                            reply: res.reply,
                         }
                         : message;
                 }))
@@ -472,11 +472,20 @@ const ChatBoard = (props: any) => {
             if(element){
                 element.scrollIntoView();
             } else {
-                console.error('Element with id THEEND not found');
+                console.log('Element with id THEEND not found');
             }
             setNewmsg(false);
         }
     }, [messages, mload, newmsg]);
+
+    useEffect(() => {
+        const element: any = document.getElementById("THEEND");
+        if(element){
+            element.scrollIntoView();
+        } else {
+            console.log('Element with id THEEND not found');
+        }
+    }, [props.session.sessionId]);
 
     useEffect(() => {
         if (newinfo) {

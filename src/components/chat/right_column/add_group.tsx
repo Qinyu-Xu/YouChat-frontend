@@ -29,10 +29,15 @@ const AddGroup = (props: any) => {
             userId: store.getState().userId,
             sessionName: name,
             initial: selected,
-        })).then(_=> {
+        })).then( (res: any) => {
             setDisabled(false);
             props.setOpen(false);
             props.setRefresh((s: any) => !s);
+            const socket: any = store.getState().webSocket;
+            socket.send(JSON.stringify({
+                type: "new_session",
+                sessionId: res.sessionId,
+            }))
         });
     }
 
