@@ -106,11 +106,12 @@ const AudioInput = (props: any) => {
                 messageType: "audio"
             }
             const addM = {
+                "senderName": props.myName,
                 "senderId": store.getState().userId,
                 "timestamp": Date.now(),
                 "messageId": -1,
                 "message": base,
-                "messageType": "audio"
+                "messageType": "audio",
             };
             socket.send(CircularJson.stringify(message));
             props.setMessages((message: any) => [...message, addM]);
